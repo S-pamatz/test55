@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+    {% block app_content%}
+        <h1> Admin Edit Profile </h1>
+        <img src="{{ url_for('static', filename= user.image_file) }}" alt="profile_pic" width="100px" height="100px">
+
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <div class="">{{ form.firstname.label() }}{{ form.firstname(value=user.firstname) }}</div>
+            <div class="">{{ form.lastname.label() }}{{ form.lastname(value=user.lastname) }}</div>
+            <div class="">{{ form.campus.label() }}{{ form.campus(value=user.wsuCampus) }}</div>
+            <div class="">{{ form.department.label() }}{{ form.department(value=user.department) }}</div>
+            <div class="">{{ form.areaofinterest.label() }}{{ form.areaofinterest(value=user.areaofinterest) }}</div>
+            <div class="">{{ form.URL.label() }}{{ form.URL(value=user.url) }}</div>
+            <div class="">{{form.is_admin.label()}}{% if user.is_admin %}{{form.is_admin(checked=True)}}{% else %}{{form.is_admin()}}{% endif %}</div>
+            <div class="">{{ form.submit() }}</div>
+        </form>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+
+{% block app_content %}
+<h1>Hi, {{current_user.firstname}} {{ current_user.lastname}}</h1>
+<!--
+        we are going to itterate through all the classes passed through classes
+        and display them -->
+    {% for class in classes %}
+<!--class is just a varaible name; however, class has to match the variable name in 
+    _class.html
+    classes has to match the name in the routes-->
+        {% include '_class.html'%}
+    {% endfor %}
+{% endblock %}
