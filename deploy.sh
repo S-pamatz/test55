@@ -1,24 +1,31 @@
 #!/bin/bash
-
-read -p "Enter the <user> name: " user_name
+echo "Runing react build."
+(
+    cd visualization/frontend
+    npm run build
+)
 
 if [ -d "package" ]; then
     rm -r package
 fi
 
-# copying static file from react generated code.
+echo "Copying static files from react generated code."
 mkdir package
 cp -r fullStack package
 cp -r visualization/frontend/build/* package/fullStack/app/View/static
 
-# transforming index.html to work with the flask app's file structure.
+echo "Transforming index.html to work with the flask app's file structure."
 python react_to_flask.py visualization/frontend/build/index.html package/fullStack/app/View/templates/react_app.html
+
+read -p "Enter the <user> name: " user_name
+
+
 
 source_directory="./package"
 destination_server="172.232.172.160"
 destination_directory="/test"
 
-# Perform SCP to copy the contents of the source directory to the remote server
+echo "Performing rsync."
 rsync -av --checksum "${source_directory}"/* "${user_name}@${destination_server}:${destination_directory}/"
 
 # Check if the SCP operation was successful
@@ -30,5 +37,5 @@ fi
 
 rm -rf package
 
-# Restart the flask app using pm2 on the destination server
+echo "Restarting the flask app"
 ssh "${user_name}@${destination_server}" 'pm2 restart my-flask'
