@@ -1,0 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  /* background-color: red; */
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.topMargin {
+  margin: 7% 0px 0px;
+}
+.main {
+  width: 100%;
+}
