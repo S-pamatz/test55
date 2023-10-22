@@ -1,9 +1,14 @@
 // getDataFromBackend.js
 // Description: This file contains functions that make requests to the backend to get data.
-// make a request to the backend to get all the entries
+
+// Define the base URL of the backend server
+const backendBaseUrl = "http://172.232.172.160:3004"; // Replace with your actual backend URL
+
+// Function to make a request to the backend to get all the entries
 export const filterEntries = (valueToFilterBy) => {
   return new Promise((resolve, reject) => {
-    fetch(`/search?inputValue=${valueToFilterBy}`)
+    // Make a fetch request to the backend's /search endpoint
+    fetch(`${backendBaseUrl}/search?inputValue=${valueToFilterBy}`)
       .then((response) => response.json())
       .then((filteredEntries) => {
         if (!Array.isArray(filteredEntries)) {
@@ -19,10 +24,12 @@ export const filterEntries = (valueToFilterBy) => {
       });
   });
 };
-// make a request to the backend to get the unique departments
+
+// Function to make a request to the backend to get the unique departments
 export const getUniqueDepartments = () => {
   return new Promise((resolve, reject) => {
-    fetch("/unique-departments")
+    // Make a fetch request to the backend's /unique-departments endpoint
+    fetch(`${backendBaseUrl}/unique-departments`)
       .then((response) => response.json())
       .then((uniqueDepartments) => {
         if (!Array.isArray(uniqueDepartments)) {
@@ -38,10 +45,12 @@ export const getUniqueDepartments = () => {
       });
   });
 };
-// make a request to the backend to get the unique interests
+
+// Function to make a request to the backend to get the unique interests
 export const getUniqueInterests = () => {
   return new Promise((resolve, reject) => {
-    fetch("/unique-interests")
+    // Make a fetch request to the backend's /unique-interests endpoint
+    fetch(`${backendBaseUrl}/unique-interests`)
       .then((response) => response.json())
       .then((uniqueInterests) => {
         if (!Array.isArray(uniqueInterests)) {
