@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block app_content %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .profile-pic {
+                margin-right: 60px;
+            }
+            .flex-container {
+                display: flex;
+                flex-direction: row;
+                align-items: stretch;
+            }
+            .flex-box {
+                display: flex;
+                flex-direction: column;
+            }
+            .flex-info {
+                display: flex;
+                flex-direction: column;
+                margin-top: 20px;
+            }
+            .flex-options {
+                display: flex;
+                flex-direction: column;
+                border: 1px solid #ccc;
+                padding: 10px;
+                height: 40px;
+                position: absolute;
+                right: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="flex-container">
+            <div class="profile-pic"><a href="http://{{ affiliate.url }}"><img src="{{ image_file }}" alt="profile_pic" width="250px" height="250px"></a></div>
+            <div class="flex-box">
+                <h1>{{affiliate.firstname}} {{affiliate.lastname}}</h1>
+                    <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Email:</span></b> {{affiliate.email}}</p>
+                    <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Area of Interest:</span></b> {{ affiliate.areaofinterest }}</p>
+                    <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Department:</span></b> {{ affiliate.department }}</p>
+                    <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Campus:</span></b> {{ affiliate.wsuCampus }}</p>
+                    <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Link:</span></b><a href="http://{{ affiliate.url }}"> {{ affiliate.url }}</a></p>
+            </div>
+            <div class="flex-options">
+                <a href="{{url_for('routes.add_projects')}}">Add Projects</a>
+            </div>
+        </div>
+        <div class="flex-info">
+            <h4><span style="color: rgb(166, 15, 45); font-weight: bold;">Publications and Projects </span></h4>
+            {% for project in affiliate.projects %}
+                <ul>
+                    <li>
+                        <p>{{ project.name }} <b><span style="color: rgb(166, 15, 45); font-weight: bold; margin-left: 48px;">URL: </span></b><a href="http://{{ project.url }}">{{ project.url }}</a></p>
+                    </li>
+                </ul>
+            {% endfor %}
+        </div>
+    </body>
+</html>
+{% endblock %}
