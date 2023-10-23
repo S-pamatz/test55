@@ -3,6 +3,10 @@
 import React from "react";
 import "./CategoriesBar.css";
 import UniversityIcon from "../../assets/University.png";
+import DepartmentsIcon from "../../assets/Department.png";
+import Interests from "../../assets/Interests.png";
+import Projects from "../../assets/Projects.png";
+import Sponsors from "../../assets/Sponsors.png";
 import Modal from "../UIComponents/modal";
 
 const CategoriesBar = () => {
@@ -13,6 +17,7 @@ const CategoriesBar = () => {
   const handleButtonClick = (contentType, event) => {
     const rect = event.currentTarget.getBoundingClientRect();
     setButtonPosition({ top: rect.top, left: rect.left, width: rect.width });
+
     
 
     if (activeModalContent === contentType) {
@@ -31,35 +36,35 @@ const CategoriesBar = () => {
         className="categoryButton"
         onClick={(e) => handleButtonClick("University", e)}
       >
-        <img src={UniversityIcon} alt="icon 1" />
+        <img src={UniversityIcon} alt="University" />
         University
       </button>
       <button
         className="categoryButton"
         onClick={(e) => handleButtonClick("Departments", e)}
       >
-        {/* <img src="path/to/icon2.png" alt="icon 2" /> */}
+        <img src={DepartmentsIcon} alt="Departments" />
         Departments
       </button>
       <button
         className="categoryButton"
         onClick={(e) => handleButtonClick("Interests", e)}
       >
-        {/* <img src="path/to/icon2.png" alt="icon 2" /> */}
+        <img src={Interests} alt="Interests" />
         Interests
       </button>
       <button
         className="categoryButton"
-        onClick={(e) => handleButtonClick("Departments", e)}
+        onClick={(e) => handleButtonClick("Projects", e)}
       >
-        {/* <img src="path/to/icon2.png" alt="icon 2" /> */}
+        <img src={Projects} alt="Projects"/>
         Projects
       </button>
       <button
         className="categoryButton"
-        onClick={(e) => handleButtonClick("Departments", e)}
+        onClick={(e) => handleButtonClick("Sponsors", e)}
       >
-        {/* <img src="path/to/icon2.png" alt="icon 2" /> */}
+        <img src={Sponsors} alt="Sponsors" />
         Sponsors
       </button>
       <Modal

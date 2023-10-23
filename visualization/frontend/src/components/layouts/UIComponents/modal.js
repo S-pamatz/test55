@@ -5,11 +5,13 @@ import { nodesLibrary } from "../../data/nodeLibrary";
 import GraphContext from "../../data/GraphContext";
 import Uni from "../../assets/University.png";
 
+
 const Modal = ({ content, position, setActiveModalContent }) => {
   const ctx = React.useContext(GraphContext);
   const handleCloseButtonClick = () => {
     setActiveModalContent(null);
   };
+
 
   const handleItemButtonClick = (item) => {
     const newItem = {
@@ -59,11 +61,11 @@ const Modal = ({ content, position, setActiveModalContent }) => {
       break;
     case "Projects":
       modalTitle = "Projects";
-      modalBody = "Information about the projects";
+      modalBody = [{ Name: "Projects" }]
       break;
     case "Sponsors":
       modalTitle = "Sponsors";
-      modalBody = "Information about the sponsors";
+      modalBody = [{ Name: "Sponsors" }]
       break;
     default:
       modalTitle = "";
@@ -71,19 +73,21 @@ const Modal = ({ content, position, setActiveModalContent }) => {
   }
 
   const modalStyles = position
-    ? {
-        top: position.top - 750 + "%",
-        left:
-          Math.min(
-            position.left + position.width / 2 + 30,
-            window.innerWidth -
-              110 
-          ) + "px",
-        transform: "translate(-50%, -100%)",
-      }
-    : {};
+  ? {
+      top: position.top - 700 + "px",
+      left:
+        Math.min(
+          position.left + position.width / 2 + 30,
+          window.innerWidth -
+            110 
+        ) + "px",
+      transform: "translate(-60%, -100%)",
+    }
+  : {};
+
 
   return (
+    <div className="modal-container">
     <div className="modal modal-open" style={modalStyles}>
       <button className="closeButton" onClick={handleCloseButtonClick}>×</button>
       <button className="categoriesButton" onClick={handleCloseButtonClick}>
@@ -100,6 +104,7 @@ const Modal = ({ content, position, setActiveModalContent }) => {
           </button>
         ))}
       </div>
+    </div>
     </div>
   );
 };

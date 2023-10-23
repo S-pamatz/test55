@@ -106,12 +106,12 @@ export const GraphContextProvider = (props) => {
           id: nodes.length,
           Name: entry.Department,
           expanded: false,
-          fill: "White",
+          fill: '#9D2235',
         };
         nodes.push(departmentNode);
         links.push({ source: 0, target: departmentNode.id }); // 0 is the ID for WSU
       } else {
-        departmentNode.fill = "white";
+        departmentNode.fill = '#9D2235';
       }
 
       // Insert or find the Name node and link it to the Department
@@ -121,12 +121,12 @@ export const GraphContextProvider = (props) => {
           id: nodes.length,
           Name: entry.Name,
           expanded: false,
-          fill: "white",
+          fill: '#9D2235',
         };
         nodes.push(nameNode);
         links.push({ source: departmentNode.id, target: nameNode.id });
       } else {
-        nameNode.fill = "white";
+        nameNode.fill = '#9D2235';
       }
 
       // Update state

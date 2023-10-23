@@ -52,7 +52,7 @@ const ForceDirectGraph = () => {
       .enter()
       .append("line")
       .attr("class", "link")
-      .attr("stroke", "gray")
+      .attr("stroke", '#9D2235')
       .attr("stroke-width", 2);
 
     const nodeGroup = g
@@ -64,31 +64,51 @@ const ForceDirectGraph = () => {
       .call(
         d3.drag().on("start", dragstart).on("drag", drag).on("end", dragend)
       );
+      const defs = svg.append('defs');
 
-      // Append a circle behind the image
-      nodeGroup.append("circle")
-      .attr("r", radius) 
-      .attr("fill", (d) => (d.fill !== undefined ? d.fill : "none"))
-// if node has fill color, use it here else no color
-      .attr("opacity", 0.6 )
+      const gradient = defs.append('linearGradient')
+        .attr('id', 'nodeGradient')
+        .attr('x1', '0%')     // Gradient starts at the top
+        .attr('y1', '20%')
+        .attr('x2', '30%')     // Gradient ends at the bottom
+        .attr('y2', '150%');
+      
+      gradient.append('stop')
+        .attr('offset', '0%')
+        .attr('stop-color', '#9D2235');
+      
+      gradient.append('stop')
+        .attr('offset', '80%')
+        .attr('stop-color', 'black');
+      
+
+    // Append a circle behind the image
+    nodeGroup
+      .append("circle")
+      .attr("r", radius)
+      .attr("fill", (d) => (d.fill !== undefined ? d.fill : "url(#nodeGradient)"))
+      // if node has fill color, use it here else no color
+      .attr("opacity", 0.8);
 
     // Append the circle (or other shape) to the group
-    nodeGroup.append("image")
-    .attr("xlink:href", (d) => d.icon) 
-    .attr("width", radius ) 
-    .attr("height", radius )
-    .attr("x", -radius/2)  // center the image
-    .attr("y", -radius/2); // center the image
+    nodeGroup
+      .append("image")
+      .attr("xlink:href", (d) => d.icon)
+      .attr("width", radius)
+      .attr("height", radius)
+      .attr("x", -radius / 2) // center the image
+      .attr("y", -radius / 2); // center the image
 
     // Append the text to the group
     nodeGroup
-    .append("text")
-    .attr("text-anchor", "middle")
-    .attr("dy", radius/2 + 10)
-    .attr("dx", 0)
-    .attr("font-size", fontSize + "px")
-    .attr("data-full-text", (d) => d.Name) 
-    .text((d) => d.Name.slice(0, 5)); 
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("dy", radius / 2 + 10)
+      .attr("dx", 0)
+      .attr("font-size", fontSize + "px")
+      .attr("data-full-text", (d) => d.Name)
+      .attr("fill", "white")
+      .text((d) => d.Name.slice(0, 5));
 
     nodeGroup.select("text").on("mouseover", function (event, d) {
       // Show full name
@@ -99,14 +119,18 @@ const ForceDirectGraph = () => {
       d3.select(this).text(d.Name.slice(0, 5)); // Limit name length to fit circle
     });
 
-    nodeGroup.select("imaage").on("mouseover", function (event, d) {
+    nodeGroup.select("circle").on("mouseover", function (event, d) {
+      d3.select(this).attr("r", (d) => radius+10);
+    });
+
+    nodeGroup.select("circle").on("mouseout", function (event, d) {
       d3.select(this).attr("r", (d) => radius);
     });
 
-    nodeGroup.select("image").on("mouseout", function (event, d) {
-      d3.select(this).attr("r", (d) => radius);
+    nodeGroup.select("circle").on("click", (event, d) => {
+      // console.log("Node clicked: ", d);
+      ctx.onNodeClick(d); // Call the callback provided from the parent
     });
-
     nodeGroup.select("image").on("click", (event, d) => {
       // console.log("Node clicked: ", d);
       ctx.onNodeClick(d); // Call the callback provided from the parent
