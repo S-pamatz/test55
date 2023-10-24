@@ -26,4 +26,4 @@ fi
 rm -rf package
 
 echo "Restarting the flask app"
-ssh "${user_name}@${destination_server}" 'pm2 restart my-flask'
+ssh "${user_name}@${destination_server}" 'shared_pm2 restart my-flask'
