@@ -202,6 +202,34 @@ def tData(givenEmail):
 
     return render_template('register.html',form=rform,emailTest=list1[0])
 
+@routes_blueprint.route('/search', methods=['GET'])
+def search():
+    try: 
+        input_value = request.args.get('inputValue', default = '', type = str)
+        # return any entry that has matching text input in any attribute.
+        filtered_data = database.query.filter(
+            database.Department.ilike(f"%{inputValue}%") |
+            database.Interest.ilike(f"%{inputValue}%") |
+            database.Name.ilike(f"%{inputValue}%") |
+            database.Membership.ilike(f"%{inputValue}%") |
+            database.WSUCampus.ilike(f"%{inputValue}%") |
+            database.Email.ilike(f"%{inputValue}%") |
+            database.URL.ilike(f"%{inputValue}%")
+        ).all()
+        return jsonify(filtered_data)
+    except:
+        return jsonify([])
+
+@routes_blueprint.route('/unique-keywords', methods=['GET'])
+def unique_keywords():
+    try:
+        input_value = request.args.get('inputValue', default = '', type = str)
+        # return any unique keyword that is relate to that attribute.
+        attributes = [database.input_value for data in database.query.distinct(database.input_value).all()]
+        return jsonify(attributes)
+    except:
+        return jsonify([])
+
 # @routes_blueprint.route('/', methods=['GET'])#/=root pathx
 # @routes_blueprint.route('/index', methods=['GET'])
 # @login_required
