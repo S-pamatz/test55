@@ -1,6 +1,6 @@
 import React from "react";
 import classes from "./Header.module.css";
-import WsuLogo from "../assets/wsu-white-logo-red-background.png";
+import WsuLogo from "../../assets/wsu-white-logo-red-background.png";
 import { FaSearch } from "react-icons/fa";
 import GraphContext from "../data/GraphContext";
 

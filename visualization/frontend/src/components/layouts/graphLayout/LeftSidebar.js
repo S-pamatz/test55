@@ -2,11 +2,11 @@
 import React, { useState, useContext } from "react";
 import GraphContext from "../../data/GraphContext";
 import classes from "./LeftSidebar.module.css";
-import gearIcon from "../../assets/icons8-gear-48.png";
-import viewIcon from "../../assets/icons8-view-48.png";
-import categoryIcon from "../../assets/icons8-category-30.png";
-import backArrow from "../../assets/icons8-back-arrow-30.png"; // Import the back arrow icon
-import searchIcon from "../../assets/icons8-search.svg";
+import gearIcon from "../../../assets/icons8-gear-48.png";
+import viewIcon from "../../../assets/icons8-view-48.png";
+import categoryIcon from "../../../assets/icons8-category-30.png";
+import backArrow from "../../../assets/icons8-back-arrow-30.png"; // Import the back arrow icon
+import searchIcon from "../../../assets/icons8-search.svg";
 import { FaSearch } from "react-icons/fa";
 
 const Sidebar = () => {

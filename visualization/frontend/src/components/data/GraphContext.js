@@ -7,7 +7,7 @@ import {
   expandNodeUsingFilteredEntries,
 } from "./handleNodeClick";
 import { filterEntries } from "./getDataFromBackend";
-import Uni from "../assets/University.png"
+import University from "../../assets/UniversityW.png";
 import { nodesLibrary } from "./nodeLibrary";
 const GraphContext = createContext({
   nodes: [],
@@ -21,7 +21,7 @@ const GraphContext = createContext({
 
 export const GraphContextProvider = (props) => {
   const [nodes, setNodes] = useState([
-    { id: 0, Name: "wsu", icon: Uni, expanded: false, fx: 500, fy: 400, depth: 0 },
+    { id: 0, Name: "wsu", icon: University, expanded: false, fx: 500, fy: 400, depth: 0 },
   ]);
   const [links, setLinks] = useState([]);
 

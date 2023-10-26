@@ -3,7 +3,7 @@ import React from "react";
 import "./modal.css";
 import { nodesLibrary } from "../../data/nodeLibrary";
 import GraphContext from "../../data/GraphContext";
-import Uni from "../../assets/University.png";
+import Uni from "../../../assets/UniversityW.png";
 
 
 const Modal = ({ content, position, setActiveModalContent }) => {

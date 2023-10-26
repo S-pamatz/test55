@@ -1,7 +1,7 @@
 // handleNodeClick.js
 // Description: This file contains the functions that are called when a node is clicked.
-import Department from "../assets/Department.png";
-import Scholar from "../assets/Sholar.png";
+import Department from "../../assets/DepartmentW.png"
+import Scholar from "../../assets/ScholarW.png"
 
 
 // This function finds the descendants of a node and returns them in an array

@@ -2,11 +2,11 @@
 // CategoriesBar.js
 import React from "react";
 import "./CategoriesBar.css";
-import UniversityIcon from "../../assets/University.png";
-import DepartmentsIcon from "../../assets/Department.png";
-import Interests from "../../assets/Interests.png";
-import Projects from "../../assets/Projects.png";
-import Sponsors from "../../assets/Sponsors.png";
+import UniversityIcon from "../../../assets/UniversityB.png";
+import DepartmentsIcon from "../../../assets/DepartmentB.png";
+import Interests from "../../../assets/InterestB.png";
+import Projects from "../../../assets/ProjectB.png";
+import Sponsors from "../../../assets/SponsorsB.png";
 import Modal from "../UIComponents/modal";
 
 const CategoriesBar = () => {

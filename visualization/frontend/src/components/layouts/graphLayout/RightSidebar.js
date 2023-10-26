@@ -2,7 +2,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import GraphContext from "../../data/GraphContext";
 import "./RightSidebar.css";
-import CloseIcon from "../../assets/icons8-back-arrow-30.png";
+import CloseIcon from "../../../assets/icons8-back-arrow-30.png";
 
 const NodeInfoRightSidebar = () => {
   const { selectedNode } = useContext(GraphContext);

@@ -1,16 +1,16 @@
 // nodeLibrary.js
 // affilate = [{id: __, Name: ___, Department: ___, Interest: ___, Email: ___, WSU Campus: ___, URL: ___}]
 import { getUniqueDepartments, getUniqueInterests } from './getDataFromBackend';
-import Uni from "../assets/University.png";
+import University from "../../assets/UniversityW.png";
 export let nodesLibrary = [
-  { id: 0, Name: "wsu",  icon: Uni, expanded: false, fx: 500, fy: 400, depth: 0 },
-  { id: 1, Name: "Interests",  icon: Uni, expanded: false, fx: 500, fy: 400, depth: 0 },
-  { id: 2, Name: "Departments",  icon: Uni, expanded: false, fx: 500, fy: 400, depth: 0 },
-  { id: 3, Name: "People",  icon: Uni, expanded: false, fx: 500, fy: 400, depth: 0 },
-  { id: 4, Name: "Projects",  icon: Uni, expanded: false, fx: 500, fy: 400, depth: 0 },
-  { id: 5, Name: "Sponsors",  icon: Uni, expanded: false, fx: 500, fy: 400, depth: 0 },
-  { id: 6, Name: "Partners",  icon: Uni, expanded: false, fx: 500, fy: 400, depth: 0 },
-  { id: 7, Name: "University",  icon: Uni, expanded: false, fx: 500, fy: 400, depth: 0 },
+  { id: 0, Name: "wsu",  icon: University, expanded: false, fx: 500, fy: 400, depth: 0 },
+  { id: 1, Name: "Interests",  icon: University, expanded: false, fx: 500, fy: 400, depth: 0 },
+  { id: 2, Name: "Departments",  icon: University, expanded: false, fx: 500, fy: 400, depth: 0 },
+  { id: 3, Name: "People",  icon: University, expanded: false, fx: 500, fy: 400, depth: 0 },
+  { id: 4, Name: "Projects",  icon: University, expanded: false, fx: 500, fy: 400, depth: 0 },
+  { id: 5, Name: "Sponsors",  icon: University, expanded: false, fx: 500, fy: 400, depth: 0 },
+  { id: 6, Name: "Partners",  icon: University, expanded: false, fx: 500, fy: 400, depth: 0 },
+  { id: 7, Name: "University",  icon: University, expanded: false, fx: 500, fy: 400, depth: 0 },
 ];
 
 export const populateNodesWithUniqueData = async () => {
