@@ -18,7 +18,7 @@ const ForceDirectGraph = () => {
     d3.select(graphRef.current).selectAll("*").remove();
     const svg = d3.select(graphRef.current);
     const g = svg.append("g"); // create a group to apply zoom transformations
-    const radius = 40;
+    const defaultRadius = 40;
     const width = +svg.attr("width");
     const height = +svg.attr("height");
     const fontSize = 12;
@@ -39,7 +39,7 @@ const ForceDirectGraph = () => {
       )
       .force(
         "collide",
-        d3.forceCollide().radius((d) => radius + 20)
+        d3.forceCollide().radius((d) => defaultRadius + 20)
       )
       .force("x", d3.forceX(width / 2).strength(0.1))
       .force("y", d3.forceY(height / 2).strength(0.1))
@@ -85,7 +85,7 @@ const ForceDirectGraph = () => {
     // Append a circle behind the image
     nodeGroup
       .append("circle")
-      .attr("r", radius)
+      .attr("r", (d) => d.radius || defaultRadius) // needd to improve this to make it dynamic with state update )
       .attr("fill", (d) => (d.fill !== undefined ? d.fill : "url(#nodeGradient)"))
       // if node has fill color, use it here else no color
       .attr("opacity", 0.8);
@@ -94,16 +94,16 @@ const ForceDirectGraph = () => {
     nodeGroup
       .append("image")
       .attr("xlink:href", (d) => d.icon)
-      .attr("width", radius)
-      .attr("height", radius)
-      .attr("x", -radius / 2) // center the image
-      .attr("y", -radius / 2); // center the image
+      .attr("width", defaultRadius)
+      .attr("height", defaultRadius)
+      .attr("x", -defaultRadius / 2) // center the image
+      .attr("y", -defaultRadius / 2); // center the image
 
     // Append the text to the group
     nodeGroup
       .append("text")
       .attr("text-anchor", "middle")
-      .attr("dy", radius / 2 + 10)
+      .attr("dy", defaultRadius / 2 + 10)
       .attr("dx", 0)
       .attr("font-size", fontSize + "px")
       .attr("data-full-text", (d) => d.Name)
@@ -120,11 +120,11 @@ const ForceDirectGraph = () => {
     });
 
     nodeGroup.select("circle").on("mouseover", function (event, d) {
-      d3.select(this).attr("r", (d) => radius+10);
+      d3.select(this).attr("r", (d) => defaultRadius+10);
     });
 
     nodeGroup.select("circle").on("mouseout", function (event, d) {
-      d3.select(this).attr("r", (d) => radius);
+      d3.select(this).attr("r", (d) => defaultRadius);
     });
 
     nodeGroup.select("circle").on("click", (event, d) => {
@@ -143,7 +143,7 @@ const ForceDirectGraph = () => {
           const deltaY = d.target.y - d.source.y;
           const dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
           const normX = deltaX / dist;
-          const sourceX = d.source.x + radius * normX;
+          const sourceX = d.source.x + defaultRadius * normX;
           return sourceX;
         })
         .attr("y1", (d) => {
@@ -151,7 +151,7 @@ const ForceDirectGraph = () => {
           const deltaY = d.target.y - d.source.y;
           const dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
           const normY = deltaY / dist;
-          const sourceY = d.source.y + radius * normY;
+          const sourceY = d.source.y + defaultRadius * normY;
           return sourceY;
         })
         .attr("x2", (d) => {
@@ -159,7 +159,7 @@ const ForceDirectGraph = () => {
           const deltaY = d.target.y - d.source.y;
           const dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
           const normX = deltaX / dist;
-          const targetX = d.target.x - radius * normX;
+          const targetX = d.target.x - defaultRadius * normX;
           return targetX;
         })
         .attr("y2", (d) => {
@@ -167,7 +167,7 @@ const ForceDirectGraph = () => {
           const deltaY = d.target.y - d.source.y;
           const dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
           const normY = deltaY / dist;
-          const targetY = d.target.y - radius * normY;
+          const targetY = d.target.y - defaultRadius * normY;
           return targetY;
         });
 

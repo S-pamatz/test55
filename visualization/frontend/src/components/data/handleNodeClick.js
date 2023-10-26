@@ -40,6 +40,7 @@ export const expandNodeUsingFilteredEntries = (
       expanded: false,
       parent: clickedNode.id,
       depth: clickedNode.depth + 1,
+      radius: clickedNode.radius / 4,
     };
   });
 
@@ -88,6 +89,7 @@ export const expandNode = (nodes, links, clickedNode, nodeLibrary) => {
         ...child,
         depth: clickedNode.depth + 1,
         icon: Department,
+        radius: clickedNode.radius /2
       };
     });
   children.forEach((child) => {
