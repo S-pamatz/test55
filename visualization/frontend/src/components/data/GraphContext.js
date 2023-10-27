@@ -21,7 +21,7 @@ const GraphContext = createContext({
 
 export const GraphContextProvider = (props) => {
   const [nodes, setNodes] = useState([
-    { id: 0, Name: "wsu", icon: University, expanded: false, fx: 500, fy: 400, depth: 0},
+    { id: 0, Name: "Universities", icon: University, expanded: false, fx: 500, fy: 400, depth: 0},
   ]);
   const [links, setLinks] = useState([]);
 
@@ -46,11 +46,11 @@ export const GraphContextProvider = (props) => {
 
   const handleNodesClick = async (clickedNode) => {
 
-    if (clickedNode.depth === 2 && clickedNode != null ) {
+    if (clickedNode.depth === 3 && clickedNode != null ) {
       setSelectedNode(clickedNode);
     }
 
-    if (clickedNode.depth >= 2) {
+    if (clickedNode.depth >= 3) {
       return; // Early return if the node is not a top-level node
     }
     let updatedNodes, updatedLinks;
@@ -61,7 +61,7 @@ export const GraphContextProvider = (props) => {
         clickedNode
       ));
     } else {
-      if (clickedNode.depth >= 1 ) { // If the node is a top-level node (depth = 1) and it is not expanded, expand it
+      if (clickedNode.depth >= 2 ) { // If the node is a top-level node (depth = 1) and it is not expanded, expand it
         try {
           const filteredEntries = await filterEntries(clickedNode.Name);
           ({ updatedNodes, updatedLinks } = expandNodeUsingFilteredEntries(

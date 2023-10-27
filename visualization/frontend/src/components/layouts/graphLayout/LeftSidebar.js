@@ -8,17 +8,23 @@ import categoryIcon from "../../../assets/icons8-category-30.png";
 import backArrow from "../../../assets/icons8-back-arrow-30.png"; // Import the back arrow icon
 import searchIcon from "../../../assets/icons8-search.svg";
 import { FaSearch } from "react-icons/fa";
+import { nodesLibrary } from "../../data/nodeLibrary";
 
 const Sidebar = () => {
   const [activeView, setActiveView] = useState("");
   const [expanded, setExpanded] = useState(false); // new state for expansion
   const ctx = useContext(GraphContext);
 
-  const handleButtonClick = (index) => {
-    const currentNode = ctx.nodes[index];
-
-    const newFill = currentNode.fill === "green" ? "red" : "green";
-    ctx.updateNode(index, { fill: newFill });
+  const handleButtonClick = (nodeName) => {
+    //find the node with the name
+    var node;
+    for (const n of nodesLibrary) {
+      if (n.Name === nodeName) {
+        node = n;
+        break;
+      }
+    }
+    ctx.setStartingNode(node);
   };
 
   const handleIconClick = (view) => {
@@ -37,9 +43,9 @@ const Sidebar = () => {
 
   const updateSearch = (e) => {
     setSearch(e.target.value);
-  }
+  };
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       ctx.onSearchClick(search);
     }
@@ -48,8 +54,7 @@ const Sidebar = () => {
   const getSearch = (e) => {
     e.preventDefault();
     ctx.onSearchClick(search);
-  }
-
+  };
 
   return (
     <div className={expanded ? classes.expandedSidebar : classes.sidebar}>
@@ -84,13 +89,27 @@ const Sidebar = () => {
         <>
           <h3>Entries</h3>
           <ul>
-            {ctx.nodes.map((node, index) => (
-              <li key={index}>
-                <button onClick={() => handleButtonClick(index)}>
-                  {node.Name}
-                </button>
-              </li>
-            ))}
+            <li>
+              <button onClick={handleButtonClick.bind(this, "Entities")}>Entities</button>
+            </li>
+            <li>
+              <button onClick={handleButtonClick.bind(this, "Universities")}>
+                Universities
+              </button>
+            </li>
+            <li>
+              <button onClick={handleButtonClick.bind(this, "Interests")}>
+                Interests
+              </button>
+            </li>
+            <li>
+              <button onClick={handleButtonClick.bind(this, "Projects")}> Projects</button>
+            </li>
+            <li>
+              <button onClick={handleButtonClick.bind(this, "Publications")}>
+                Publications
+              </button>
+            </li>
           </ul>
         </>
       )}
