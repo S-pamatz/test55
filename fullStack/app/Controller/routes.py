@@ -259,18 +259,19 @@ def add_projects():
 
 @routes_blueprint.route('/displayAllUsers', methods=['GET', 'POST'])
 def displayAll():
-    print("test")
+    # print("test")
 
-    users = Affiliate.query.all()
-    image_urls = []
+    # users = Affiliate.query.all()
+    # image_urls = []
 
-    # Loop through the users and generate image URLs
-    for user in users:
-        image_file = url_for('static', filename=user.image_file)
-        image_urls.append(image_file)
+    # # Loop through the users and generate image URLs
+    # for user in users:
+    #     image_file = url_for('static', filename=user.image_file)
+    #     image_urls.append(image_file)
 
-    # Combine users and image_urls into a list of tuples
-    user_data = zip(users, image_urls)
+    # # Combine users and image_urls into a list of tuples
+    # user_data = zip(users, image_urls)
+    user_data = []
 
     return render_template('displayAll.html', user_data=user_data)
 
