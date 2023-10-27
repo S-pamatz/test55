@@ -6,6 +6,8 @@ from flask_login import LoginManager
 from flask_moment import Moment
 from flask_bootstrap import Bootstrap
 from config import Config
+from flask_cors import CORS
+
 # extensions
 db = SQLAlchemy()
 bootstrap = Bootstrap()
@@ -15,8 +17,8 @@ moment = Moment()
 
 
 def create_app(config_class=Config):
-
     app = Flask(__name__)
+    CORS(app) 
     app.config.from_object(config_class)
     app.static_folder = config_class.STATIC_FOLDER
     app.template_folder = config_class.TEMPLATE_FOLDER
