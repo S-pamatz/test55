@@ -3,6 +3,7 @@ from app import db, login
 from enum import unique
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
+from wtforms.validators import DataRequired
 
 
 @login.user_loader
@@ -16,9 +17,27 @@ works = db.Table(
     db.Column("affiliate_id", db.Integer, db.ForeignKey("affiliate.id")),
     db.Column("project_id", db.Integer, db.ForeignKey("project.id")),
 )
+interests = db.Table(
+    "interests",
+    db.Column("affiliate_id", db.Integer, db.ForeignKey("affiliate.id")),
+    db.Column("intresttest_id", db.Integer, db.ForeignKey("intrest_test.id")),
+)
 
 # model is how it is stored in the db. ewach class has certain data that is stored
 # forms is what the user sees. it is connected to html
+
+
+class Subcategory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+
+
+class IntrestTest(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    subcategory_id = db.Column(db.Integer, db.ForeignKey('subcategory.id'))
+    subcategory = db.relationship('Subcategory', foreign_keys=[
+                                  subcategory_id], backref='interests')
 
 
 class Affiliate(db.Model, UserMixin):
@@ -33,11 +52,12 @@ class Affiliate(db.Model, UserMixin):
 
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
 
-    areaofinterest = db.Column(db.String(120))
     wsuCampus = db.Column(db.String)
     department = db.Column(db.String)
     url = db.Column(db.String)
     projects = db.relationship("Project", secondary=works, backref="authors")
+    interests = db.relationship(
+        "IntrestTest", secondary=interests, backref="affiliates")
 
     def set_password(self, password):  # going to take a password and hash it
         self.password_hash = generate_password_hash(password)
@@ -65,6 +85,10 @@ class Project(db.Model):
 class Interest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
+
+  #  parent_id = db.Column(db.Integer, db.ForeignKey('interest.id'))
+   # parent = db.relationship('Interest', remote_side=[
+    #                         id], backref='sub_interests')
 
 # class Class(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)

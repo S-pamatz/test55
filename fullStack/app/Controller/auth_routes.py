@@ -82,6 +82,7 @@ def add_interest():
     if current_user.is_admin:
         form = AddKeywords()
         if form.validate_on_submit():
+            print("this went through")
             new_interest = Interest(name=form.name.data)
             db.session.add(new_interest)
             db.session.commit()
@@ -132,6 +133,7 @@ def tags():
     if current_user.is_admin:
         interests = Interest.query.order_by(Interest.name).all()
         campuses = Campus.query.order_by(Campus.name).all()
+        print(interests)
 
         if request.method == "POST":
             if request.form["submit_button"] == "Delete":
