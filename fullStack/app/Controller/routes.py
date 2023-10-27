@@ -395,6 +395,35 @@ def jsonD():
 
     return response
 
+@routes_blueprint.route('/search', methods=['GET'])
+def search():
+    inputValue = request.args.get("inputValue")
+
+    # Search through the relevant fields for the inputValue
+    affiliates = db.session.query(Affiliate).filter(
+        Affiliate.firstname.ilike(f"%{inputValue}%") |
+        Affiliate.lastname.ilike(f"%{inputValue}%") |
+        Affiliate.wsuCampus.ilike(f"%{inputValue}%") |
+        Affiliate.department.ilike(f"%{inputValue}%") |
+        Affiliate.email.ilike(f"%{inputValue}%") |
+        Affiliate.url.ilike(f"%{inputValue}%")
+    ).all()
+
+    # Construct the response data
+    response_data = []
+    for affiliate in affiliates:
+        response_data.append({
+            "Interest": '',
+            "Department": getattr(affiliate, 'department', ''),
+            "Name": f"{getattr(affiliate, 'firstname', '')} {getattr(affiliate, 'lastname', '')}".strip(),
+            "Membership": '',  # placeholder, adjust as needed
+            "WSUCampus": getattr(affiliate, 'wsuCampus', ''),
+            "Email": getattr(affiliate, 'email', ''),
+            "URL": getattr(affiliate, 'url', '')
+        })
+
+    return jsonify(response_data)
+
 
 @routes_blueprint.route('/jsnKey', methods=['GET'])
 def jsonK():

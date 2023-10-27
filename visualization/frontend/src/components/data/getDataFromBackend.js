@@ -8,7 +8,8 @@ const backendBaseUrl = "http://172.232.172.160:3004"; // Replace with your actua
 export const filterEntries = (valueToFilterBy) => {
   return new Promise((resolve, reject) => {
     // Make a fetch request to the backend's /search endpoint
-    fetch(`${backendBaseUrl}/search?inputValue=${valueToFilterBy}`)
+    // fetch(`${backendBaseUrl}/search?inputValue=${valueToFilterBy}`)
+    fetch(`http://172.232.172.160/search?inputValue=${valueToFilterBy}`)
       .then((response) => response.json())
       .then((filteredEntries) => {
         if (!Array.isArray(filteredEntries)) {

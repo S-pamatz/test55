@@ -13,6 +13,7 @@ echo "Copying static files from react generated code."
 mkdir package
 cp -r fullStack package
 cp -r visualization/frontend/build/* package/fullStack/app/View/static
+cp -r visualization/backend package/visBackend
 
 echo "Transforming index.html to work with the flask app's file structure."
 python react_to_flask.py visualization/frontend/build/index.html package/fullStack/app/View/templates/react_app.html

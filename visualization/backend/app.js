@@ -84,7 +84,7 @@ app.get("/search", (req, res) => {
         (entry.URL?.toLowerCase() ?? '').includes(inputValue.toLowerCase())
       );
     });
-    
+    console.log(filteredData);
     res.json(filteredData);
   } catch (error) {
     console.error("Error fetching and filtering data:", error);
