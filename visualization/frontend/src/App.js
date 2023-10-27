@@ -10,7 +10,8 @@ import "./index.css";
 import { populateNodesWithUniqueData } from "./components/data/nodeLibrary";
 
 
-function App() {
+
+function App()  {
   populateNodesWithUniqueData();
   return (
     <div>

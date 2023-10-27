@@ -21,7 +21,7 @@ const ForceDirectGraph = () => {
     const defaultRadius = 40;
     const width = +svg.attr("width");
     const height = +svg.attr("height");
-    const fontSize = 12;
+    const fontSize = 12/3;
 
     const simulation = d3
       .forceSimulation(nodes)

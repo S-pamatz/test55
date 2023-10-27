@@ -1,6 +1,7 @@
 // nodeLibrary.js
 // affilate = [{id: __, Name: ___, Department: ___, Interest: ___, Email: ___, WSU Campus: ___, URL: ___}]
-import { getUniqueDepartments, getUniqueInterests } from './getDataFromBackend';
+import { getUniqueDepartments, getUniqueInterests, getData } from './getDataFromBackend';
+
 import University from "../../assets/UniversityW.png";
 export let nodesLibrary = [
   { id: 0, Name: "wsu",  icon: University, expanded: false, fx: 500, fy: 400, depth: 0 },
@@ -18,7 +19,10 @@ export const populateNodesWithUniqueData = async () => {
     // Fetch unique departments and interests
     const uniqueDepartments = await getUniqueDepartments();
     const uniqueInterests = await getUniqueInterests();
-  
+    // ******************************************************
+    const data = await getData();
+    console.log("data", data);
+    // ******************************************************
     // Limit the number of departments to 10
     const limitedUniqueDepartments = uniqueDepartments.slice(0, 10);
   

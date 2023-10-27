@@ -32,8 +32,8 @@ export const getUniqueDepartments = () => {
     fetch(`${backendBaseUrl}/unique-departments`)
       .then((response) => response.json())
       .then((uniqueDepartments) => {
+        // console.log("uniqueDepartments", uniqueDepartments);
         if (!Array.isArray(uniqueDepartments)) {
-          console.error("Error: uniqueDepartments is not an array");
           reject("Error: uniqueDepartments is not an array");
         } else {
           resolve(uniqueDepartments);
@@ -54,7 +54,7 @@ export const getUniqueInterests = () => {
       .then((response) => response.json())
       .then((uniqueInterests) => {
         if (!Array.isArray(uniqueInterests)) {
-          console.error("Error: uniqueInterests is not an array");
+          // console.error("Error: uniqueInterests is not an array");
           reject("Error: uniqueInterests is not an array");
         } else {
           resolve(uniqueInterests);
@@ -62,6 +62,26 @@ export const getUniqueInterests = () => {
       })
       .catch((error) => {
         console.error("Error fetching unique interests:", error);
+        reject(error);
+      });
+  });
+};
+
+export const getData = () => {
+  return new Promise((resolve, reject) => {
+    fetch(`http://172.232.172.160/jsnDerulo`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("data", data);
+        if (!Array.isArray(data)) {
+          console.error("Error: data is not an array");
+          reject("Error: data is not an array");
+        } else {
+          resolve(data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
         reject(error);
       });
   });
