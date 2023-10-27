@@ -20,6 +20,7 @@
     cursor: pointer;
     transition: transform 0.3s;
     color: white;
+    font-size: 20px;
     /* align-self: flex-start; */
 }
 
@@ -28,8 +29,8 @@
 }
 
 .categoryButton img {
-    width: 15px; 
-    height: 15px; 
+    width: 25px; 
+    height: 25px; 
     margin-right: 5px;
 }
 

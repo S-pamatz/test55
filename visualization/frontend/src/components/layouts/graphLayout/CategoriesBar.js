@@ -37,14 +37,14 @@ const CategoriesBar = () => {
         onClick={(e) => handleButtonClick("University", e)}
       >
         <img src={UniversityIcon} alt="University" />
-        University
+        Universities
       </button>
       <button
         className="categoryButton"
         onClick={(e) => handleButtonClick("Departments", e)}
       >
-        <img src={DepartmentsIcon} alt="Departments" />
-        Departments
+        <img src={DepartmentsIcon} alt="Entities" />
+        Entities
       </button>
       <button
         className="categoryButton"
@@ -64,8 +64,8 @@ const CategoriesBar = () => {
         className="categoryButton"
         onClick={(e) => handleButtonClick("Sponsors", e)}
       >
-        <img src={Sponsors} alt="Sponsors" />
-        Sponsors
+        <img src={Sponsors} alt="Publications" />
+        Publications
       </button>
       <Modal
         content={activeModalContent}

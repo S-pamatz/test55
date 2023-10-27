@@ -5,13 +5,13 @@ import { getUniqueDepartments, getUniqueInterests, getData } from './getDataFrom
 import University from "../../assets/UniversityW.png";
 export let nodesLibrary = [
   { id: 0, Name: "Entities",  icon: University, expanded: false, fx: 500, fy: 400, depth: 0 },
-  { id: 1, Name: "Universities",  icon: University, expanded: false,  depth: 0 , fx:500, fy:400, parent: 0},
+  { id: 1, Name: "Universities",  icon: University, expanded: false,  depth: 0 , fx:500, fy:400},
   { id: 2, Name: "Interests",  icon: University, expanded: false, fx: 500, fy: 400, depth: 0 },
   { id: 3, Name: "Projects",  icon: University, expanded: false, fx: 500, fy: 400, depth: 0 },
   { id: 4, Name: "Publications",  icon: University, expanded: false, fx: 500, fy: 400, depth: 0 },
   { id: 5, Name: "Departments",  icon: University, expanded: false, fx: 500, fy: 400, depth: 0 },
-  { id: 6, Name: "WSU",  icon: University, expanded: false,  depth: 0 , parent: 0},
-  { id: 7, Name: "Oregon State",  icon: University, expanded: false,  depth: 0, parent: 0 },
+  { id: 6, Name: "WSU",  icon: University, expanded: false,  depth: 0 , parent: 1},
+  { id: 7, Name: "Oregon State",  icon: University, expanded: false,  depth: 0, parent: 1 },
 ];
 
 export const populateNodesWithUniqueData = async () => {
@@ -34,7 +34,7 @@ export const populateNodesWithUniqueData = async () => {
       nodesLibrary.push({
         id: currentId,
         Name: department,
-        parent: 1,  // Assuming wsu node id as the parent
+        parent: 6,  // Assuming wsu node id as the parent
         expanded: false,
         fx: null,
         fy: null,
@@ -48,7 +48,7 @@ export const populateNodesWithUniqueData = async () => {
       nodesLibrary.push({
         id: currentId,
         Name: interest,
-        parent: 1,  // Assuming Interests node id as the parent
+        parent: 2,  // Assuming Interests node id as the parent
         expanded: false,
         fx: null,
         fy: null,

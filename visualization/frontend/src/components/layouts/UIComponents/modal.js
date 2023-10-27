@@ -48,11 +48,11 @@ const Modal = ({ content, position, setActiveModalContent }) => {
   let modalTitle, modalBody;
   switch (content) {
     case "University":
-      modalTitle = "University";
-      modalBody = getmModalBoday("wsu");
+      modalTitle = "Universities";
+      modalBody = getmModalBoday("Universities");
       break;
     case "Departments":
-      modalTitle = "Departments";
+      modalTitle = "Entities";
       modalBody = getmModalBoday("Departments");
       break;
     case "Interests":
@@ -61,11 +61,11 @@ const Modal = ({ content, position, setActiveModalContent }) => {
       break;
     case "Projects":
       modalTitle = "Projects";
-      modalBody = [{ Name: "Projects" }]
+      modalBody = [{ Name: "Fly me to the Moon" }]
       break;
     case "Sponsors":
-      modalTitle = "Sponsors";
-      modalBody = [{ Name: "Sponsors" }]
+      modalTitle = "Publications";
+      modalBody = [{ Name: "Space Oddity" }]
       break;
     default:
       modalTitle = "";
@@ -74,10 +74,10 @@ const Modal = ({ content, position, setActiveModalContent }) => {
 
   const modalStyles = position
   ? {
-      top: position.top - 700 + "px",
+      top: position.top - 800 + "px",
       left:
         Math.min(
-          position.left + position.width / 2 + 30,
+          position.left + position.width / 2 + 90,
           window.innerWidth -
             110 
         ) + "px",
