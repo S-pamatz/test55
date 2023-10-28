@@ -31,12 +31,16 @@
                     <li><a href="{{ url_for('routes.index') }}">Profile</a></li>
                     <li><a href="{{url_for('routes.edit_profile')}}">Edit Profile</a></li>
                     <li><a href="{{url_for('routes.addTags')}}">Add Tags</a></li>
+                    <li><a href="{{ url_for('routes.createIntrests') }}">Create new interests</a></li>
                     <li><a href="{{url_for('routes.test_saved_tags')}}">See tags</a></li>
+                    <li><a href="{{url_for('routes.test_saved_tags')}}">Edit Tags</a></li>
+                    <li><a href="{{url_for('routes.returnUniqueDepart')}}"> returnUniqueDep1art</a></li>
                         {% if current_user.is_admin %}
                             <li><a href="{{ url_for('auth.admin') }}">Users</a></li>
                             <li><a href="{{ url_for('auth.tags') }}">Tags</a></li>
                         {% endif %}
                     <li><a href="{{ url_for('routes.displayAll') }}">Visualize</a></li>
+                   
                     <li><a href="{{ url_for('auth.logout') }}">Logoutt</a></li>
                     {% endif %}
                 </ul>

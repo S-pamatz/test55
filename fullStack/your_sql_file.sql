@@ -19,10 +19,10 @@
 -- Table structure for table `affiliate`
 --
 
-DROP TABLE IF EXISTS `affiliate`;
+DROP TABLE IF EXISTS `Affiliate`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `affiliate` (
+CREATE TABLE `Affiliate` (
   `id`  int(11) NOT NULL AUTO_INCREMENT,
   `image_file` varchar(200) DEFAULT NULL,
   `email` varchar(200) DEFAULT NULL,
@@ -42,9 +42,9 @@ CREATE TABLE `affiliate` (
 -- Dumping data for table `affiliate`
 --
 
-LOCK TABLES `affiliate` WRITE;
+LOCK TABLES `Affiliate` WRITE;
 /*!40000 ALTER TABLE `affiliate` DISABLE KEYS */;
-INSERT INTO `affiliate` VALUES (1,'0c950a3167ccbefe.jpg','limchangthe@yahoo.com','pbkdf2:sha256:260000$QNhRuAlAFB3kQok2$06c86fde8c90ad4bf66224c486b17f25c829983487923ac2240b09f5a910198b','James','Lim',1,'','WSU Pullman','Art','www.howtobeagentleman.com'),(2,'Default_pic.png','brianjoo@gmail.com','pbkdf2:sha256:260000$2rtqZ2MK19nW7pvV$39d26d369a76095ff1b7f3f0728c9a2bca03c4481308ed4e3b821da46d1b2d24','Brian','Joo',0,'None','WSU Pullman','Criminal Justice and Criminology','www.loveyourpuppies.com'),(3,'20846a612d71d60c.jpg','b.kandaswamy@wsu.edu','pbkdf2:sha256:260000$yMDhE9wB6YcX8GEO$d602b5887e87b89544e69f1db9e73ebe165b13dc4ae316a63a1a97dd502e9365','Subu','Kandaswamy',1,'Artificial Intelligence','WSU Pullman','Digital Technology and Culture','ce.wsu.edu/faculty/boll/');
+INSERT INTO `Affiliate` VALUES (1,'0c950a3167ccbefe.jpg','limchangthe@yahoo.com','pbkdf2:sha256:260000$QNhRuAlAFB3kQok2$06c86fde8c90ad4bf66224c486b17f25c829983487923ac2240b09f5a910198b','James','Lim',1,'','WSU Pullman','Art','www.howtobeagentleman.com'),(2,'Default_pic.png','brianjoo@gmail.com','pbkdf2:sha256:260000$2rtqZ2MK19nW7pvV$39d26d369a76095ff1b7f3f0728c9a2bca03c4481308ed4e3b821da46d1b2d24','Brian','Joo',0,'None','WSU Pullman','Criminal Justice and Criminology','www.loveyourpuppies.com'),(3,'20846a612d71d60c.jpg','b.kandaswamy@wsu.edu','pbkdf2:sha256:260000$yMDhE9wB6YcX8GEO$d602b5887e87b89544e69f1db9e73ebe165b13dc4ae316a63a1a97dd502e9365','Subu','Kandaswamy',1,'Artificial Intelligence','WSU Pullman','Digital Technology and Culture','ce.wsu.edu/faculty/boll/');
 /*!40000 ALTER TABLE `affiliate` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -79,8 +79,9 @@ DROP TABLE IF EXISTS `department`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `department` (
-  `id` varchar(0) DEFAULT NULL,
-  `name` varchar(0) DEFAULT NULL
+  `id`  int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -97,12 +98,13 @@ UNLOCK TABLES;
 -- Table structure for table `interest`
 --
 
-DROP TABLE IF EXISTS `interest`;
+DROP TABLE IF EXISTS `Interest`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `interest` (
-  `id` tinyint(4) DEFAULT NULL,
-  `name` varchar(23) DEFAULT NULL
+CREATE TABLE `Interest` (
+  `id`  int(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(120) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -172,4 +174,24 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-09-18 10:46:26
+CREATE TABLE intrest_test (
+  
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  subcategory_id INT,
+  FOREIGN KEY (subcategory_id) REFERENCES subcategory(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE subcategory (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(120) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+CREATE TABLE works_departments (
+    id SERIAL PRIMARY KEY,
+    affiliate_id INTEGER REFERENCES affiliate(id),
+    department_id INTEGER REFERENCES department(id)
+);

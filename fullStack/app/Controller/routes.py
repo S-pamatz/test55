@@ -1,3 +1,4 @@
+from flask import render_template  # Import Flask function for rendering templates
 from flask import Flask, jsonify
 import base64
 import csv
@@ -10,7 +11,7 @@ import os
 import app
 from app.Controller.auth_forms import AddIntrest, AddIntrestOld, AddKeywords, affiliateRegister
 from app.Controller.forms import EditForm, AddProjectsForm, editTagsForm
-from app.Model.models import Affiliate, Interest, IntrestTest, Project, Subcategory
+from app.Model.models import Affiliate, Department, Interest, IntrestTest, Project, Subcategory
 from flask_login import login_user, current_user, logout_user, login_required
 from config import Config
 from flask import Flask
@@ -107,6 +108,17 @@ def tempIndex():
 def index():
     #eform = EmptyForm()
     image_file = url_for('static', filename=current_user.image_file)
+    # Assuming 'interests' is the relationship between Affiliate and IntrestTest
+    categories = current_user.interests
+
+    # Retrieve all subcategories related to the current user's categories
+    subcategories = []
+    for category in categories:
+        subcategories.extend(category.subcategory.interests)
+    subcategory_names = [subcategory.name for subcategory in subcategories]
+    print(subcategory_names)
+
+    print(categories)
     return render_template('display_profile.html', title='Display Profile', affiliate=current_user, image_file=image_file)
 
 
@@ -200,41 +212,53 @@ def addTags():
 def edit_profile():
     image_file = url_for('static', filename=current_user.image_file)
     eform = EditForm()
-    if request.method == 'POST':
-        # handle the form submission
-        if eform.validate_on_submit():
+    eform.set_department_choices()
+    # Within the function, after `eform.set_department_choices()`
 
-            if eform.picture.data:
-                picture_file = save_picture(eform.picture.data)
-                current_user.image_file = picture_file
+  # Within the function, before querying the database for department
 
-            current_user.firstname = eform.firstname.data
-            current_user.lastname = eform.lastname.data
-            current_user.email = eform.email.data
-            current_user.wsuCampus = eform.campus.data
-            current_user.department = eform.department.data
+    department_name = eform.department.data
+    print("Department Name from Form:", department_name)  # Add this line
 
-            current_user.url = eform.URL.data
+    department = Department.query.filter_by(name=department_name).first()
 
+    if request.method == 'POST' and eform.validate_on_submit():
+        if eform.picture.data:
+            picture_file = save_picture(eform.picture.data)
+            current_user.image_file = picture_file
+
+        current_user.firstname = eform.firstname.data
+        current_user.lastname = eform.lastname.data
+        current_user.wsuCampus = eform.campus.data
+        current_user.url = eform.URL.data
+
+        if eform.password.data:  # Set password only if it's provided
             current_user.set_password(eform.password.data)
-            db.session.add(current_user)
-            db.session.commit()
-            flash('Your changes have been saved')
-            return redirect(url_for('routes.index'))
 
-        pass
+        # Fetch the department instance based on the form data
+        department_name = eform.department.data
+        print("1", department_name)
+        department = Department.query.filter_by(name=department_name).first()
+        print("2", department)
+        if department:
+            print("1")
+            # Assign the department to the current user's departments
+            current_user.departments = [department]  # Set as a list
+            print("3", current_user.departments)
+        db.session.commit()
+        flash('Your changes have been saved')
+        return redirect(url_for('routes.index'))
+
     elif request.method == 'GET':
-        # populate the user data from the DB
         eform.firstname.data = current_user.firstname
         eform.lastname.data = current_user.lastname
-        eform.email.data = current_user.email
         eform.campus.data = current_user.wsuCampus
-        eform.department.data = current_user.department
+
+        if current_user.departments:
+            # Fill the form with the first department's name
+            eform.department.data = current_user.departments[0].name
 
         eform.URL.data = current_user.url
-
-    else:
-        pass
 
     return render_template('edit_profile.html', title='Edit Profile', form=eform, image_file=image_file)
 
@@ -259,19 +283,18 @@ def add_projects():
 
 @routes_blueprint.route('/displayAllUsers', methods=['GET', 'POST'])
 def displayAll():
-    # print("test")
+    print("test")
 
-    # users = Affiliate.query.all()
-    # image_urls = []
+    users = Affiliate.query.all()
+    image_urls = []
 
-    # # Loop through the users and generate image URLs
-    # for user in users:
-    #     image_file = url_for('static', filename=user.image_file)
-    #     image_urls.append(image_file)
+    # Loop through the users and generate image URLs
+    for user in users:
+        image_file = url_for('static', filename=user.image_file)
+        image_urls.append(image_file)
 
-    # # Combine users and image_urls into a list of tuples
-    # user_data = zip(users, image_urls)
-    user_data = []
+    # Combine users and image_urls into a list of tuples
+    user_data = zip(users, image_urls)
 
     return render_template('displayAll.html', user_data=user_data)
 
@@ -360,6 +383,7 @@ def tData(givenEmail):
                               wsuCampus=rform.wsuCampus.data,
                               department=rform.department.data,
                               url=rform.url.data,
+                              validUser="Valid",
                               email=list1[0])
         affiliate.set_password(rform.password.data)
 
@@ -377,52 +401,38 @@ def jsonD():
 
     affiliates = Affiliate.query.all()
     for user in affiliates:
-       # print(user.email)
+        # Create a dictionary to store interests grouped by subcategory
+        interests_data = {}
+
+        for interest in user.interests:
+            subcategory_name = interest.subcategory.name if interest.subcategory else "Other"
+            if interest.name not in interests_data:
+                interests_data[interest.name] = []
+            interests_data[interest.name].append(subcategory_name)
+
+        # Convert the subcategory lists to sets and then back to lists to remove duplicates
+        for interest_name in interests_data:
+            interests_data[interest_name] = list(
+                set(interests_data[interest_name]))
+        print(interests_data)
         jsonData.append({
             "firstName": user.firstname,
             "lastName": user.lastname,
             "wsu campus": user.wsuCampus,
             "department": user.department,
-            "email": user.email
+            "email": user.email,
+            "interests": interests_data
         })
+
     # Convert the data to a JSON string
     json_data = jsonify(jsonData)
-
+    print(json_data)
     # Create a Response with the JSON data and set headers for download
     response = make_response(json_data)
     response.headers["Content-Disposition"] = "attachment; filename=affiliates.json"
     response.headers["Content-Type"] = "application/json"
 
     return response
-
-@routes_blueprint.route('/search', methods=['GET'])
-def search():
-    inputValue = request.args.get("inputValue")
-
-    # Search through the relevant fields for the inputValue
-    affiliates = db.session.query(Affiliate).filter(
-        Affiliate.firstname.ilike(f"%{inputValue}%") |
-        Affiliate.lastname.ilike(f"%{inputValue}%") |
-        Affiliate.wsuCampus.ilike(f"%{inputValue}%") |
-        Affiliate.department.ilike(f"%{inputValue}%") |
-        Affiliate.email.ilike(f"%{inputValue}%") |
-        Affiliate.url.ilike(f"%{inputValue}%")
-    ).all()
-
-    # Construct the response data
-    response_data = []
-    for affiliate in affiliates:
-        response_data.append({
-            "Interest": '',
-            "Department": getattr(affiliate, 'department', ''),
-            "Name": f"{getattr(affiliate, 'firstname', '')} {getattr(affiliate, 'lastname', '')}".strip(),
-            "Membership": '',  # placeholder, adjust as needed
-            "WSUCampus": getattr(affiliate, 'wsuCampus', ''),
-            "Email": getattr(affiliate, 'email', ''),
-            "URL": getattr(affiliate, 'url', '')
-        })
-
-    return jsonify(response_data)
 
 
 @routes_blueprint.route('/jsnKey', methods=['GET'])
@@ -457,10 +467,14 @@ def tagTest():
 
     tags = Interest.query.all()
     for tag in tags:
-        print(tag)
-       # print(user.email)
+        tag_data = {
+            'id': tag.id,
+            'name': tag.name
+        }
+        jsonData.append(tag_data)
 
-    return jsonData
+    return jsonify(jsonData)
+
 
 # this is just to create big instances
 
@@ -613,6 +627,248 @@ def makeDictFromIntrests():
 
     return dict1
 
+
+# TAY
+@routes_blueprint.route('/get_all_interests1', methods=['GET'])
+def get_all_interests():
+    # Perform a query to retrieve all IntrestTest objects with their associated subinterests
+    all_interests = IntrestTest.query.all()
+
+    # Create a dictionary to store the results
+    results = {}
+
+    for interest_test in all_interests:
+        subcategory = interest_test.subcategory
+        if subcategory:
+            intrest_test_name = interest_test.name
+            subinterest_name = subcategory.name
+            if intrest_test_name not in results:
+                results[intrest_test_name] = []
+            results[intrest_test_name].append(subinterest_name)
+
+    # Create a JSON response
+    response = {
+        "interests": results
+    }
+
+    # Return the JSON response
+    return jsonify(response)
+
+
+@routes_blueprint.route('/search_interests', methods=['GET'])
+def search_interests():
+    # Get the search query from the request
+    # Assuming the query parameter is named 'query'
+    search_query = request.args.get('query')
+
+    # Perform a query to retrieve interests matching the search query
+    matching_interests = IntrestTest.query.filter(
+        IntrestTest.name.ilike(f"%{search_query}%")).all()
+
+    # Create a set to store unique subinterests
+    unique_subinterests = set()
+
+    for interest_test in matching_interests:
+        subcategory = interest_test.subcategory
+        if subcategory:
+            subinterest_name = subcategory.name
+            unique_subinterests.add(subinterest_name)
+
+    # Create a JSON response
+    response = {
+        "data":
+        list(unique_subinterests)
+
+    }
+
+    # Return the JSON response
+    return jsonify(response)
+
+
+@routes_blueprint.route('/search_Unique_interests', methods=['GET'])
+def search_unique_interests():
+    # Get the search query from the request
+    # Assuming the query parameter is named 'query'
+    #search_query = request.args.get('query')
+
+    # Perform a query to retrieve interests matching the search query
+    allI = IntrestTest.query.all()
+    uI = set()  # makes it
+    for interest_test in allI:
+        interest_name = interest_test.name
+        uI.add(interest_name)
+    # Create a JSON response
+    response = {
+        "data":
+        list(uI)
+
+    }
+
+    # Return the JSON response
+    return jsonify(response)
+
+
+@routes_blueprint.route('/returnUniqueDepart', methods=['GET'])
+def returnUniqueDepart():
+    # Get the search query from the request
+    # Assuming the query parameter is named 'query'
+    #search_query = request.args.get('query')
+
+    # Perform a query to retrieve interests matching the search query
+    checkList = [
+        ("Biology", "Bio"),
+        ("Computer Science", "CS"),
+        ("College of Nursing", "CoN"),
+        ("Civil and Environmental Engineering", "CEE"),
+        ("Edward R. Murrow", "ERMC"),
+        ("Anthropology", "Anthro"),
+        ("Hydraulic and Water Resource Engineering", "HWRE"),
+        ("School of the Environment", "SoE"),
+        ("First-Year Programs", "FYP"),
+        ("Social and Behavioral Sciences", "SBS"),
+        ("Civil Engineering", "CE"),
+        ("School of Design and Construction", "SDC"),
+        ("Human Resources", "HR"),
+        ("Libraries", "Lib"),
+        ("CEREO and the School of the Environment", "CEREO/SoE"),
+        ("AgWeatherNet", "AWN"),
+        ("College of Medicine", "CoM"),
+        ("English", "Eng"),
+        ("Nursing", "Nurs"),
+        ("Crop and Soil Sciences", "CSS"),
+        ("Community, Environment and Development", "CED"),
+        ("Mechanical and Materials Engineering", "MME"),
+        ("Social Sciences", "SS"),
+        ("School of Biological Sciences", "SBS"),
+        ("Animal Science", "AS"),
+        ("Extension - Agriculture and Natural Resources", "E-ANR"),
+        ("Global Animal Health", "GAH"),
+        ("Institute of Biological Chemistry", "IBC"),
+        ("Plant Pathology", "PP"),
+        ("Electrical Engineering", "EE"),
+        ("Arts and Sciences", "A&S"),
+        ("Politics, Philosophy, and Public Affairs", "PPPA"),
+        ("Institute of Biological Chemistry", "IBC"),
+        ("College of Arts and Sciences, School of the Environment", "CAS/SoE"),
+        ("WSU Press", "Press"),
+        ("Geology", "Geo"),
+        ("Landscape Architecture", "LA"),
+        ("Sociology", "Soc"),
+        ("Hospitality Business Management", "HBM"),
+        ("Division of Governmental Studies and Services", "DGSS"),
+        ("Integrative Physiology and Neuroscience", "IPN"),
+        ("Civil and Environmental Engineering", "CEE"),
+        ("Civil & Environmental Engineering", "CEE"),
+        ("Washington Stormwater Center", "WSC"),
+        ("Natural Resources", "NR"),
+        ("Chemical", "Chem"),
+        ("Earth Sciences", "ES"),
+        ("School Of Biological Sciences", "SBS"),
+        ("Communications", "Comm"),
+        ("Mathematics and Statistics", "Math/Stat"),
+        ("School of Economic Sciences", "SES"),
+        ("College of Arts and Sciences", "CAS"),
+        ("Biological Systems Engineering", "BSE"),
+        ("Pre-Law Resource Center", "PLRC"),
+        ("Horticulture", "Hort"),
+        ("Extension Ag and Natural Resources Unit", "E-ANRU"),
+        ("Extension", "Ext"),
+        ("Division of Global Research and Engagement", "DGRE"),
+        ("Office of Equity and Diversity", "OED"),
+        ("Center for Sustaining Agriculture and Natural Resources", "CSANR"),
+        ("College of Education", "CoE"),
+        ("Water Research Center", "WRC"),
+        ("Entomology", "Ento"),
+        ("Voiland School of Chemical Engineering and Bioengineering", "VSCEB"),
+        ("CIVIL AND ENVIRONMENTAL ENGINEERING", "CEE"),
+        ("Microbiology/EECS", "Micro/EECS"),
+        ("Extension - ANR Prog Unit", "Ext-ANRPU"),
+        ("Pharmaceutical Sciences", "PharmSci"),
+        ("School of Education", "SOE"),
+        ("Global Politics", "GP"),
+        ("CEE LAR", "CEE LAR"),
+        ("DEPARTMENT OF CIVIL AND ENVIRONMENTAL ENGINEERING", "CEE"),
+        ("LAR", "LAR"),
+        ("Civil and Environmental engineering", "CEE"),
+        ("Economics", "Econ"),
+        ("Laboratory for Atmospheric Research", "LAR"),
+        ("HONORS COLLEGE", "HC"),
+        ("School of Engineering", "SoE"),
+        ("Fine Arts", "FA"),
+        ("School of Mechanical and Materials Engineering", "SMME"),
+        ("Communications", "Comm"),
+        ("Environmental Science", "EnvSci"),
+        ("Center for Institutional Studies and Enrollment", "CISER"),
+        ("Any", "Any"),
+        ("Communication", "Comm"),
+        ("Criminal Justice and Criminology", "CJC"),
+        ("Civil and Environmental", "CEE"),
+        ("Nursing", "Nurs"),
+        ("WSU Extension - Ag. and Natural Resources Prog. Unit", "WSUE-ANRPU"),
+        ("Edward R. Murrow College of Communication", "ERMCOC"),
+        ("Corporate and Foundation Relations", "CFR"),
+        ("Chemistry", "Chem"),
+        ("Mathematics", "Math"),
+        ("Crops and Soils", "C&S"),
+        ("Admin/Washington Stormwater Center", "Admin/WSC"),
+        ("Civil", "CEE"),
+        ("Environmental and Natural Resource Sciences", "ENRS"),
+        ("Crop and Soil Science", "CSS"),
+        ("Apparel, Merchandising, Design and Textiles", "AMDT"),
+        ("None", "None"),
+        ("Crop and Soil Sciences", "CSS"),
+        ("Cultural Studies and Social Thought in Education", "CSSTE"),
+        ("Electrical Engineering and Computer Science", "EECS"),
+        ("History", "Hist"),
+        ("CEREO & WRC", "CEREO/WRC"),
+        ("Ucomm", "Ucomm")
+    ]
+
+    allI = Department.query.all()
+
+    temp = []
+    for interest_test in allI:
+        interest_name = interest_test.name
+        temp.append(interest_name)
+
+    unique_abbr = set()  # Use set to ensure unique abbreviations
+
+    for x in checkList:
+        for value in x:
+            if value in temp:
+                unique_abbr.add(x[1])  # Add the abbreviation to the set
+
+    # Convert the set of unique abbreviations to a sorted list
+    sorted_abbr = sorted(list(unique_abbr))
+
+    response = {
+        "data": sorted_abbr
+    }
+
+    return jsonify(response)
+
+
+# Assuming you have the current user available in your route context
+
+
+@routes_blueprint.route('/user_interests')
+def user_interests():
+    if current_user.is_authenticated:
+        user_interests = current_user.interests
+        interests_with_subcategories = []
+
+        for interest in user_interests:
+            # Accessing subcategories via the defined relationship
+            subcategories = interest.subcategory
+            interest_data = {
+                "interest": interest,
+                "subcategories": subcategories
+            }
+            interests_with_subcategories.append(interest_data)
+
+        return render_template('user_interests.html', interests_with_subcategories=interests_with_subcategories)
+    else:
+        return "User not found or not logged in"
 
 # @routes_blueprint.route('/', methods=['GET'])#/=root pathx
 # @routes_blueprint.route('/index', methods=['GET'])
