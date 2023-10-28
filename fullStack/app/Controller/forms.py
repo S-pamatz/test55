@@ -3,7 +3,7 @@ from flask_wtf.file import FileField, FileAllowed
 from wtforms import SelectMultipleField, StringField, SubmitField, TextAreaField, PasswordField, SelectField
 from wtforms_sqlalchemy.fields import QuerySelectField
 from wtforms.validators import ValidationError, Length, DataRequired, Email, EqualTo
-from app.Model.models import Affiliate
+from app.Model.models import Affiliate, Department
 from flask_login import current_user
 
 
@@ -20,17 +20,22 @@ class EditForm(FlaskForm):
                         FileAllowed(['jpg', 'png'])])
     firstname = StringField('First Name:', validators=[DataRequired()])
     lastname = StringField('Last Name:', validators=[DataRequired()])
-    email = StringField('Email:', validators=[DataRequired()])
+    #email = StringField('Email:', validators=[DataRequired()])
     campus = SelectField('Campus:', choices=[('Please Select an Option Below'), ('WSU Pullman'), ('WSU Spokane'), (
         'WSU Tri-Cities'), ('WSU Vancouver'), ('WSU Everett'), ("WSU Global Campus")], validators=[DataRequired()])
-    department = SelectField('Department:', choices=[('Please Select an Option Below'), ('Anthropology'), ('Art'), ('Chemistry'), ('Criminal Justice and Criminology'), (
-        'Digital Technology and Culture'), ('English'), ('History'), ('Mathematics and Statistics'), ('Physics and Astronomy'), ('Psychology'), ('Sociology'), ('SBS'), ('CEE'), ('Biology')], validators=[DataRequired()])
+    department = SelectField('Department:', choices=[],
+                             validators=[DataRequired()])
 
     URL = StringField('URL:')
     password = PasswordField('Password:', validators=[DataRequired()])
     password2 = PasswordField('Repeat Password:', validators=[
                               DataRequired(), EqualTo('password')])
     submit = SubmitField('Submit')
+
+    def set_department_choices(self):
+        self.department.choices = [
+            (department.name, department.name) for department in Department.query.all()
+        ]
 
     def validate_email(self, email):
         affiliates = Affiliate.query.filter_by(email=email.data).all()

@@ -855,20 +855,27 @@ def returnUniqueDepart():
 def user_interests():
     if current_user.is_authenticated:
         user_interests = current_user.interests
-        interests_with_subcategories = []
+        combined_data = {}
 
         for interest in user_interests:
-            # Accessing subcategories via the defined relationship
-            subcategories = interest.subcategory
-            interest_data = {
-                "interest": interest,
-                "subcategories": subcategories
-            }
-            interests_with_subcategories.append(interest_data)
+            interest_name = interest.name
+            subcategory_name = interest.subcategory.name if interest.subcategory else None
 
-        return render_template('user_interests.html', interests_with_subcategories=interests_with_subcategories)
-    else:
-        return "User not found or not logged in"
+            if interest_name not in combined_data:
+                combined_data[interest_name] = {
+                    "Interest": interest_name, "SubCategories": []}
+
+            if subcategory_name:
+                combined_data[interest_name]["SubCategories"].append(
+                    subcategory_name)
+
+        result_data = list(combined_data.values())
+
+        return jsonify({
+            current_user.email: result_data
+        })
+
+    return "User not found or not logged in"
 
 # @routes_blueprint.route('/', methods=['GET'])#/=root pathx
 # @routes_blueprint.route('/index', methods=['GET'])
