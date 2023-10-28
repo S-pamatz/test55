@@ -381,7 +381,7 @@ def tData(givenEmail):
         affiliate = Affiliate(firstname=rform.firstname.data,
                               lastname=rform.lastname.data,
                               wsuCampus=rform.wsuCampus.data,
-                              department=rform.department.data,
+
                               url=rform.url.data,
                               validUser="Valid",
                               email=list1[0])
@@ -419,7 +419,7 @@ def jsonD():
             "firstName": user.firstname,
             "lastName": user.lastname,
             "wsu campus": user.wsuCampus,
-            "department": user.department,
+
             "email": user.email,
             "interests": interests_data
         })
