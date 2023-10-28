@@ -32,7 +32,7 @@ export const filterEntries = (valueToFilterBy) => {
 export const getUniqueDepartments = () => {
   return new Promise((resolve, reject) => {
     // Make a fetch request to the backend's /unique-departments endpoint
-    fetch(`${backendBaseUrl}/unique-departments`)
+    fetch(`http://172.232.172.160/returnUniqueDepart`)
       .then((response) => response.json())
       .then((uniqueDepartments) => {
         // console.log("uniqueDepartments", uniqueDepartments);
@@ -51,23 +51,26 @@ export const getUniqueDepartments = () => {
 
 // Function to make a request to the backend to get the unique interests
 export const getUniqueInterests = () => {
-  return new Promise((resolve, reject) => {
-    // Make a fetch request to the backend's /unique-interests endpoint
-    fetch(`${backendBaseUrl}/unique-interests`)
-      .then((response) => response.json())
-      .then((uniqueInterests) => {
-        if (!Array.isArray(uniqueInterests)) {
-          // console.error("Error: uniqueInterests is not an array");
-          reject("Error: uniqueInterests is not an array");
-        } else {
-          resolve(uniqueInterests);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching unique interests:", error);
-        reject(error);
-      });
-  });
+  // move to remote server eventually.
+
+  // return new Promise((resolve, reject) => {
+  //   // Make a fetch request to the backend's /unique-interests endpoint
+  //   fetch(`${backendBaseUrl}/unique-interests`)
+  //     .then((response) => response.json())
+  //     .then((uniqueInterests) => {
+  //       if (!Array.isArray(uniqueInterests)) {
+  //         // console.error("Error: uniqueInterests is not an array");
+  //         reject("Error: uniqueInterests is not an array");
+  //       } else {
+  //         resolve(uniqueInterests);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching unique interests:", error);
+  //       reject(error);
+  //     });
+  // });
+  return [];
 };
 
 export const getData = () => {

@@ -283,20 +283,20 @@ def add_projects():
 
 @routes_blueprint.route('/displayAllUsers', methods=['GET', 'POST'])
 def displayAll():
-    print("test")
+    # print("test")
 
-    users = Affiliate.query.all()
-    image_urls = []
+    # users = Affiliate.query.all()
+    # image_urls = []
 
-    # Loop through the users and generate image URLs
-    for user in users:
-        image_file = url_for('static', filename=user.image_file)
-        image_urls.append(image_file)
+    # # Loop through the users and generate image URLs
+    # for user in users:
+    #     image_file = url_for('static', filename=user.image_file)
+    #     image_urls.append(image_file)
 
-    # Combine users and image_urls into a list of tuples
-    user_data = zip(users, image_urls)
+    # # Combine users and image_urls into a list of tuples
+    # user_data = zip(users, image_urls)
 
-    return render_template('displayAll.html', user_data=user_data)
+    return render_template('displayAll.html', user_data=[])
 
 
 def check_url(url):
@@ -684,6 +684,33 @@ def search_interests():
     # Return the JSON response
     return jsonify(response)
 
+@routes_blueprint.route('/search', methods=['GET'])
+def search():
+    inputValue = request.args.get("inputValue")
+
+    # Search through the relevant fields for the inputValue
+    affiliates = db.session.query(Affiliate).filter(
+        Affiliate.firstname.ilike(f"%{inputValue}%") |
+        Affiliate.lastname.ilike(f"%{inputValue}%") |
+        Affiliate.wsuCampus.ilike(f"%{inputValue}%") |
+        Affiliate.department.ilike(f"%{inputValue}%") |
+        Affiliate.email.ilike(f"%{inputValue}%") |
+        Affiliate.url.ilike(f"%{inputValue}%")
+    ).all()
+
+    # Construct the response data
+    response_data = []
+    for affiliate in affiliates:
+        response_data.append({
+            "Interest": '',
+            "Department": getattr(affiliate, 'department', ''),
+            "Name": f"{getattr(affiliate, 'firstname', '')} {getattr(affiliate, 'lastname', '')}".strip(),
+            "Membership": '',  # placeholder, adjust as needed
+            "WSUCampus": getattr(affiliate, 'wsuCampus', ''),
+            "Email": getattr(affiliate, 'email', ''),
+            "URL": getattr(affiliate, 'url', '')
+        })
+    return jsonify(response_data)
 
 @routes_blueprint.route('/search_Unique_interests', methods=['GET'])
 def search_unique_interests():
@@ -710,142 +737,154 @@ def search_unique_interests():
 
 @routes_blueprint.route('/returnUniqueDepart', methods=['GET'])
 def returnUniqueDepart():
+    all_departments = Department.query.all()
+
+    unique_names = set()  # Use set to ensure unique department names
+
+    for dept in all_departments:
+        unique_names.add(dept.name)
+
+    # Convert the set of unique names to a sorted list
+    sorted_names = sorted(list(unique_names))
+
+    return jsonify(sorted_names)
+
     # Get the search query from the request
     # Assuming the query parameter is named 'query'
     #search_query = request.args.get('query')
 
     # Perform a query to retrieve interests matching the search query
-    checkList = [
-        ("Biology", "Bio"),
-        ("Computer Science", "CS"),
-        ("College of Nursing", "CoN"),
-        ("Civil and Environmental Engineering", "CEE"),
-        ("Edward R. Murrow", "ERMC"),
-        ("Anthropology", "Anthro"),
-        ("Hydraulic and Water Resource Engineering", "HWRE"),
-        ("School of the Environment", "SoE"),
-        ("First-Year Programs", "FYP"),
-        ("Social and Behavioral Sciences", "SBS"),
-        ("Civil Engineering", "CE"),
-        ("School of Design and Construction", "SDC"),
-        ("Human Resources", "HR"),
-        ("Libraries", "Lib"),
-        ("CEREO and the School of the Environment", "CEREO/SoE"),
-        ("AgWeatherNet", "AWN"),
-        ("College of Medicine", "CoM"),
-        ("English", "Eng"),
-        ("Nursing", "Nurs"),
-        ("Crop and Soil Sciences", "CSS"),
-        ("Community, Environment and Development", "CED"),
-        ("Mechanical and Materials Engineering", "MME"),
-        ("Social Sciences", "SS"),
-        ("School of Biological Sciences", "SBS"),
-        ("Animal Science", "AS"),
-        ("Extension - Agriculture and Natural Resources", "E-ANR"),
-        ("Global Animal Health", "GAH"),
-        ("Institute of Biological Chemistry", "IBC"),
-        ("Plant Pathology", "PP"),
-        ("Electrical Engineering", "EE"),
-        ("Arts and Sciences", "A&S"),
-        ("Politics, Philosophy, and Public Affairs", "PPPA"),
-        ("Institute of Biological Chemistry", "IBC"),
-        ("College of Arts and Sciences, School of the Environment", "CAS/SoE"),
-        ("WSU Press", "Press"),
-        ("Geology", "Geo"),
-        ("Landscape Architecture", "LA"),
-        ("Sociology", "Soc"),
-        ("Hospitality Business Management", "HBM"),
-        ("Division of Governmental Studies and Services", "DGSS"),
-        ("Integrative Physiology and Neuroscience", "IPN"),
-        ("Civil and Environmental Engineering", "CEE"),
-        ("Civil & Environmental Engineering", "CEE"),
-        ("Washington Stormwater Center", "WSC"),
-        ("Natural Resources", "NR"),
-        ("Chemical", "Chem"),
-        ("Earth Sciences", "ES"),
-        ("School Of Biological Sciences", "SBS"),
-        ("Communications", "Comm"),
-        ("Mathematics and Statistics", "Math/Stat"),
-        ("School of Economic Sciences", "SES"),
-        ("College of Arts and Sciences", "CAS"),
-        ("Biological Systems Engineering", "BSE"),
-        ("Pre-Law Resource Center", "PLRC"),
-        ("Horticulture", "Hort"),
-        ("Extension Ag and Natural Resources Unit", "E-ANRU"),
-        ("Extension", "Ext"),
-        ("Division of Global Research and Engagement", "DGRE"),
-        ("Office of Equity and Diversity", "OED"),
-        ("Center for Sustaining Agriculture and Natural Resources", "CSANR"),
-        ("College of Education", "CoE"),
-        ("Water Research Center", "WRC"),
-        ("Entomology", "Ento"),
-        ("Voiland School of Chemical Engineering and Bioengineering", "VSCEB"),
-        ("CIVIL AND ENVIRONMENTAL ENGINEERING", "CEE"),
-        ("Microbiology/EECS", "Micro/EECS"),
-        ("Extension - ANR Prog Unit", "Ext-ANRPU"),
-        ("Pharmaceutical Sciences", "PharmSci"),
-        ("School of Education", "SOE"),
-        ("Global Politics", "GP"),
-        ("CEE LAR", "CEE LAR"),
-        ("DEPARTMENT OF CIVIL AND ENVIRONMENTAL ENGINEERING", "CEE"),
-        ("LAR", "LAR"),
-        ("Civil and Environmental engineering", "CEE"),
-        ("Economics", "Econ"),
-        ("Laboratory for Atmospheric Research", "LAR"),
-        ("HONORS COLLEGE", "HC"),
-        ("School of Engineering", "SoE"),
-        ("Fine Arts", "FA"),
-        ("School of Mechanical and Materials Engineering", "SMME"),
-        ("Communications", "Comm"),
-        ("Environmental Science", "EnvSci"),
-        ("Center for Institutional Studies and Enrollment", "CISER"),
-        ("Any", "Any"),
-        ("Communication", "Comm"),
-        ("Criminal Justice and Criminology", "CJC"),
-        ("Civil and Environmental", "CEE"),
-        ("Nursing", "Nurs"),
-        ("WSU Extension - Ag. and Natural Resources Prog. Unit", "WSUE-ANRPU"),
-        ("Edward R. Murrow College of Communication", "ERMCOC"),
-        ("Corporate and Foundation Relations", "CFR"),
-        ("Chemistry", "Chem"),
-        ("Mathematics", "Math"),
-        ("Crops and Soils", "C&S"),
-        ("Admin/Washington Stormwater Center", "Admin/WSC"),
-        ("Civil", "CEE"),
-        ("Environmental and Natural Resource Sciences", "ENRS"),
-        ("Crop and Soil Science", "CSS"),
-        ("Apparel, Merchandising, Design and Textiles", "AMDT"),
-        ("None", "None"),
-        ("Crop and Soil Sciences", "CSS"),
-        ("Cultural Studies and Social Thought in Education", "CSSTE"),
-        ("Electrical Engineering and Computer Science", "EECS"),
-        ("History", "Hist"),
-        ("CEREO & WRC", "CEREO/WRC"),
-        ("Ucomm", "Ucomm")
-    ]
+    # checkList = [
+    #     ("Biology", "Bio"),
+    #     ("Computer Science", "CS"),
+    #     ("College of Nursing", "CoN"),
+    #     ("Civil and Environmental Engineering", "CEE"),
+    #     ("Edward R. Murrow", "ERMC"),
+    #     ("Anthropology", "Anthro"),
+    #     ("Hydraulic and Water Resource Engineering", "HWRE"),
+    #     ("School of the Environment", "SoE"),
+    #     ("First-Year Programs", "FYP"),
+    #     ("Social and Behavioral Sciences", "SBS"),
+    #     ("Civil Engineering", "CE"),
+    #     ("School of Design and Construction", "SDC"),
+    #     ("Human Resources", "HR"),
+    #     ("Libraries", "Lib"),
+    #     ("CEREO and the School of the Environment", "CEREO/SoE"),
+    #     ("AgWeatherNet", "AWN"),
+    #     ("College of Medicine", "CoM"),
+    #     ("English", "Eng"),
+    #     ("Nursing", "Nurs"),
+    #     ("Crop and Soil Sciences", "CSS"),
+    #     ("Community, Environment and Development", "CED"),
+    #     ("Mechanical and Materials Engineering", "MME"),
+    #     ("Social Sciences", "SS"),
+    #     ("School of Biological Sciences", "SBS"),
+    #     ("Animal Science", "AS"),
+    #     ("Extension - Agriculture and Natural Resources", "E-ANR"),
+    #     ("Global Animal Health", "GAH"),
+    #     ("Institute of Biological Chemistry", "IBC"),
+    #     ("Plant Pathology", "PP"),
+    #     ("Electrical Engineering", "EE"),
+    #     ("Arts and Sciences", "A&S"),
+    #     ("Politics, Philosophy, and Public Affairs", "PPPA"),
+    #     ("Institute of Biological Chemistry", "IBC"),
+    #     ("College of Arts and Sciences, School of the Environment", "CAS/SoE"),
+    #     ("WSU Press", "Press"),
+    #     ("Geology", "Geo"),
+    #     ("Landscape Architecture", "LA"),
+    #     ("Sociology", "Soc"),
+    #     ("Hospitality Business Management", "HBM"),
+    #     ("Division of Governmental Studies and Services", "DGSS"),
+    #     ("Integrative Physiology and Neuroscience", "IPN"),
+    #     ("Civil and Environmental Engineering", "CEE"),
+    #     ("Civil & Environmental Engineering", "CEE"),
+    #     ("Washington Stormwater Center", "WSC"),
+    #     ("Natural Resources", "NR"),
+    #     ("Chemical", "Chem"),
+    #     ("Earth Sciences", "ES"),
+    #     ("School Of Biological Sciences", "SBS"),
+    #     ("Communications", "Comm"),
+    #     ("Mathematics and Statistics", "Math/Stat"),
+    #     ("School of Economic Sciences", "SES"),
+    #     ("College of Arts and Sciences", "CAS"),
+    #     ("Biological Systems Engineering", "BSE"),
+    #     ("Pre-Law Resource Center", "PLRC"),
+    #     ("Horticulture", "Hort"),
+    #     ("Extension Ag and Natural Resources Unit", "E-ANRU"),
+    #     ("Extension", "Ext"),
+    #     ("Division of Global Research and Engagement", "DGRE"),
+    #     ("Office of Equity and Diversity", "OED"),
+    #     ("Center for Sustaining Agriculture and Natural Resources", "CSANR"),
+    #     ("College of Education", "CoE"),
+    #     ("Water Research Center", "WRC"),
+    #     ("Entomology", "Ento"),
+    #     ("Voiland School of Chemical Engineering and Bioengineering", "VSCEB"),
+    #     ("CIVIL AND ENVIRONMENTAL ENGINEERING", "CEE"),
+    #     ("Microbiology/EECS", "Micro/EECS"),
+    #     ("Extension - ANR Prog Unit", "Ext-ANRPU"),
+    #     ("Pharmaceutical Sciences", "PharmSci"),
+    #     ("School of Education", "SOE"),
+    #     ("Global Politics", "GP"),
+    #     ("CEE LAR", "CEE LAR"),
+    #     ("DEPARTMENT OF CIVIL AND ENVIRONMENTAL ENGINEERING", "CEE"),
+    #     ("LAR", "LAR"),
+    #     ("Civil and Environmental engineering", "CEE"),
+    #     ("Economics", "Econ"),
+    #     ("Laboratory for Atmospheric Research", "LAR"),
+    #     ("HONORS COLLEGE", "HC"),
+    #     ("School of Engineering", "SoE"),
+    #     ("Fine Arts", "FA"),
+    #     ("School of Mechanical and Materials Engineering", "SMME"),
+    #     ("Communications", "Comm"),
+    #     ("Environmental Science", "EnvSci"),
+    #     ("Center for Institutional Studies and Enrollment", "CISER"),
+    #     ("Any", "Any"),
+    #     ("Communication", "Comm"),
+    #     ("Criminal Justice and Criminology", "CJC"),
+    #     ("Civil and Environmental", "CEE"),
+    #     ("Nursing", "Nurs"),
+    #     ("WSU Extension - Ag. and Natural Resources Prog. Unit", "WSUE-ANRPU"),
+    #     ("Edward R. Murrow College of Communication", "ERMCOC"),
+    #     ("Corporate and Foundation Relations", "CFR"),
+    #     ("Chemistry", "Chem"),
+    #     ("Mathematics", "Math"),
+    #     ("Crops and Soils", "C&S"),
+    #     ("Admin/Washington Stormwater Center", "Admin/WSC"),
+    #     ("Civil", "CEE"),
+    #     ("Environmental and Natural Resource Sciences", "ENRS"),
+    #     ("Crop and Soil Science", "CSS"),
+    #     ("Apparel, Merchandising, Design and Textiles", "AMDT"),
+    #     ("None", "None"),
+    #     ("Crop and Soil Sciences", "CSS"),
+    #     ("Cultural Studies and Social Thought in Education", "CSSTE"),
+    #     ("Electrical Engineering and Computer Science", "EECS"),
+    #     ("History", "Hist"),
+    #     ("CEREO & WRC", "CEREO/WRC"),
+    #     ("Ucomm", "Ucomm")
+    # ]
 
-    allI = Department.query.all()
+    # allI = Department.query.all()
 
-    temp = []
-    for interest_test in allI:
-        interest_name = interest_test.name
-        temp.append(interest_name)
+    # temp = []
+    # for interest_test in allI:
+    #     interest_name = interest_test.name
+    #     temp.append(interest_name)
 
-    unique_abbr = set()  # Use set to ensure unique abbreviations
+    # unique_abbr = set()  # Use set to ensure unique abbreviations
 
-    for x in checkList:
-        for value in x:
-            if value in temp:
-                unique_abbr.add(x[1])  # Add the abbreviation to the set
+    # for x in checkList:
+    #     for value in x:
+    #         if value in temp:
+    #             unique_abbr.add(x[1])  # Add the abbreviation to the set
 
-    # Convert the set of unique abbreviations to a sorted list
-    sorted_abbr = sorted(list(unique_abbr))
+    # # Convert the set of unique abbreviations to a sorted list
+    # sorted_abbr = sorted(list(unique_abbr))
 
-    response = {
-        "data": sorted_abbr
-    }
+    # response = {
+    #     "data": sorted_abbr
+    # }
 
-    return jsonify(response)
+    # return jsonify(sorted_abbr)
 
 
 # Assuming you have the current user available in your route context

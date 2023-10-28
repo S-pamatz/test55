@@ -62,6 +62,8 @@ class Affiliate(db.Model, UserMixin):
     departments = db.relationship(
         "Department", secondary=works_departments, backref="affiliates"
     )
+    # For heavens sake please don't remove this.
+    department = db.Column(db.String)
     url = db.Column(db.String)
     projects = db.relationship("Project", secondary=works, backref="authors")
     interests = db.relationship(

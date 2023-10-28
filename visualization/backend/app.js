@@ -95,6 +95,7 @@ app.get("/search", (req, res) => {
 // Get all unique departments
 app.get("/unique-departments", (req, res) => {
   const uniqueDepartments = [...new Set(data.map((entry) => entry.Department))];
+  console.log(uniqueDepartments);
   res.json(uniqueDepartments);
 });
 
