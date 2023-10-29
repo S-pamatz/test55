@@ -21,7 +21,7 @@ const ForceDirectGraph = () => {
     const defaultRadius = 40;
     const width = +svg.attr("width");
     const height = +svg.attr("height");
-    const fontSize = defaultRadius/3;
+    const fontSize = defaultRadius/2.5;
 
     const simulation = d3
       .forceSimulation(nodes)
@@ -97,18 +97,18 @@ const ForceDirectGraph = () => {
       .attr("width", defaultRadius)
       .attr("height", defaultRadius)
       .attr("x", -defaultRadius / 2) // center the image
-      .attr("y", -defaultRadius / 2); // center the image
+      .attr("y", -defaultRadius / 1.2); // center the image
 
     // Append the text to the group
     nodeGroup
       .append("text")
       .attr("text-anchor", "middle")
-      .attr("dy", defaultRadius / 2 + 10)
+      .attr("dy", defaultRadius / 2.3)
       .attr("dx", 0)
       .attr("font-size", fontSize + "px")
       .attr("data-full-text", (d) => d.Name)
       .attr("fill", "white")
-      .text((d) => d.Name.slice(0, 5));
+      .text((d) => d.Name.slice(0, 3).toUpperCase());
 
     nodeGroup.select("text").on("mouseover", function (event, d) {
       // Show full name
@@ -116,7 +116,7 @@ const ForceDirectGraph = () => {
     });
 
     nodeGroup.select("text").on("mouseout", function (event, d) {
-      d3.select(this).text(d.Name.slice(0, 5)); // Limit name length to fit circle
+      d3.select(this).text(d.Name.slice(0, 3).toUpperCase()); // Limit name length to fit circle
     });
 
     nodeGroup.select("circle").on("mouseover", function (event, d) {
