@@ -1,14 +1,44 @@
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request, Blueprint
+import mailbox
+from flask import Flask, render_template, flash, redirect, url_for, request, Blueprint
+from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 from app import db
 
 from app.Controller.auth_forms import LoginForm, affiliateRegister, AddKeywords, AdminEditProfile
+from app.Controller.routes import email
 from app.Model.models import Affiliate, Interest, Campus
 from flask_login import login_user, current_user, logout_user, login_required
 from config import Config
-
+from flask_mail import Mail, Message
 auth_blueprint = Blueprint('auth', __name__)
 auth_blueprint.template_folder = Config.TEMPLATE_FOLDER
+
+# for users that do not have their email in the db
+
+application = Flask(__name__)
+# app1.config.from_object(Config)
+# Flask-Mail Configuration
+# Example: Outlook/Office 365 SMTP server
+# https://stackoverflow.com/questions/17980351/flask-mail-not-sending-emails-no-error-is-being-reported
+# https://stackoverflow.com/questions/28466384/python-flask-email-keyerror-keyerror-mail
+application.config['MAIL_SERVER'] = 'smtp.office365.com'
+application.config['MAIL_PORT'] = 587
+application.config['MAIL_DEFAULT_SENDER'] = 'wsuaffiliateconfirmation@outlook.com'
+application.config['MAIL_USERNAME'] = 'wsuaffiliateconfirmation@outlook.com'
+application.config['MAIL_PASSWORD'] = 'changethislater!'
+application.config['MAIL_USE_TLS'] = True
+application.config['MAIL_USE_SSL'] = False
+
+application.config['MAIL_DEBUG'] = True
+
+application.config['MAIL_SUPPRESS_SEND'] = False
+application.config['TESTING'] = False
+mail = Mail(application)
+#DEBUG = True
+#from flask.ext.mail import Mail, Message
+# Flask-Mail Configuration
+
+s = URLSafeTimedSerializer('Thisisasecret!')
 
 
 @auth_blueprint.route('/register', methods=['GET', 'POST'])
@@ -19,11 +49,12 @@ def register():
         affiliate = Affiliate(firstname=rform.firstname.data,
                               lastname=rform.lastname.data,
                               wsuCampus=rform.wsuCampus.data,
-                              department=rform.department.data,
+
                               url=check_url(rform.url.data),
                               email=rform.email.data)
         affiliate.set_password(password=rform.password.data)
 
+        print(rform.email.data)
         if is_empty == 0:
             affiliate.is_admin = True
         else:
