@@ -5,7 +5,7 @@ import { nodesLibrary } from "../../data/nodeLibrary";
 import GraphContext from "../../data/GraphContext";
 import Uni from "../../../assets/UniversityW.png";
 
-const Modal = ({ content, setActiveModalContent, image }) => {
+const Modal = ({ content, image }) => {
   const ctx = React.useContext(GraphContext);
 
   const [buttons, setButtons] = useState(<></>);
