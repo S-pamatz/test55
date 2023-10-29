@@ -4,11 +4,12 @@ import sys
 def transform_html(content):
     # Replace favicon, manifest, icons, etc.
     replacements = {
-        r'href="/favicon.ico"': r'href="{{ url_for("static", filename="favicon.ico") }}"',
-        r'href="/logo192.png"': r'href="{{ url_for("static", filename="logo192.png") }}"',
-        r'href="/manifest.json"': r'href="{{ url_for("static", filename="manifest.json") }}"',
-        r'src="/static/js/main.([a-zA-Z0-9]+).js"': r'src="{{ url_for("static", filename="static/js/main.\1.js") }}"',
-        r'href="/static/css/main.([a-zA-Z0-9]+).css"': r'href="{{ url_for("static", filename="static/css/main.\1.css") }}"'
+        r'href="/(favicon.ico)"': r'href="{{ url_for("static", filename="\1") }}"',
+        r'href="/(logo[\w\d]+\.png)"': r'href="{{ url_for("static", filename="\1") }}"',
+        r'href="/(manifest.json)"': r'href="{{ url_for("static", filename="\1") }}"',
+        r'src="/static/js/(main\.[a-zA-Z0-9]+\.js)"': r'src="{{ url_for("static", filename="static/js/\1") }}"',
+        r'href="/static/css/(main\.[a-zA-Z0-9]+\.css)"': r'href="{{ url_for("static", filename="static/css/\1") }}"',
+        r'src="/static/media/(.*?\.[a-zA-Z0-9]+\.svg)"': r'src="{{ url_for("static", filename="static/media/\1") }}"',
     }
 
     for pattern, replacement in replacements.items():
