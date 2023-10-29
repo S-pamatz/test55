@@ -33,9 +33,9 @@ class EditForm(FlaskForm):
     submit = SubmitField('Submit')
 
     def set_department_choices(self):
+        departments = Department.query.order_by(Department.name).all()
         self.department.choices = [
-            (department.name, department.name) for department in Department.query.all()
-        ]
+            (department.name, department.name) for department in departments]
 
     def validate_email(self, email):
         affiliates = Affiliate.query.filter_by(email=email.data).all()
