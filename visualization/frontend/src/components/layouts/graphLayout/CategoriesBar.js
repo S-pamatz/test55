@@ -16,63 +16,59 @@ const CategoriesBar = () => {
 
   const handleButtonClick = (contentType, event) => {
     const rect = event.currentTarget.getBoundingClientRect();
-    setButtonPosition({ top: rect.top, left: rect.left, width: rect.width });
-
-    
+    setButtonPosition({
+      top: rect.bottom,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+    });
 
     if (activeModalContent === contentType) {
-        setActiveModalContent(null);
+      setActiveModalContent(null);
     } else {
-        setActiveModalContent(contentType);
+      setActiveModalContent(contentType);
     }
-    
-    setIsButtonClicked(true);
-};
 
+    setIsButtonClicked(true);
+  };
 
   return (
-    <div className="categoriesBar" >
-      <button
-        className="categoryButton"
-        onClick={(e) => handleButtonClick("University", e)}
-      >
-        <img src={UniversityIcon} alt="University" />
-        Universities
-      </button>
-      <button
-        className="categoryButton"
-        onClick={(e) => handleButtonClick("Departments", e)}
-      >
-        <img src={DepartmentsIcon} alt="Entities" />
-        Entities
-      </button>
-      <button
-        className="categoryButton"
-        onClick={(e) => handleButtonClick("Interests", e)}
-      >
-        <img src={Interests} alt="Interests" />
-        Interests
-      </button>
-      <button
-        className="categoryButton"
-        onClick={(e) => handleButtonClick("Projects", e)}
-      >
-        <img src={Projects} alt="Projects"/>
-        Projects
-      </button>
-      <button
-        className="categoryButton"
-        onClick={(e) => handleButtonClick("Sponsors", e)}
-      >
-        <img src={Sponsors} alt="Publications" />
-        Publications
-      </button>
+    <span className="categoriesBar">
       <Modal
-        content={activeModalContent}
+        content={"Universities"}
         position={buttonPosition}
+        image={<img src={UniversityIcon} alt="University" />}
         setActiveModalContent={setActiveModalContent}
       />
-    </div>
+
+      <Modal
+        content={"Departments"}
+        position={buttonPosition}
+        image={<img src={DepartmentsIcon} alt="University" />}
+        setActiveModalContent={setActiveModalContent}
+      />
+
+      <Modal
+        content={"Intrests"}
+        position={buttonPosition}
+        image={<img src={Interests} alt="University" />}
+        setActiveModalContent={setActiveModalContent}
+      />
+
+      <Modal
+        content={"Projects"}
+        position={buttonPosition}
+        image={<img src={Projects} alt="University" />}
+        setActiveModalContent={setActiveModalContent}
+      />
+
+      <Modal
+        content={"Publications"}
+        position={buttonPosition}
+        image={<img src={Sponsors} alt="University" />}
+        setActiveModalContent={setActiveModalContent}
+      />
+    </span>
   );
 };
 
