@@ -123,27 +123,25 @@ def index():
     return render_template('display_profile.html', title='Display Profile', affiliate=current_user, image_file=image_file)
 
 
-@routes_blueprint.route('/get_subcategories/<int:interest_id>')
-def get_subcategories(interest_id):
-    interest = IntrestTest.query.get(interest_id)
+@routes_blueprint.route('/get_subcategories/<selected_interest_name>', methods=['GET'])
+def get_subcategories(selected_interest_name):
+    selected_interests = IntrestTest.query.filter_by(
+        name=selected_interest_name).all()
 
-    if interest is not None:
-        interests_with_same_name = IntrestTest.query.filter_by(
-            name=interest.name).all()
-        subcategory_options = ""
+    if selected_interests:
+        subcategory_options = ''
+        for selected_interest in selected_interests:
+            subcategories = Subcategory.query.filter_by(
+                id=selected_interest.subcategory_id).all()
+            for subcategory in subcategories:
+                subcategory_options += f'<option value="{subcategory.id}">{subcategory.name}</option>'
 
-        for i in interests_with_same_name:
-            subcategories = i.subcategory
-            if subcategories:
-                if not isinstance(subcategories, list):
-                    subcategories = [subcategories]
+        if subcategory_options:
+            return subcategory_options
+        else:
+            return 'No subcategories found for the given interests.'
 
-                for subcategory in subcategories:
-                    subcategory_options += f"<option value='{subcategory.id}'>{subcategory.name}</option>"
-
-        return subcategory_options
-
-    return "No subcategories found for this interest."
+    return ''  # Return an empty string if no matching interest is found
 
 
 @routes_blueprint.route('/test_saved_tags', methods=['GET'])
@@ -173,10 +171,17 @@ def test_saved_tags():
 @routes_blueprint.route('/addTags', methods=['GET', 'POST'])
 @login_required
 def addTags():
-    interests = IntrestTest.query.order_by(IntrestTest.name).all()
+    #interests = IntrestTest.query.order_by(IntrestTest.name).all()
+    interests = IntrestTest.query.order_by(
+        IntrestTest.name).distinct(IntrestTest.name).all()
+    unique_interest_names = set(
+        interest.name for interest in IntrestTest.query.distinct(IntrestTest.name).all())
+
     subcategories = Subcategory.query.all()
     print("1")
     eform = editTagsForm()
+    eform.subcategory.choices = [(subcategory.id, subcategory.name)
+                                 for subcategory in subcategories]
     print("2")
     # Populate the area of interest choices
     eform.areaofinterest.choices = [
@@ -205,7 +210,7 @@ def addTags():
         print("5")
         eform.areaofinterest.data = current_user.interests
     print("8")
-    return render_template('addTags.html', title='addTags', form=eform, interests=interests, subcategories=subcategories)
+    return render_template('addTags.html', title='addTags', form=eform, unique_interest_names=unique_interest_names, subcategories=subcategories)
 
 
 @routes_blueprint.route('/edit_profile', methods=['GET', 'POST'])
@@ -481,7 +486,7 @@ def tagTest():
 
 # initial;
 
-
+# this will be used to connect
 @routes_blueprint.route('/createIntrests', methods=['GET', 'POST'])
 def createIntrests():
     eForm = AddIntrest()
@@ -489,6 +494,15 @@ def createIntrests():
         (subcategory.id, subcategory.name) for subcategory in Subcategory.query.all()]
 
     if eForm.validate_on_submit():
+        # Check if the interest already exists in the database
+        existing_interest = IntrestTest.query.filter_by(
+            name=eForm.name.data).first()
+
+       # if existing_interest:
+        #    flash("Interest already exists", "warning")
+        #   return redirect(url_for('routes.createIntrests'))
+
+        # If the interest doesn't exist, add it to the database
         interest = IntrestTest(
             name=eForm.name.data,
             subcategory_id=eForm.subcategory_id.data
