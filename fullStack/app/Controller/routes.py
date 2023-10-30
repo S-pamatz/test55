@@ -319,11 +319,11 @@ def read():
         return '<form action="/readFile" method="POST"><input name="email"><input type="submit"></form>'
     email = request.form['email']
     if (readFile(email) == True):
-        flash("this email is in our db. we will re-route you to the validation page")
+        #flash("this email is in our db. we will re-route you to the validation page")
         return redirect(url_for('routes.email', givenEmail=email))
         # return redirect(url_for('routes.tData', givenEmail=email))
     else:
-        flash("this email is not in our db. we will redirect you to the register page")
+       # flash("this email is not in our db. we will redirect you to the register page")
         return redirect(url_for('auth.register'))
 
 
@@ -685,6 +685,7 @@ def search_interests():
     # Return the JSON response
     return jsonify(response)
 
+
 @routes_blueprint.route('/search', methods=['GET'])
 def search():
     inputValue = request.args.get("inputValue")
@@ -712,6 +713,7 @@ def search():
             "URL": getattr(affiliate, 'url', '')
         })
     return jsonify(response_data)
+
 
 @routes_blueprint.route('/search_Unique_interests', methods=['GET'])
 def search_unique_interests():

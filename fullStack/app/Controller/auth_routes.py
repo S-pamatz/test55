@@ -41,9 +41,64 @@ mail = Mail(application)
 s = URLSafeTimedSerializer('Thisisasecret!')
 
 
-@auth_blueprint.route('/register', methods=['GET', 'POST'])
-def register():
+@auth_blueprint.route('/validateEmail', methods=['GET', 'POST'])
+def validateEmail():
+
+    if request.method == 'GET':
+        return '<form action="/readFile" method="POST"><input name="email"><input type="submit"></form>'
+    email = request.form['email']
+
+    return redirect(url_for('auth.email1', givenEmail=email))
+    # return redirect(url_for('routes.tData', givenEmail=email))
+
+
+@auth_blueprint.route('/email/<givenEmail>', methods=['GET', 'POST'])
+def email1(givenEmail):
+    if request.method == 'GET':
+
+        # email = request.form['email']
+        print("1")
+        email = givenEmail
+        print(email)
+        token = s.dumps(email, salt='email-confirm')
+        print("2")
+        msg = Message(
+            'Confirm Email', sender='wsuaffiliateconfirmation@outlook.com', recipients=[email])
+        print("3")
+        link = url_for('auth.confirm_email', token=token,
+                       _external=True)  # look at later
+        print("this is test\n")
+        print(application.config['MAIL_SERVER'])
+        print(application.config['MAIL_PORT'])
+        msg.body = 'Your link is {}'.format(link)
+    # msg.body="test"ws1
+    # g@gmail.com
+
+        try:
+            mail.send(msg)
+        except Exception as e:
+            print("Email sending failed:", str(e))
+
+       # return '<h1>The email you entered is {}. The token is {}</h1>'.format(email, token)
+        return 'email sending...please check email'
+
+
+@auth_blueprint.route('/confirm_email/<token>')
+def confirm_email(token):
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=3600)
+
+    except SignatureExpired:
+        return '<h1>The token is expired!</h1>'
+
+    return redirect(url_for('auth.register', givenEmail=email))
+
+
+@auth_blueprint.route('/register/<givenEmail>', methods=['GET', 'POST'])
+def register(givenEmail):
     rform = affiliateRegister()
+    rform.email.data = givenEmail
+    rform.email.render_kw = {'readonly': True}
     is_empty = Affiliate.query.count()
     if rform.validate_on_submit():
         affiliate = Affiliate(firstname=rform.firstname.data,
@@ -51,7 +106,7 @@ def register():
                               wsuCampus=rform.wsuCampus.data,
 
                               url=check_url(rform.url.data),
-                              email=rform.email.data)
+                              )
         affiliate.set_password(password=rform.password.data)
 
         print(rform.email.data)
