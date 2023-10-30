@@ -141,7 +141,7 @@ def get_subcategories(selected_interest_name):
         else:
             return 'No subcategories found for the given interests.'
 
-    return ''  # Return an empty string if no matching interest is found
+    return ''  # Return an empty string if no matching interest is founds
 
 
 @routes_blueprint.route('/test_saved_tags', methods=['GET'])
