@@ -36,7 +36,6 @@ export const expandNodeUsingFilteredEntries = (
       Membership: entry.Membership,
       URL: entry.URL,
       WSUCampus: entry.WSUCampus,
-      icon: Scholar,
       expanded: false,
       parent: clickedNode.id,
       depth: clickedNode.depth + 1,

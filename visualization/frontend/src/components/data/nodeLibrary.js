@@ -51,8 +51,6 @@ export let nodesLibrary = [
   { id: 35, Name: "People",  icon: University, expanded: false,  depth: 0, parent: 28 },
   { id: 36, Name: "Interest",  icon: University, expanded: false,  depth: 0, parent: 28 },
   { id: 37, Name: "Entities",  icon: University, expanded: false,  depth: 0, parent: 28 },
-  
-
 ];
 
 export const populateNodesWithUniqueData = async () => {
