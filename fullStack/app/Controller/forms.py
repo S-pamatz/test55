@@ -3,7 +3,7 @@ from flask_wtf.file import FileField, FileAllowed
 from wtforms import SelectMultipleField, StringField, SubmitField, TextAreaField, PasswordField, SelectField
 from wtforms_sqlalchemy.fields import QuerySelectField
 from wtforms.validators import ValidationError, Length, DataRequired, Email, EqualTo
-from app.Model.models import Affiliate, Department
+from app.Model.models import Affiliate, Department, Universities_Colleges
 from flask_login import current_user
 
 
@@ -25,6 +25,8 @@ class EditForm(FlaskForm):
         'WSU Tri-Cities'), ('WSU Vancouver'), ('WSU Everett'), ("WSU Global Campus")], validators=[DataRequired()])
     department = SelectField('Department:', choices=[],
                              validators=[DataRequired()])
+    university = SelectField('University:',
+                             validators=[DataRequired()])
     membership = SelectField('membership:', choices=[(
         'Please Select an Option Below'), ('Yes, I am a member'), ('No, I am not a member')], validators=[DataRequired()])
     URL = StringField('URL:')
@@ -32,6 +34,13 @@ class EditForm(FlaskForm):
     password2 = PasswordField('Repeat Password:', validators=[
                               DataRequired(), EqualTo('password')])
     submit = SubmitField('Submit')
+
+    def set_university_choices(self):
+
+        universities = Universities_Colleges.query.order_by(
+            Universities_Colleges.id).all()
+        self.university.choices = [(uni.name, uni.name)
+                                   for uni in universities]
 
     def set_department_choices(self):
         departments = Department.query.order_by(Department.name).all()

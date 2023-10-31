@@ -34,6 +34,7 @@ CREATE TABLE `Affiliate` (
   `wsuCampus` varchar(200) DEFAULT NULL,
   `department` varchar(200) DEFAULT NULL,
   `membership` varchar(200) DEFAULT NULL,
+  'university'varchar(200) DEFAULT NULL,
   `url` varchar(200) DEFAULT NULL,
    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -196,3 +197,26 @@ CREATE TABLE works_departments (
     affiliate_id INTEGER REFERENCES affiliate(id),
     department_id INTEGER REFERENCES department(id)
 );
+
+
+
+DROP TABLE IF EXISTS `Universities_Colleges`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Universities_Colleges` (
+  `id`  int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+DROP TABLE IF EXISTS `Universities__Colleges`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Universities__Colleges` (
+  `id`  int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
