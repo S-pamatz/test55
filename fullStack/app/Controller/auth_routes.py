@@ -104,7 +104,36 @@ def register(givenEmail):
         affiliate = Affiliate(firstname=rform.firstname.data,
                               lastname=rform.lastname.data,
                               wsuCampus=rform.wsuCampus.data,
+                              membership=rform.membership.data,
+                              url=check_url(rform.url.data),
+                              )
+        affiliate.set_password(password=rform.password.data)
 
+        print(rform.email.data)
+        if is_empty == 0:
+            affiliate.is_admin = True
+        else:
+            affiliate.is_admin = False
+
+        db.session.add(affiliate)
+        db.session.commit()
+        flash('You are  a registered user')
+        return redirect(url_for('routes.index'))
+
+    return render_template('register.html', form=rform)
+
+
+@auth_blueprint.route('/register1', methods=['GET', 'POST'])
+def register1():
+    rform = affiliateRegister()
+    rform.email.data = "121@wsu.com"
+    rform.email.render_kw = {'readonly': True}
+    is_empty = Affiliate.query.count()
+    if rform.validate_on_submit():
+        affiliate = Affiliate(firstname=rform.firstname.data,
+                              lastname=rform.lastname.data,
+                              wsuCampus=rform.wsuCampus.data,
+                              membership=rform.membership.data,
                               url=check_url(rform.url.data),
                               )
         affiliate.set_password(password=rform.password.data)

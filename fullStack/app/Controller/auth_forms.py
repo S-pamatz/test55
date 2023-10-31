@@ -13,7 +13,8 @@ class affiliateRegister(FlaskForm):
         'WSU Tri-Cities'), ('WSU Vancouver'), ('WSU Everett'), ("WSU Global Campus")], validators=[DataRequired()])
     department = SelectField('Department:', choices=[('Please Select an Option Below'), ('Anthropology'), ('Art'), ('Chemistry'), ('Criminal Justice and Criminology'), (
         'Digital Technology and Culture'), ('English'), ('History'), ('Mathematics and Statistics'), ('Physics and Astronomy'), ('Psychology'), ('Sociology'), ('SBS'), ('CEE'), ('Biology')], validators=[DataRequired()])
-
+    membership = SelectField('Membership:', choices=[(
+        'Please Select an Option Below'), ('Yes'), ('No')], validators=[DataRequired()])
     url = StringField('URL:', validators=[DataRequired()])
     email = StringField('Email:', validators=[DataRequired(), Email()])
     password = PasswordField('Password:', validators=[DataRequired()])

@@ -56,7 +56,7 @@ class Affiliate(db.Model, UserMixin):
     lastname = db.Column(db.String(128))
 
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
-
+    membership = db.Column(db.String)
     wsuCampus = db.Column(db.String)
     #department = db.Column(db.String)
     departments = db.relationship(

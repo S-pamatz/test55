@@ -236,6 +236,7 @@ def edit_profile():
         current_user.firstname = eform.firstname.data
         current_user.lastname = eform.lastname.data
         current_user.wsuCampus = eform.campus.data
+        current_user.membership = eform.membership.data
         current_user.url = eform.URL.data
 
         if eform.password.data:  # Set password only if it's provided
@@ -259,6 +260,7 @@ def edit_profile():
         eform.firstname.data = current_user.firstname
         eform.lastname.data = current_user.lastname
         eform.campus.data = current_user.wsuCampus
+        eform.membership.data = current_user.membership
 
         if current_user.departments:
             # Fill the form with the first department's name
@@ -323,13 +325,16 @@ def read():
     if request.method == 'GET':
         return '<form action="/readFile" method="POST"><input name="email"><input type="submit"></form>'
     email = request.form['email']
-    if (readFile(email) == True):
-        #flash("this email is in our db. we will re-route you to the validation page")
-        return redirect(url_for('routes.email', givenEmail=email))
-        # return redirect(url_for('routes.tData', givenEmail=email))
-    else:
-       # flash("this email is not in our db. we will redirect you to the register page")
-        return redirect(url_for('auth.register'))
+
+    return redirect(url_for('routes.email', givenEmail=email))
+   # email = request.form['email']
+   # if (readFile(email) == True):
+    #flash("this email is in our db. we will re-route you to the validation page")
+    #  return redirect(url_for('routes.email', givenEmail=email))
+    # return redirect(url_for('routes.tData', givenEmail=email))
+ #   else:
+    # flash("this email is not in our db. we will redirect you to the register page")
+    #  return redirect(url_for('auth.register'))
 
 
 def readFile(email):
@@ -425,7 +430,7 @@ def jsonD():
             "firstName": user.firstname,
             "lastName": user.lastname,
             "wsu campus": user.wsuCampus,
-
+            "membership": user.membership,
             "email": user.email,
             "interests": interests_data
         })

@@ -33,6 +33,7 @@ CREATE TABLE `Affiliate` (
   `areaofinterest` varchar(200) DEFAULT NULL,
   `wsuCampus` varchar(200) DEFAULT NULL,
   `department` varchar(200) DEFAULT NULL,
+  `membership` varchar(200) DEFAULT NULL,
   `url` varchar(200) DEFAULT NULL,
    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

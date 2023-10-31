@@ -25,7 +25,8 @@ class EditForm(FlaskForm):
         'WSU Tri-Cities'), ('WSU Vancouver'), ('WSU Everett'), ("WSU Global Campus")], validators=[DataRequired()])
     department = SelectField('Department:', choices=[],
                              validators=[DataRequired()])
-
+    membership = SelectField('membership:', choices=[(
+        'Please Select an Option Below'), ('Yes, I am a member'), ('No, I am not a member')], validators=[DataRequired()])
     URL = StringField('URL:')
     password = PasswordField('Password:', validators=[DataRequired()])
     password2 = PasswordField('Repeat Password:', validators=[
