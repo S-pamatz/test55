@@ -14,6 +14,8 @@ class ProfileForm(FlaskForm):
     combined_interests = StringField('Combined Interests')
     submit = SubmitField('Save')
 
+#
+
 
 class EditForm(FlaskForm):
     picture = FileField('Update Profile Picture', validators=[
