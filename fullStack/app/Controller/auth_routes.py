@@ -229,6 +229,7 @@ def admin_edit_profile(user_id):
             user.wsuCampus = form.campus.data
             user.department = form.department.data
             user.areaofinterest = form.areaofinterest.data
+
             user.url = check_url(form.URL.data)
             user.is_admin = form.is_admin.data
             db.session.add(user)
