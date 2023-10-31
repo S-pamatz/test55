@@ -61,7 +61,13 @@ export const GraphContextProvider = (props) => {
         clickedNode
       ));
     } else {
-      if (clickedNode.depth >= 2 ) { // If the node is a top-level node (depth = 1) and it is not expanded, expand it
+      if (clickedNode.id === 46 ) {
+        ({ updatedNodes, updatedLinks } = expandNode(
+          nodes,
+          links,
+          clickedNode, nodesLibrary
+        ));
+      }else if (clickedNode.depth >= 2 ) { // If the node is a top-level node (depth = 1) and it is not expanded, expand it
         try {
           const filteredEntries = await filterEntries(clickedNode.Name);
           ({ updatedNodes, updatedLinks } = expandNodeUsingFilteredEntries(
@@ -88,6 +94,7 @@ export const GraphContextProvider = (props) => {
   };
 
   const handleSearchClick = async (search) => {
+    console.log("NodeLibray: ", nodesLibrary)
     if (!search) return; // If search is empty, do nothing
 
     try {

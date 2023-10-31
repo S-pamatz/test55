@@ -348,12 +348,12 @@ export const populateNodesWithUniqueData = async () => {
 
     nodesLibrary.push({
       id: otherId,
-      Name: "Other.(" + otherId + ")",
+      Name: "Others",
       parent: 6, // Assuming wsu node id as the parent
       expanded: false,
       fx: null,
       fy: null,
-      depth: 1,
+      depth: 0,
     });
     currentId++;
 
@@ -370,7 +370,6 @@ export const populateNodesWithUniqueData = async () => {
         fy: null,
         depth: 1,
       });
-      console.log(department + "id: " + otherId);
       currentId++;
     }
 
