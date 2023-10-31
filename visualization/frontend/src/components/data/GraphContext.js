@@ -46,11 +46,11 @@ export const GraphContextProvider = (props) => {
 
   const handleNodesClick = async (clickedNode) => {
 
-    if (clickedNode.depth === 3 && clickedNode != null ) {
+    if (clickedNode.depth === 4 && clickedNode != null ) {
       setSelectedNode(clickedNode);
     }
 
-    if (clickedNode.depth >= 3) {
+    if (clickedNode.depth >= 4) {
       return; // Early return if the node is not a top-level node
     }
     let updatedNodes, updatedLinks;
