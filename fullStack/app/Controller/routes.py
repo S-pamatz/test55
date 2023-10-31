@@ -219,6 +219,7 @@ def edit_profile():
     image_file = url_for('static', filename=current_user.image_file)
     eform = EditForm()
     eform.set_department_choices()
+    eform.set_university_choices()
     # Within the function, after `eform.set_department_choices()`
 
   # Within the function, before querying the database for department
@@ -237,6 +238,7 @@ def edit_profile():
         current_user.lastname = eform.lastname.data
         current_user.wsuCampus = eform.campus.data
         current_user.membership = eform.membership.data
+        current_user.university = eform.university.data
         current_user.url = eform.URL.data
 
         if eform.password.data:  # Set password only if it's provided
@@ -261,7 +263,7 @@ def edit_profile():
         eform.lastname.data = current_user.lastname
         eform.campus.data = current_user.wsuCampus
         eform.membership.data = current_user.membership
-
+        eform.university.data = current_user.university
         if current_user.departments:
             # Fill the form with the first department's name
             eform.department.data = current_user.departments[0].name

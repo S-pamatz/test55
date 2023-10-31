@@ -64,6 +64,7 @@ class Affiliate(db.Model, UserMixin):
     )
     # For heavens sake please don't remove this.
     department = db.Column(db.String)
+    university = db.Column(db.String)
     url = db.Column(db.String)
     projects = db.relationship("Project", secondary=works, backref="authors")
     interests = db.relationship(
@@ -93,6 +94,12 @@ class Project(db.Model):
 
 
 class Interest(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+
+
+class Universities_Colleges(db.Model):
+    __tablename__ = 'universities_colleges'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
 
