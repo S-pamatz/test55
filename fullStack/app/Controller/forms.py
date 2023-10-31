@@ -36,7 +36,7 @@ class EditForm(FlaskForm):
     submit = SubmitField('Submit')
 
     def set_university_choices(self):
-        # Ensure you're ordering by the appropriate column
+
         universities = Universities_Colleges.query.order_by(
             Universities_Colleges.id).all()
         self.university.choices = [(uni.name, uni.name)
