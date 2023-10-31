@@ -888,7 +888,7 @@ def returnUniqueDepart():
     #     temp.append(interest_name)
 
     # unique_abbr = set()  # Use set to ensure unique abbreviations
-
+#
     # for x in checkList:
     #     for value in x:
     #         if value in temp:
