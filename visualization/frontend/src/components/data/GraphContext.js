@@ -34,6 +34,7 @@ export const GraphContextProvider = (props) => {
   const setStartingNode = (newNode) => {
     // You can add logic here if needed.
     setNodes([newNode]);
+    setLinks([]);
   };
 
   // const contextValue = {
