@@ -879,7 +879,7 @@ def returnUniqueDepart():
     #     ("CEREO & WRC", "CEREO/WRC"),
     #     ("Ucomm", "Ucomm")
     # ]
-
+#
     # allI = Department.query.all()
 
     # temp = []
