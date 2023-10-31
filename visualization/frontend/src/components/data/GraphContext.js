@@ -34,6 +34,7 @@ export const GraphContextProvider = (props) => {
   const setStartingNode = (newNode) => {
     // You can add logic here if needed.
     setNodes([newNode]);
+    setLinks([]);
   };
 
   // const contextValue = {
@@ -45,8 +46,9 @@ export const GraphContextProvider = (props) => {
   const [selectedNode, setSelectedNode] = useState(null);
 
   const handleNodesClick = async (clickedNode) => {
+    const isInNodeLibrary = nodesLibrary.some(node => node.Name === clickedNode.Name);
 
-    if (clickedNode.depth === 4 && clickedNode != null ) {
+    if (clickedNode.depth >= 3 && !isInNodeLibrary && clickedNode != null ) {
       setSelectedNode(clickedNode);
     }
 
