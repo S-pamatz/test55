@@ -198,7 +198,7 @@ def addTags():
         selected_interest_id = eform.areaofinterest.data
         selected_interest = IntrestTest.query.get(selected_interest_id)
 
-        # Update the user's interests
+        # Update the user's interests#
         current_user.interests.append(selected_interest)
 
         # Now, you can access the subcategory through the selected_interest
