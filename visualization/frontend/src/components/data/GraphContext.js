@@ -9,6 +9,8 @@ import {
 import { filterEntries } from "./getDataFromBackend";
 import University from "../../assets/UniversityW.png";
 import { nodesLibrary } from "./nodeLibrary";
+import { useHighlightPath } from "../function/searchHelper";
+
 const GraphContext = createContext({
   nodes: [],
   links: [],
@@ -21,7 +23,15 @@ const GraphContext = createContext({
 
 export const GraphContextProvider = (props) => {
   const [nodes, setNodes] = useState([
-    { id: 0, Name: "Universities", icon: University, expanded: false, fx: 500, fy: 400, depth: 0},
+    {
+      id: 0,
+      Name: "Universities",
+      icon: University,
+      expanded: false,
+      fx: 500,
+      fy: 400,
+      depth: 0,
+    },
   ]);
   const [links, setLinks] = useState([]);
 
@@ -45,10 +55,14 @@ export const GraphContextProvider = (props) => {
 
   const [selectedNode, setSelectedNode] = useState(null);
 
-  const handleNodesClick = async (clickedNode) => {
-    const isInNodeLibrary = nodesLibrary.some(node => node.Name === clickedNode.Name);
+  // const { highlightPath } = useHighlightPath();
 
-    if (clickedNode.depth >= 3 && !isInNodeLibrary && clickedNode != null ) {
+  const handleNodesClick = async (clickedNode) => {
+    const isInNodeLibrary = nodesLibrary.some(
+      (node) => node.Name === clickedNode.Name
+    );
+
+    if (clickedNode.depth >= 3 && !isInNodeLibrary && clickedNode != null) {
       setSelectedNode(clickedNode);
     }
 
@@ -63,13 +77,15 @@ export const GraphContextProvider = (props) => {
         clickedNode
       ));
     } else {
-      if (clickedNode.id === 46 ) {
+      if (clickedNode.id === 46) {
         ({ updatedNodes, updatedLinks } = expandNode(
           nodes,
           links,
-          clickedNode, nodesLibrary
+          clickedNode,
+          nodesLibrary
         ));
-      }else if (clickedNode.depth >= 2 ) { // If the node is a top-level node (depth = 1) and it is not expanded, expand it
+      } else if (clickedNode.depth >= 2) {
+        // If the node is a top-level node (depth = 1) and it is not expanded, expand it
         try {
           const filteredEntries = await filterEntries(clickedNode.Name);
           ({ updatedNodes, updatedLinks } = expandNodeUsingFilteredEntries(
@@ -82,69 +98,84 @@ export const GraphContextProvider = (props) => {
           console.error("Error expanding node:", error);
           return;
         }
-      } else { // If the node is a top-level node (depth = 0) and it is not expanded, expand it using the nodeLibrary
+      } else {
+        // If the node is a top-level node (depth = 0) and it is not expanded, expand it using the nodeLibrary
         ({ updatedNodes, updatedLinks } = expandNode(
           nodes,
           links,
-          clickedNode, nodesLibrary
+          clickedNode,
+          nodesLibrary
         ));
       }
     }
-    console.log("updatedNodes: ", updatedNodes)
-    console.log("updatedLinks: ", updatedLinks)
+    console.log("updatedNodes: ", updatedNodes);
+    console.log("updatedLinks: ", updatedLinks);
     setNodes(updatedNodes);
     setLinks(updatedLinks);
   };
 
   const handleSearchClick = async (search) => {
-    console.log("NodeLibray: ", nodesLibrary)
     if (!search) return; // If search is empty, do nothing
 
-    try {
-      const filteredEntries = await filterEntries(search);
+    // Search for the Department node
+    let searchNodes = nodes.find((node) => node.Name === search);
 
-      if (!filteredEntries || filteredEntries.length === 0) return;
+    if (searchNodes) {
+      highlightPath(searchNodes);
+    } else {
+      try {
+        const filteredEntries = await filterEntries(search);
 
-      const entry = filteredEntries[0];
+        if (!filteredEntries || filteredEntries.length === 0) return;
 
-      // Insert or find Department node
-      let departmentNode = nodes.find(
-        (node) => node.Name === entry.Department
-      );
-      if (!departmentNode) {
-        departmentNode = {
-          id: nodes.length,
-          Name: entry.Department,
-          expanded: false,
-          fill: '#9D2235',
-        };
-        nodes.push(departmentNode);
-        links.push({ source: 0, target: departmentNode.id }); // 0 is the ID for WSU
-      } else {
-        departmentNode.fill = '#9D2235';
+        const entry = filteredEntries[0];
+
+        // Insert or find Department node
+        let departmentNode = nodes.find(
+          (node) => node.Name === entry.Department
+        );
+        if (!departmentNode) {
+          departmentNode = {
+            id: nodes.length,
+            Name: entry.Department,
+            expanded: false,
+            fill: "#9D2235",
+          };
+          nodes.push(departmentNode);
+          links.push({ source: 0, target: departmentNode.id }); // 0 is the ID for WSU
+        } else {
+          departmentNode.fill = "#9D2235";
+        }
+
+        // Insert or find the Name node and link it to the Department
+        let nameNode = nodes.find((node) => node.Name === entry.Name);
+        if (!nameNode) {
+          nameNode = {
+            id: nodes.length,
+            Name: entry.Name,
+            expanded: false,
+            fill: "#9D2235",
+          };
+          nodes.push(nameNode);
+          links.push({ source: departmentNode.id, target: nameNode.id });
+        } else {
+          nameNode.fill = "#9D2235";
+        }
+      } catch (error) {
+        console.error("Error searching and expanding nodes:", error);
       }
-
-      // Insert or find the Name node and link it to the Department
-      let nameNode = nodes.find((node) => node.Name === entry.Name);
-      if (!nameNode) {
-        nameNode = {
-          id: nodes.length,
-          Name: entry.Name,
-          expanded: false,
-          fill: '#9D2235',
-        };
-        nodes.push(nameNode);
-        links.push({ source: departmentNode.id, target: nameNode.id });
-      } else {
-        nameNode.fill = '#9D2235';
-      }
-
-      // Update state
-      setNodes([...nodes]);
-      setLinks([...links]);
-    } catch (error) {
-      console.error("Error searching and expanding nodes:", error);
     }
+    // Update state
+    setNodes([...nodes]);
+    setLinks([...links]);
+  };
+
+  const highlightPath = (targetNode) => {
+    console.log("targetNode: ", targetNode)
+    // change the targetNode to red and it parent and link to red
+    targetNode.fill = "red";
+    const parentNode = nodes.find((node) => node.id === targetNode.parent);
+    parentNode.fill = "red";
   };
 
   return (
@@ -155,7 +186,7 @@ export const GraphContextProvider = (props) => {
         selectedNode: selectedNode,
         onNodeClick: handleNodesClick,
         onSearchClick: handleSearchClick,
-        updateNode: updateNode, 
+        updateNode: updateNode,
         setStartingNode: setStartingNode,
       }}
     >
@@ -163,5 +194,4 @@ export const GraphContextProvider = (props) => {
     </GraphContext.Provider>
   );
 };
-export default GraphContext ; 
-
+export default GraphContext;
