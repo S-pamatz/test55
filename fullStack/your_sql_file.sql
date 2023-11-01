@@ -20,8 +20,7 @@
 --
 
 DROP TABLE IF EXISTS `Affiliate`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `Affiliate` (
   `id`  int(11) NOT NULL AUTO_INCREMENT,
   `image_file` varchar(200) DEFAULT NULL,
@@ -34,15 +33,13 @@ CREATE TABLE `Affiliate` (
   `wsuCampus` varchar(200) DEFAULT NULL,
   `department` varchar(200) DEFAULT NULL,
   `membership` varchar(200) DEFAULT NULL,
-  'sponsor' varchar(200) DEFAULT NULL,
-  'partners' varchar(200) DEFAULT NULL,
-  'university'varchar(200) DEFAULT NULL,
+  `sponsor` varchar(200) DEFAULT NULL,
+  `partners` varchar(200) DEFAULT NULL,
+  `university` varchar(200) DEFAULT NULL,
   `url` varchar(200) DEFAULT NULL,
-   PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
 -- Dumping data for table `affiliate`
 --
 
@@ -235,3 +232,10 @@ CREATE TABLE `partners` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+CREATE TABLE interests (
+    id INT AUTO_INCREMENT PRIMARY KEY, -- assuming an auto-increment primary key
+    affiliate_id INT,
+    intresttest_id INT,
+    FOREIGN KEY (affiliate_id) REFERENCES affiliate(id),
+    FOREIGN KEY (intresttest_id) REFERENCES intrest_test(id)
+);

@@ -41,6 +41,7 @@ application.config['MAIL_DEBUG'] = True
 
 application.config['MAIL_SUPPRESS_SEND'] = False
 application.config['TESTING'] = False
+application.config['DEBUG'] = True
 mail = Mail(application)
 #DEBUG = True
 #from flask.ext.mail import Mail, Message
@@ -126,25 +127,31 @@ def index():
     return render_template('display_profile.html', title='Display Profile', affiliate=current_user, image_file=image_file)
 
 
-@routes_blueprint.route('/get_subcategories/<selected_interest_name>', methods=['GET'])
-def get_subcategories(selected_interest_name):
-    selected_interests = IntrestTest.query.filter_by(
-        name=selected_interest_name).all()
+@routes_blueprint.route('/get_subcategories/<selected_interest_id>', methods=['GET'])
+def get_subcategories(selected_interest_id):
+    selected_interest = IntrestTest.query.get(selected_interest_id)
 
-    if selected_interests:
+    if selected_interest:
+        subcategories = selected_interest.subcategory
         subcategory_options = ''
-        for selected_interest in selected_interests:
-            subcategories = Subcategory.query.filter_by(
-                id=selected_interest.subcategory_id).all()
-            for subcategory in subcategories:
-                subcategory_options += f'<option value="{subcategory.id}">{subcategory.name}</option>'
+
+        # Ensure subcategories are retrieved as a list
+        if not isinstance(subcategories, list):
+            subcategories = [subcategories]
+
+        for subcategory in subcategories:
+            subcategory_options += f'<option value="{subcategory.id}">{subcategory.name}</option>'
 
         if subcategory_options:
             return subcategory_options
-        else:
-            return 'No subcategories found for the given interests.'
 
-    return ''  # Return an empty string if no matching interest is founds
+    return 'No subcategories found for the given interest.'
+
+    # Return an empty string if no matching interest is found
+    return ''
+
+    # Return an empty string if no matching interest is found
+    return ''
 
 
 @routes_blueprint.route('/test_saved_tags', methods=['GET'])
@@ -174,46 +181,35 @@ def test_saved_tags():
 @routes_blueprint.route('/addTags', methods=['GET', 'POST'])
 @login_required
 def addTags():
-    #interests = IntrestTest.query.order_by(IntrestTest.name).all()
-    interests = IntrestTest.query.order_by(
-        IntrestTest.name).distinct(IntrestTest.name).all()
-    unique_interest_names = set(
-        interest.name for interest in IntrestTest.query.distinct(IntrestTest.name).all())
-
+    # Fetch interests and subcategories
+    interests = IntrestTest.query.order_by(IntrestTest.name).all()
     subcategories = Subcategory.query.all()
-    print("1")
+
+    # Instantiate the form
     eform = editTagsForm()
-    eform.subcategory.choices = [(subcategory.id, subcategory.name)
-                                 for subcategory in subcategories]
-    print("2")
-    # Populate the area of interest choices
+
+    # Populate form choices
     eform.areaofinterest.choices = [
         (interest.id, interest.name) for interest in interests]
-    print("3")
-    # Populate the subcategory choices
     eform.subcategory.choices = [(subcategory.id, subcategory.name)
                                  for subcategory in subcategories]
-    print("4")
-    if request.method == 'POST':
-        if eform.validate_on_submit():
-            selected_interest = IntrestTest.query.get(
-                eform.areaofinterest.data)
 
-            # Update the user's interests
-            current_user.interests.append(selected_interest)
+    if request.method == 'POST' and eform.validate_on_submit():
+        selected_interest_id = eform.areaofinterest.data
+        selected_interest = IntrestTest.query.get(selected_interest_id)
 
-            # Now, you can access the subcategory through the selected_interest
-            selected_subcategory = selected_interest.subcategory
+        # Update the user's interests#
+        current_user.interests.append(selected_interest)
 
-            db.session.commit()
-            flash('Your changes have been saved')
-            return redirect(url_for('routes.addTags'))
+        # Now, you can access the subcategory through the selected_interest
+        selected_subcategory = selected_interest.subcategory
 
-    elif request.method == 'GET':
-        print("5")
-        eform.areaofinterest.data = current_user.interests
-    print("8")
-    return render_template('addTags.html', title='addTags', form=eform, unique_interest_names=unique_interest_names, subcategories=subcategories)
+        db.session.commit()
+        flash('Your changes have been saved')
+        return redirect(url_for('routes.addTags'))
+
+    # If it's a GET request or the form didn't validate, render the template
+    return render_template('addTags.html', title='Add Tags', form=eform, interests=interests, subcategories=subcategories)
 
 
 @routes_blueprint.route('/edit_profile', methods=['GET', 'POST'])
@@ -513,7 +509,7 @@ def createIntrests():
         # Check if the interest already exists in the database
         existing_interest = IntrestTest.query.filter_by(
             name=eForm.name.data).first()
-
+        print("hi")
        # if existing_interest:
         #    flash("Interest already exists", "warning")
         #   return redirect(url_for('routes.createIntrests'))
@@ -530,7 +526,10 @@ def createIntrests():
         flash("Interest added successfully", "success")
         # Redirect back to the form page
         return redirect(url_for('routes.createIntrests'))
+    else:
 
+        # Print out form errors to see why validation failed
+        print(eForm.errors)
     return render_template('createIntrests.html', form=eForm)
 
 
@@ -965,13 +964,38 @@ def search_publications():
         "engine": "google_scholar",
         "q": query,
         # Replace 'secret_api_key' with your actual SerpApi key
-        "api_key": "7b0dfdd55f413940ad0f7e70cd1eba865208e60506508f0a2d4825e98b0b5439"
+        #  "api_key": "7b0dfdd55f413940ad0f7e70cd1eba865208e60506508f0a2d4825e98b0b5439"
+        # commented for now, so i dont accidently hit my limit
     }
 
     search = GoogleSearch(params)
     results = search.get_dict()
-
+    # parseData(results)
+    parseData()
     return results
+
+
+def parseData():
+    # Read the data from the file
+    with open('serpApi.txt', 'r') as file:
+        data = file.read()
+
+    # Remove the outer brackets to obtain individual publications
+    publications_text = data.strip('[]')
+
+    # Split the text to get individual publications
+    publications = publications_text.split('},{')
+
+    # Clean up the data (remove curly braces, etc.)
+    cleaned_publications = [pub.strip('{}') for pub in publications]
+
+    # Process or print each individual publication's details
+    for pub in cleaned_publications:
+        i = 0
+        if (i == 0):
+            # You can save this to another file or perform further parsing as needed
+            print(pub)
+            i = i+1
 
 # @routes_blueprint.route('/', methods=['GET'])#/=root pathx
 # @routes_blueprint.route('/index', methods=['GET'])

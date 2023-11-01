@@ -54,19 +54,19 @@ class Affiliate(db.Model, UserMixin):
     password_hash = db.Column(db.String(128), nullable=False, default=None)
     firstname = db.Column(db.String(128))
     lastname = db.Column(db.String(128))
-    sponsor = db.Column(db.String)
+    sponsor = db.Column(db.String(128))
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
-    membership = db.Column(db.String)
-    wsuCampus = db.Column(db.String)
+    membership = db.Column(db.String(128))
+    wsuCampus = db.Column(db.String(128))
     #department = db.Column(db.String)
     departments = db.relationship(
         "Department", secondary=works_departments, backref="affiliates"
     )
     # For heavens sake please don't remove this.
-    department = db.Column(db.String)
-    university = db.Column(db.String)
-    partners = db.Column(db.String)
-    url = db.Column(db.String)
+    department = db.Column(db.String(128))
+    university = db.Column(db.String(128))
+    partners = db.Column(db.String(128))
+    url = db.Column(db.String(128))
     projects = db.relationship("Project", secondary=works, backref="authors")
     interests = db.relationship(
         "IntrestTest", secondary=interests, backref="affiliates")
@@ -91,7 +91,7 @@ class Department(db.Model):
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
-    url = db.Column(db.String, nullable=False)
+    url = db.Column(db.String(128), nullable=False)
 
 
 class Interest(db.Model):
