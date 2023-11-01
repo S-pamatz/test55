@@ -8,8 +8,8 @@
             <label for="interestDropdown">Select Interest:</label>
             <select class="form-control" id="interestDropdown" name="areaofinterest">
                 <option value="">Select Interest</option>
-                {% for interest_name in unique_interest_names %}
-                    <option value="{{ interest_name }}">{{ interest_name }}</option>
+                {% for interest in interests %}
+                    <option value="{{ interest.id }}">{{ interest.name }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -24,26 +24,20 @@
         <button type="submit" class="btn btn-primary">Save</button>
     </form>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#interestDropdown').on('change', function() {
-                var selectedInterest = $(this).val();
-                var subcategoryDropdown = $('#subcategoryDropdown');
-
-                if (selectedInterest) {
-                    $.ajax({
-                        type: 'GET',
-                        url: '/get_subcategories/' + selectedInterest,
-                        success: function(data) {
-                            subcategoryDropdown.html(data);
-                        }
-                    });
-                } else {
-                    subcategoryDropdown.empty();
-                    subcategoryDropdown.prop('disabled', true);
-                }
-            });
+    <script type="text/javascript">
+        document.getElementById('interestDropdown').addEventListener('change', function() {
+            var selectedInterest = this.value;
+            var subcategoryDropdown = document.getElementById('subcategoryDropdown');
+            
+            // Clear existing subcategory dropdown options
+            subcategoryDropdown.innerHTML = '<option value="">Select Subcategory</option>';
+            
+            // Fetch subcategories for the selected interest using AJAX
+            fetch('/get_subcategories/' + selectedInterest)
+                .then(response => response.text())
+                .then(data => {
+                    subcategoryDropdown.innerHTML += data;  // Add fetched subcategories to the dropdown
+                });
         });
     </script>
 {% endblock %}

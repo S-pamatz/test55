@@ -126,14 +126,15 @@ def register(givenEmail):
 @auth_blueprint.route('/register1', methods=['GET', 'POST'])
 def register1():
     rform = affiliateRegister()
-    rform.email.data = "121@wsu.com"
-    rform.email.render_kw = {'readonly': True}
+   # @ rform.email.data = "121@wsu.com"
+   # rform.email.render_kw = {'readonly': True}
     is_empty = Affiliate.query.count()
     if rform.validate_on_submit():
         affiliate = Affiliate(firstname=rform.firstname.data,
                               lastname=rform.lastname.data,
                               wsuCampus=rform.wsuCampus.data,
                               membership=rform.membership.data,
+                              email=rform.email.data,
                               url=check_url(rform.url.data),
                               )
         affiliate.set_password(password=rform.password.data)

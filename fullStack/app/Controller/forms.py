@@ -77,9 +77,9 @@ class EditForm(FlaskForm):
 
 class editTagsForm(FlaskForm):
     areaofinterest = SelectField(
-        'Area of Interest:')
+        'areaofinterest:')
     #areaofinterest = SelectField('Area of Interest', coerce=int)
-    subcategory = SelectField('Sub-Area of Interest:')
+    subcategory = SelectField('subcategory:')
     submit = SubmitField('Submit')
 
 
