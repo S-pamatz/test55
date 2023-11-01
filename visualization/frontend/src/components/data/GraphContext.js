@@ -90,7 +90,8 @@ export const GraphContextProvider = (props) => {
         ));
       }
     }
-
+    console.log("updatedNodes: ", updatedNodes)
+    console.log("updatedLinks: ", updatedLinks)
     setNodes(updatedNodes);
     setLinks(updatedLinks);
   };
