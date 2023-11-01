@@ -8,6 +8,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "d3": "^7.8.4",
+    "eslint-plugin-jest-dom": "^5.1.0",
     "mocha": "^10.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -21,12 +22,6 @@
     "build": "react-scripts build",
     "test": "jest",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [

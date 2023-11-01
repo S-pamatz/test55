@@ -62,6 +62,12 @@ export const expandNodeUsingFilteredEntries = (
 };
 // filter out the descendants of the clicked node with id and return the updated nodes and links
 export const collapseNode = (nodes, links, clickedNode) => {
+  if (!nodes.find((n) => n.id === clickedNode.id)) {
+    return { updatedNodes: nodes, updatedLinks: links };
+  }
+  if (!clickedNode.expanded) {
+    return { updatedNodes: nodes, updatedLinks: links };
+  }
   const descendants = findDescendants(nodes, clickedNode);
   const descendantIds = descendants.map((n) => n.id);
 
@@ -81,6 +87,9 @@ export const collapseNode = (nodes, links, clickedNode) => {
 export const expandNode = (nodes, links, clickedNode, nodeLibrary) => {
   let updatedNodes = [...nodes];
   let updatedLinks = [...links];
+  if (clickedNode.expanded) {
+    return { updatedNodes, updatedLinks };
+  }
   const children = nodeLibrary
     .filter((n) => n.parent === clickedNode.id)
     .map((child) => {
@@ -88,7 +97,7 @@ export const expandNode = (nodes, links, clickedNode, nodeLibrary) => {
         ...child,
         depth: clickedNode.depth + 1,
         icon: Department,
-        radius: clickedNode.radius /2
+        // radius: clickedNode.radius /2
       };
     });
   children.forEach((child) => {
