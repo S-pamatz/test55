@@ -61,6 +61,7 @@ const ForceDirectGraph = () => {
       .enter()
       .append("g")
       .attr("class", "nodeGroup")
+      .attr("data-testid", (d) => `node-${d.id}`)
       .call(
         d3.drag().on("start", dragstart).on("drag", drag).on("end", dragend)
       );
@@ -206,7 +207,7 @@ const ForceDirectGraph = () => {
   }, [nodes, links]);
 
   return (
-    <svg className="graph" ref={graphRef} width={1500} height={1000}></svg>
+    <svg className="graph" data-testid="force-graph" ref={graphRef} width={1500} height={1000}></svg>
   );
 };
 
