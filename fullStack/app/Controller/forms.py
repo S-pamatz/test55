@@ -3,7 +3,7 @@ from flask_wtf.file import FileField, FileAllowed
 from wtforms import SelectMultipleField, StringField, SubmitField, TextAreaField, PasswordField, SelectField
 from wtforms_sqlalchemy.fields import QuerySelectField
 from wtforms.validators import ValidationError, Length, DataRequired, Email, EqualTo
-from app.Model.models import Affiliate, Department, Sponsor, Universities_Colleges
+from app.Model.models import Affiliate, Department, Partners, Sponsor, Universities_Colleges
 from flask_login import current_user
 
 
@@ -31,6 +31,9 @@ class EditForm(FlaskForm):
                              validators=[DataRequired()])
     sponsor = SelectField('sponsor:',
                           validators=[DataRequired()])
+    partners = SelectField('partners:',
+                           validators=[DataRequired()])
+
     membership = SelectField('membership:', choices=[(
         'Please Select an Option Below'), ('Yes, I am a member'), ('No, I am not a member')], validators=[DataRequired()])
     URL = StringField('URL:')
@@ -45,6 +48,12 @@ class EditForm(FlaskForm):
             Sponsor.id).all()
         self.sponsor.choices = [(uni.name, uni.name)
                                 for uni in sponsor]
+
+    def set_partners(self):
+
+        partners = Partners.query.order_by(Partners.id).all()
+        self.partners.choices = [(partner.name, partner.name)
+                                 for partner in partners]
 
     def set_university_choices(self):
 
