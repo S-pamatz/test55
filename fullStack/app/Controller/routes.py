@@ -1,4 +1,7 @@
-from flask import render_template  # Import Flask function for rendering templates
+# Import Flask function for rendering templates
+from flask import Flask, render_template
+from serpapi import GoogleSearch
+from flask import render_template
 from flask import Flask, jsonify
 import base64
 import csv
@@ -945,6 +948,30 @@ def user_interests():
         })
 
     return "User not found or not logged in"
+
+
+# pip install google-search-results
+
+
+# Your SerpApi API key
+api_key = 'YOUR_API_KEY'
+
+
+@routes_blueprint.route('/search_publications', methods=['GET'])
+def search_publications():
+    query = "Jan Boll"
+
+    params = {
+        "engine": "google_scholar",
+        "q": query,
+        # Replace 'secret_api_key' with your actual SerpApi key
+        "api_key": "7b0dfdd55f413940ad0f7e70cd1eba865208e60506508f0a2d4825e98b0b5439"
+    }
+
+    search = GoogleSearch(params)
+    results = search.get_dict()
+
+    return results
 
 # @routes_blueprint.route('/', methods=['GET'])#/=root pathx
 # @routes_blueprint.route('/index', methods=['GET'])
