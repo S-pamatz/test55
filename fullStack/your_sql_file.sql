@@ -109,7 +109,7 @@ UNLOCK TABLES;
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Interest` (
+CREATE TABLE `interest` (
   `id`  int(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(120) NOT NULL,
   PRIMARY KEY (`id`)
@@ -204,7 +204,7 @@ CREATE TABLE subcategory (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Universities_Colleges` (
+CREATE TABLE `universities_colleges` (
   `id`  int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`)
