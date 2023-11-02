@@ -18,8 +18,10 @@
 --
 -- Table structure for table `affiliate`
 --
+/*
 
-DROP TABLE IF EXISTS `affiliate`;
+*/
+
 
 CREATE TABLE `affiliate` (
   `id`  int(11) NOT NULL AUTO_INCREMENT,
@@ -53,7 +55,7 @@ UNLOCK TABLES;
 -- Table structure for table `campus`
 --
 
-DROP TABLE IF EXISTS `campus`;
+
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `campus` (
@@ -76,7 +78,7 @@ UNLOCK TABLES;
 -- Table structure for table `department`
 --
 
-DROP TABLE IF EXISTS `department`;
+
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `department` (
@@ -104,7 +106,7 @@ UNLOCK TABLES;
 -- Table structure for table `interest`
 --
 
-DROP TABLE IF EXISTS `Interest`;
+
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Interest` (
@@ -128,7 +130,7 @@ UNLOCK TABLES;
 -- Table structure for table `project`
 --
 
-DROP TABLE IF EXISTS `project`;
+
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `project` (
@@ -152,7 +154,7 @@ UNLOCK TABLES;
 -- Table structure for table `works`
 --
 
-DROP TABLE IF EXISTS `works`;
+
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `works` (
@@ -199,7 +201,7 @@ CREATE TABLE subcategory (
 
 
 
-DROP TABLE IF EXISTS `Universities_Colleges`;
+
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Universities_Colleges` (
@@ -210,7 +212,7 @@ CREATE TABLE `Universities_Colleges` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
-DROP TABLE IF EXISTS `sponsor`;
+
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sponsor` (
@@ -222,7 +224,7 @@ CREATE TABLE `sponsor` (
 
 
 
-DROP TABLE IF EXISTS `partners`;
+
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `partners` (
