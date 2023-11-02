@@ -1,6 +1,6 @@
 # Import Flask function for rendering templates
 from flask import Flask, render_template
-from serpapi import GoogleSearch
+#from serpapi import GoogleSearch
 from flask import render_template
 from flask import Flask, jsonify
 import base64
@@ -106,16 +106,37 @@ def save_picture(form_picture):
 def tempIndex():
     return render_template('cereoLink.html')
 
+def test_saved_tags1():
+    user_interests = current_user.interests
+    combined_data = {}
 
+    for interest in user_interests:
+        interest_name = interest.name
+        subcategory_name = interest.subcategory.name if interest.subcategory else None
+
+        if interest_name not in combined_data:
+            combined_data[interest_name] = {
+                "Interest": interest_name, "SubCategories": []}
+
+        if subcategory_name:
+            combined_data[interest_name]["SubCategories"].append(
+                subcategory_name)
+
+    result_data = list(combined_data.values())
+
+    # Return the combined data directly
+    return result_data
 @routes_blueprint.route('/index', methods=['GET'])
 @routes_blueprint.route('/', methods=['GET'])
 @login_required
 def index():
+    print("hiu")
     #eform = EmptyForm()
     image_file = url_for('static', filename=current_user.image_file)
     # Assuming 'interests' is the relationship between Affiliate and IntrestTest
     categories = current_user.interests
-
+    combined_data=test_saved_tags1()
+    print("this is a test",combined_data)
     # Retrieve all subcategories related to the current user's categories
     subcategories = []
     for category in categories:
@@ -124,7 +145,7 @@ def index():
     print(subcategory_names)
 
     print(categories)
-    return render_template('display_profile.html', title='Display Profile', affiliate=current_user, image_file=image_file)
+    return render_template('display_profile.html', title='Display Profile', affiliate=current_user, image_file=image_file, combined_data= combined_data)
 
 from flask import render_template  # Import Flask function for rendering templates
 from flask import Flask, jsonify
@@ -303,7 +324,8 @@ def test_saved_tags():
 @login_required
 def addTags():
     # Fetch interests and subcategories
-    interests = IntrestTest.query.order_by(IntrestTest.name).all()
+   # Fetch distinct interests
+    interests = db.session.query(IntrestTest).distinct(IntrestTest.name).order_by(IntrestTest.name).all()
     subcategories = Subcategory.query.all()
 
     # Instantiate the form
@@ -314,7 +336,6 @@ def addTags():
         (interest.id, interest.name) for interest in interests]
     eform.subcategory.choices = [(subcategory.id, subcategory.name)
                                  for subcategory in subcategories]
-
     if request.method == 'POST' and eform.validate_on_submit():
         selected_interest_id = eform.areaofinterest.data
         selected_interest = IntrestTest.query.get(selected_interest_id)
@@ -1080,23 +1101,8 @@ def user_interests():
 api_key = 'YOUR_API_KEY'
 
 
-@routes_blueprint.route('/search_publications', methods=['GET'])
-def search_publications():
-    query = "Jan Boll"
 
-    params = {
-        "engine": "google_scholar",
-        "q": query,
-        # Replace 'secret_api_key' with your actual SerpApi key
-        #  "api_key": "7b0dfdd55f413940ad0f7e70cd1eba865208e60506508f0a2d4825e98b0b5439"
-        # commented for now, so i dont accidently hit my limit
-    }
 
-    search = GoogleSearch(params)
-    results = search.get_dict()
-    # parseData(results)
-    parseData()
-    return results
 
 
 def parseData():
