@@ -49,35 +49,75 @@ mail = Mail(application)
 # Flask-Mail Configuration
 
 s = URLSafeTimedSerializer('Thisisasecret!')
-
+#http://127.0.0.1:5000/scopus_search?full_name=Boll,%20Jan
 @routes_blueprint.route('/scopus_search', methods=['GET'])
 def scopus_search():
-    # Set up the Scopus API endpoint and your API key
     base_url = "https://api.elsevier.com/content/search/scopus"
     api_key = "bb043bb9dd59b0773aa25ee46c55307a"  # Replace with your actual API key
+   # api_key="7wIu7PY7cV8dXPxpaS744oKcXDsAhuAaDrM68GXi"
+    professor_full_name = request.args.get('full_name')
 
-    # Retrieve the professor's name from the request
-    professor_name = request.args.get('boll')  # Assuming 'professor_name' is a parameter passed in the request
-
-    # Make sure a professor's name is provided
-    if professor_name:
-        # Construct the URL for the Scopus search specifically for the professor's publications
-        query = f"AUTHLASTNAME({professor_name})"  # Construct a query to search by author's last name
+    if professor_full_name:
+        query = f"AUTHNAME(\"{professor_full_name}\")"
         search_url = f"{base_url}?query={query}"
         headers = {"X-ELS-APIKey": api_key}
 
-        # Make a GET request to the Scopus API
         response = requests.get(search_url, headers=headers)
 
-        # Process the response
         if response.status_code == 200:
             data = response.json()
-            return jsonify(data)  # Return the JSON response from Scopus as a JSON object in the response
+            return jsonify(data)
         else:
             return f"Error: {response.status_code}", response.status_code
     else:
-        return "No professor's name provided", 400  # Return an error if no professor's name parameter is provided
+        return "No professor's name provided", 400
 
+#https://api.semanticscholar.org/api-docs/graph#tag/Author-Data/operation/get_graph_get_author_papers
+#http://127.0.0.1:5000/semantic_scholar_author_search?author_name=Jan+Boll
+@routes_blueprint.route('/semantic_scholar_author_search', methods=['GET'])# this gets the id
+def semantic_scholar_author_search():
+    base_url = "https://api.semanticscholar.org/graph/v1/author/search"
+    s2_api_key = "7wIu7PY7cV8dXPxpaS744oKcXDsAhuAaDrM68GXi"  # Replace with your Semantic Scholar API key
+
+    author_name = request.args.get('author_name')
+
+    if author_name:
+        query = author_name.replace(' ', '+')  # Format the query for the URL
+
+        # Construct the URL with the query parameter
+        search_url = f"{base_url}?query={query}"
+        headers = {"x-api-key": s2_api_key}
+
+        response = requests.get(search_url, headers=headers)
+
+        if response.status_code == 200:
+            data = response.json()
+            return jsonify(data)
+        else:
+            return f"Error: {response.status_code}", response.status_code
+    else:
+        return "No author name provided", 400
+
+#http://127.0.0.1:5000/semantic_scholar_author_papers?author_id=2248598385
+
+@routes_blueprint.route('/semantic_scholar_author_papers', methods=['GET'])# this gets the id abd searches up papers
+def semantic_scholar_author_papers():
+    s2_api_key = "7wIu7PY7cV8dXPxpaS744oKcXDsAhuAaDrM68GXi"  # Replace with your Semantic Scholar API key
+    author_id = request.args.get('author_id')
+
+    if author_id:
+        base_url = f"https://api.semanticscholar.org/graph/v1/author/{author_id}/papers"
+        headers = {"x-api-key": s2_api_key}
+
+        response = requests.get(base_url, headers=headers)
+
+        if response.status_code == 200:
+            data = response.json()
+            return jsonify(data)
+        else:
+            return f"Error: {response.status_code}", response.status_code
+    else:
+        return "No author ID provided", 400
 
 
 
