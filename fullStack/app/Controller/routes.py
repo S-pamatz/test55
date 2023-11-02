@@ -193,7 +193,7 @@ def save_picture(form_picture):
     return picture_fn
 
 
-
+#
 
 @routes_blueprint.route('/get_subcategories/<selected_interest_id>', methods=['GET'])
 def get_subcategories(selected_interest_id):
