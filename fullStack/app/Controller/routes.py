@@ -286,7 +286,7 @@ def addTags():
 def edit_profile():
     image_file = url_for('static', filename=current_user.image_file)
     eform = EditForm()
-    eform.set_department_choices()
+  
     eform.set_university_choices()
     eform.set_sponsor()
     eform.set_partners()
@@ -294,10 +294,7 @@ def edit_profile():
 
   # Within the function, before querying the database for department
 
-    department_name = eform.department.data
-    print("Department Name from Form:", department_name)  # Add this line
-
-    department = Department.query.filter_by(name=department_name).first()
+  
 
     if request.method == 'POST' and eform.validate_on_submit():
         if eform.picture.data:
@@ -312,20 +309,11 @@ def edit_profile():
         current_user.sponsor = eform.sponsor.data
         current_user.partners = eform.partners.data
         current_user.url = eform.URL.data
-
+        current_user.department=  eform.department.data
         if eform.password.data:  # Set password only if it's provided
             current_user.set_password(eform.password.data)
 
-        # Fetch the department instance based on the form data
-        department_name = eform.department.data
-        print("1", department_name)
-        department = Department.query.filter_by(name=department_name).first()
-        print("2", department)
-        if department:
-            print("1")
-            # Assign the department to the current user's departments
-            current_user.departments = [department]  # Set as a list
-            print("3", current_user.departments)
+       
         db.session.commit()
         flash('Your changes have been saved')
         return redirect(url_for('routes.index'))
@@ -338,9 +326,7 @@ def edit_profile():
         eform.university.data = current_user.university
         eform.sponsor.data = current_user.sponsor
         eform.partners.data = current_user.partners
-        if current_user.departments:
-            # Fill the form with the first department's name
-            eform.department.data = current_user.departments[0].name
+        eform.department.data=current_user.department
 
         eform.URL.data = current_user.url
 
