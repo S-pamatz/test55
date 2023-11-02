@@ -56,12 +56,13 @@ def scopus_search():
     base_url = "https://api.elsevier.com/content/search/scopus"
     api_key = "bb043bb9dd59b0773aa25ee46c55307a"  # Replace with your actual API key
 
-    # Retrieve the query parameter from the request
-    query = request.args.get('query')
+    # Retrieve the professor's name from the request
+    professor_name = request.args.get('boll')  # Assuming 'professor_name' is a parameter passed in the request
 
-    # Make sure a query is provided
-    if query:
-        # Construct the URL for the Scopus search
+    # Make sure a professor's name is provided
+    if professor_name:
+        # Construct the URL for the Scopus search specifically for the professor's publications
+        query = f"AUTHLASTNAME({professor_name})"  # Construct a query to search by author's last name
         search_url = f"{base_url}?query={query}"
         headers = {"X-ELS-APIKey": api_key}
 
@@ -75,7 +76,8 @@ def scopus_search():
         else:
             return f"Error: {response.status_code}", response.status_code
     else:
-        return "No query provided", 400  # Return an error if no query parameter is provided
+        return "No professor's name provided", 400  # Return an error if no professor's name parameter is provided
+
 
 
 
@@ -286,15 +288,19 @@ def addTags():
 def edit_profile():
     image_file = url_for('static', filename=current_user.image_file)
     eform = EditForm()
-  
+    eform.set_department_choices()
     eform.set_university_choices()
     eform.set_sponsor()
     eform.set_partners()
+    
     # Within the function, after `eform.set_department_choices()`
 
   # Within the function, before querying the database for department
 
-  
+    department_name = eform.department.data
+    print("Department Name from Form:", department_name)  # Add this line
+
+    department = Department.query.filter_by(name=department_name).first()
 
     if request.method == 'POST' and eform.validate_on_submit():
         if eform.picture.data:
@@ -309,11 +315,21 @@ def edit_profile():
         current_user.sponsor = eform.sponsor.data
         current_user.partners = eform.partners.data
         current_user.url = eform.URL.data
-        current_user.department=  eform.department.data
+
         if eform.password.data:  # Set password only if it's provided
             current_user.set_password(eform.password.data)
 
-       
+        # Fetch the department instance based on the form data
+        department_name = eform.department.data
+        print("1", department_name)
+        department = Department.query.filter_by(name=department_name).first()
+        print("2", department)
+        if department:
+            print("1")
+            # Assign the department to the current user's departments
+            current_user.departments = [department]  # Set as a list
+            print("3", current_user.departments)
+            current_user.department = department_name
         db.session.commit()
         flash('Your changes have been saved')
         return redirect(url_for('routes.index'))
@@ -326,11 +342,14 @@ def edit_profile():
         eform.university.data = current_user.university
         eform.sponsor.data = current_user.sponsor
         eform.partners.data = current_user.partners
-        eform.department.data=current_user.department
+        if current_user.departments:
+            # Fill the form with the first department's name
+            eform.department.data = current_user.departments[0].name
 
         eform.URL.data = current_user.url
 
     return render_template('edit_profile.html', title='Edit Profile', form=eform, image_file=image_file)
+
 
 
 @routes_blueprint.route('/add_projects', methods=["POST", "GET"])
@@ -769,7 +788,7 @@ def search_interests():
     # Return the JSON response
     return jsonify(response)
 
-
+#http://127.0.0.1:5000/search?inputValue=James%20Lim
 @routes_blueprint.route('/search', methods=['GET'])
 def search():
     inputValue = request.args.get("inputValue")

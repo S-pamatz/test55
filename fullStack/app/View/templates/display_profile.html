@@ -18,8 +18,10 @@
             <h1>{{ affiliate.firstname }} {{ affiliate.lastname }}</h1>
             <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Email:</span></b> {{ affiliate.email }}</p>
             <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Area of Interest:</span></b> {{ affiliate.areaofinterest }}</p>
-            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Department:</span></b>{{ affiliate.department }}
-              
+            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Department:</span></b>
+                {% for department in affiliate.departments %}
+                    {{ department.name }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
             </p>
             <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Campus:</span></b> {{ affiliate.wsuCampus }}</p>
             <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Membership:</span></b> {{ affiliate.membership }}</p>

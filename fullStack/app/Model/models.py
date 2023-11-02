@@ -22,7 +22,11 @@ interests = db.Table(
     db.Column("affiliate_id", db.Integer, db.ForeignKey("affiliate.id")),
     db.Column("intresttest_id", db.Integer, db.ForeignKey("intrest_test.id")),
 )
-
+works_departments = db.Table(
+    "works_departments",
+    db.Column("affiliate_id", db.Integer, db.ForeignKey("affiliate.id")),
+    db.Column("department_id", db.Integer, db.ForeignKey("department.id"))
+)
 # model is how it is stored in the db. ewach class has certain data that is stored
 # forms is what the user sees. it is connected to html
 
@@ -55,7 +59,9 @@ class Affiliate(db.Model, UserMixin):
     membership = db.Column(db.String(128))
     wsuCampus = db.Column(db.String(128))
     #department = db.Column(db.String)
-   
+    departments = db.relationship(
+        "Department", secondary=works_departments, backref="affiliates"
+    )
     # For heavens sake please don't remove this.
     department = db.Column(db.String(128))
     university = db.Column(db.String(128))

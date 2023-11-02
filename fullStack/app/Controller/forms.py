@@ -25,8 +25,8 @@ class EditForm(FlaskForm):
     #email = StringField('Email:', validators=[DataRequired()])
     campus = SelectField('Campus:', choices=[('Please Select an Option Below'), ('WSU Pullman'), ('WSU Spokane'), (
         'WSU Tri-Cities'), ('WSU Vancouver'), ('WSU Everett'), ("WSU Global Campus")], validators=[DataRequired()])
-    department = SelectField('Department:', choices=[('Please Select an Option Below'), ('Anthropology'), ('Art'), ('Chemistry'), ('Criminal Justice and Criminology'), (
-        'Digital Technology and Culture'), ('English'), ('History'), ('Mathematics and Statistics'), ('Physics and Astronomy'), ('Psychology'), ('Sociology'), ('SBS'), ('CEE'), ('Biology')], validators=[DataRequired()])
+    department = SelectField('Department:', choices=[],
+                             validators=[DataRequired()])
     university = SelectField('University:',
                              validators=[DataRequired()])
     sponsor = SelectField('sponsor:',
@@ -48,7 +48,10 @@ class EditForm(FlaskForm):
             Sponsor.id).all()
         self.sponsor.choices = [(uni.name, uni.name)
                                 for uni in sponsor]
-
+    def set_department_choices(self):
+        departments = Department.query.order_by(Department.name).all()
+        self.department.choices = [
+            (department.name, department.name) for department in departments]
     def set_partners(self):
 
         partners = Partners.query.order_by(Partners.id).all()

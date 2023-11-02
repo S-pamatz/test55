@@ -136,7 +136,7 @@ def register1():
                               wsuCampus=rform.wsuCampus.data,
                               membership=rform.membership.data,
                               email=rform.email.data,
-                               department=rform.department.data,
+                              department=rform.department.data,
                               url=check_url(rform.url.data),
                               )
         affiliate.set_password(password=rform.password.data)
