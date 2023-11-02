@@ -1,6 +1,6 @@
 # Import Flask function for rendering templates
 from flask import Flask, render_template
-#from serpapi import GoogleSearch
+
 from flask import render_template
 from flask import Flask, jsonify
 import base64
@@ -19,6 +19,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from config import Config
 from flask import Flask
 from flask_mail import Mail, Message
+import requests
 routes_blueprint = Blueprint('routes', __name__)
 routes_blueprint.template_folder = Config.TEMPLATE_FOLDER
 
@@ -48,6 +49,34 @@ mail = Mail(application)
 # Flask-Mail Configuration
 
 s = URLSafeTimedSerializer('Thisisasecret!')
+
+@routes_blueprint.route('/scopus_search', methods=['GET'])
+def scopus_search():
+    # Set up the Scopus API endpoint and your API key
+    base_url = "https://api.elsevier.com/content/search/scopus"
+    api_key = "bb043bb9dd59b0773aa25ee46c55307a"  # Replace with your actual API key
+
+    # Retrieve the query parameter from the request
+    query = request.args.get('query')
+
+    # Make sure a query is provided
+    if query:
+        # Construct the URL for the Scopus search
+        search_url = f"{base_url}?query={query}"
+        headers = {"X-ELS-APIKey": api_key}
+
+        # Make a GET request to the Scopus API
+        response = requests.get(search_url, headers=headers)
+
+        # Process the response
+        if response.status_code == 200:
+            data = response.json()
+            return jsonify(data)  # Return the JSON response from Scopus as a JSON object in the response
+        else:
+            return f"Error: {response.status_code}", response.status_code
+    else:
+        return "No query provided", 400  # Return an error if no query parameter is provided
+
 
 
 @routes_blueprint.route('/email/<givenEmail>', methods=['GET', 'POST'])
@@ -147,94 +176,11 @@ def index():
     print(categories)
     return render_template('display_profile.html', title='Display Profile', affiliate=current_user, image_file=image_file, combined_data= combined_data)
 
-from flask import render_template  # Import Flask function for rendering templates
-from flask import Flask, jsonify
-import base64
-import csv
-from flask import make_response, render_template, flash, redirect, url_for, request, Blueprint, jsonify
-from itsdangerous import SignatureExpired, URLSafeTimedSerializer
-from app import db
-import pandas as pd
-import secrets
-import os
-import app
-from app.Controller.auth_forms import AddIntrest, AddIntrestOld, AddKeywords, affiliateRegister
-from app.Controller.forms import EditForm, AddProjectsForm, editTagsForm
-from app.Model.models import Affiliate, Department, Interest, IntrestTest, Project, Subcategory
-from flask_login import login_user, current_user, logout_user, login_required
-from config import Config
-from flask import Flask
-from flask_mail import Mail, Message
-routes_blueprint = Blueprint('routes', __name__)
-routes_blueprint.template_folder = Config.TEMPLATE_FOLDER
 
 
-application = Flask(__name__)
-# app1.config.from_object(Config)
-# Flask-Mail Configuration
-# Example: Outlook/Office 365 SMTP server
-# https://stackoverflow.com/questions/17980351/flask-mail-not-sending-emails-no-error-is-being-reported
-# https://stackoverflow.com/questions/28466384/python-flask-email-keyerror-keyerror-mail
-application.config['MAIL_SERVER'] = 'smtp.office365.com'
-application.config['MAIL_PORT'] = 587
-application.config['MAIL_DEFAULT_SENDER'] = 'wsuaffiliateconfirmation@outlook.com'
-application.config['MAIL_USERNAME'] = 'wsuaffiliateconfirmation@outlook.com'
-application.config['MAIL_PASSWORD'] = 'changethislater!'
-application.config['MAIL_USE_TLS'] = True
-application.config['MAIL_USE_SSL'] = False
-
-application.config['MAIL_DEBUG'] = True
-
-application.config['MAIL_SUPPRESS_SEND'] = False
-application.config['TESTING'] = False
-mail = Mail(application)
-#DEBUG = True
-#from flask.ext.mail import Mail, Message
-# Flask-Mail Configuration
-
-s = URLSafeTimedSerializer('Thisisasecret!')
 
 
-@routes_blueprint.route('/email/<givenEmail>', methods=['GET', 'POST'])
-def email(givenEmail):
-    if request.method == 'GET':
 
-        # email = request.form['email']
-        print("1")
-        email = givenEmail
-        print(email)
-        token = s.dumps(email, salt='email-confirm')
-        print("2")
-        msg = Message(
-            'Confirm Email', sender='wsuaffiliateconfirmation@outlook.com', recipients=[email])
-        print("3")
-        link = url_for('routes.confirm_email', token=token,
-                       _external=True)  # look at later
-        print("this is test\n")
-        print(application.config['MAIL_SERVER'])
-        print(application.config['MAIL_PORT'])
-        msg.body = 'Your link is {}'.format(link)
-    # msg.body="test"ws1
-    # g@gmail.com
-
-        try:
-            mail.send(msg)
-        except Exception as e:
-            print("Email sending failed:", str(e))
-
-       # return '<h1>The email you entered is {}. The token is {}</h1>'.format(email, token)
-        return 'email sending...please check email'
-
-
-@routes_blueprint.route('/confirm_email/<token>')
-def confirm_email(token):
-    try:
-        email = s.loads(token, salt='email-confirm', max_age=3600)
-
-    except SignatureExpired:
-        return '<h1>The token is expired!</h1>'
-
-    return redirect(url_for('routes.tData', givenEmail=email))
 
 
 def save_picture(form_picture):
@@ -247,29 +193,7 @@ def save_picture(form_picture):
     return picture_fn
 
 
-@routes_blueprint.route('/home', methods=['GET'])
-def tempIndex():
-    return render_template('cereoLink.html')
 
-
-@routes_blueprint.route('/index', methods=['GET'])
-@routes_blueprint.route('/', methods=['GET'])
-@login_required
-def index():
-    #eform = EmptyForm()
-    image_file = url_for('static', filename=current_user.image_file)
-    # Assuming 'interests' is the relationship between Affiliate and IntrestTest
-    categories = current_user.interests
-
-    # Retrieve all subcategories related to the current user's categories
-    subcategories = []
-    for category in categories:
-        subcategories.extend(category.subcategory.interests)
-    subcategory_names = [subcategory.name for subcategory in subcategories]
-    print(subcategory_names)
-
-    print(categories)
-    return render_template('display_profile.html', title='Display Profile', affiliate=current_user, image_file=image_file)
 
 @routes_blueprint.route('/get_subcategories/<selected_interest_id>', methods=['GET'])
 def get_subcategories(selected_interest_id):
@@ -1097,8 +1021,7 @@ def user_interests():
 # pip install google-search-results
 
 
-# Your SerpApi API key
-api_key = 'YOUR_API_KEY'
+
 
 
 

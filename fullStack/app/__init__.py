@@ -23,7 +23,7 @@ def create_app(config_class=Config):
     app.static_folder = config_class.STATIC_FOLDER
     app.template_folder = config_class.TEMPLATE_FOLDER
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:teamFullStack@localhost/our_users1'
-   # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:CEREO2023@localhost:3306/mysql'
+  #  app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:CEREO2023@localhost:3306/mysql'
     # instad of localhost i need ipss
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://username:password@remote_server_ip_or_hostname:port/database_name'
 
