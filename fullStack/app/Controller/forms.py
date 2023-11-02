@@ -20,22 +20,18 @@ class ProfileForm(FlaskForm):
 class EditForm(FlaskForm):
     picture = FileField('Update Profile Picture', validators=[
                         FileAllowed(['jpg', 'png'])])
-    firstname = StringField('First Name:', validators=[DataRequired()])
-    lastname = StringField('Last Name:', validators=[DataRequired()])
+    firstname = StringField('First Name:')
+    lastname = StringField('Last Name:')
     #email = StringField('Email:', validators=[DataRequired()])
     campus = SelectField('Campus:', choices=[('Please Select an Option Below'), ('WSU Pullman'), ('WSU Spokane'), (
-        'WSU Tri-Cities'), ('WSU Vancouver'), ('WSU Everett'), ("WSU Global Campus")], validators=[DataRequired()])
-    department = SelectField('Department:', choices=[],
-                             validators=[DataRequired()])
-    university = SelectField('University:',
-                             validators=[DataRequired()])
-    sponsor = SelectField('sponsor:',
-                          validators=[DataRequired()])
-    partners = SelectField('partners:',
-                           validators=[DataRequired()])
+        'WSU Tri-Cities'), ('WSU Vancouver'), ('WSU Everett'), ("WSU Global Campus")])
+    department = SelectField('Department:', choices=[])
+    university = SelectField('University:')
+    sponsor = SelectField('sponsor:')
+    partners = SelectField('partners:')
 
     membership = SelectField('membership:', choices=[(
-        'Please Select an Option Below'), ('Yes, I am a member'), ('No, I am not a member')], validators=[DataRequired()])
+        'Please Select an Option Below'), ('Yes, I am a member'), ('No, I am not a member')])
     URL = StringField('URL:')
     password = PasswordField('Password:', validators=[DataRequired()])
     password2 = PasswordField('Repeat Password:', validators=[
