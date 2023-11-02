@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block app_content %}
-    <h1>Add Tags</h1>
+    <h1>Add Tags1</h1>
 
     <form method="POST" action="/addTags">
         {{ form.csrf_token }}
@@ -36,8 +36,22 @@
             fetch('/get_subcategories/' + selectedInterest)
                 .then(response => response.text())
                 .then(data => {
-                    subcategoryDropdown.innerHTML += data;  // Add fetched subcategories to the dropdown
+                    var subcategories = data.split('</option>');
+                    var uniqueSubcategories = {};
+    
+                    // Filter out duplicate subcategories based on their names
+                    subcategories.forEach(subcategory => {
+                        if (subcategory.trim() !== '') {
+                            var subcategoryName = subcategory.split('">')[1];
+                            if (!uniqueSubcategories[subcategoryName]) {
+                                uniqueSubcategories[subcategoryName] = true;
+                                subcategoryDropdown.innerHTML += subcategory + '</option>';
+                            }
+                        }
+                    });
                 });
         });
     </script>
-{% endblock %}
+    
+    
+{% endblock %}  

@@ -1,6 +1,6 @@
 # Import Flask function for rendering templates
 from flask import Flask, render_template
-from serpapi import GoogleSearch
+#from serpapi import GoogleSearch
 from flask import render_template
 from flask import Flask, jsonify
 import base64
@@ -106,6 +106,151 @@ def save_picture(form_picture):
 def tempIndex():
     return render_template('cereoLink.html')
 
+def test_saved_tags1():
+    user_interests = current_user.interests
+    combined_data = {}
+
+    for interest in user_interests:
+        interest_name = interest.name
+        subcategory_name = interest.subcategory.name if interest.subcategory else None
+
+        if interest_name not in combined_data:
+            combined_data[interest_name] = {
+                "Interest": interest_name, "SubCategories": []}
+
+        if subcategory_name:
+            combined_data[interest_name]["SubCategories"].append(
+                subcategory_name)
+
+    result_data = list(combined_data.values())
+
+    # Return the combined data directly
+    return result_data
+@routes_blueprint.route('/index', methods=['GET'])
+@routes_blueprint.route('/', methods=['GET'])
+@login_required
+def index():
+    print("hiu")
+    #eform = EmptyForm()
+    image_file = url_for('static', filename=current_user.image_file)
+    # Assuming 'interests' is the relationship between Affiliate and IntrestTest
+    categories = current_user.interests
+    combined_data=test_saved_tags1()
+    print("this is a test",combined_data)
+    # Retrieve all subcategories related to the current user's categories
+    subcategories = []
+    for category in categories:
+        subcategories.extend(category.subcategory.interests)
+    subcategory_names = [subcategory.name for subcategory in subcategories]
+    print(subcategory_names)
+
+    print(categories)
+    return render_template('display_profile.html', title='Display Profile', affiliate=current_user, image_file=image_file, combined_data= combined_data)
+
+from flask import render_template  # Import Flask function for rendering templates
+from flask import Flask, jsonify
+import base64
+import csv
+from flask import make_response, render_template, flash, redirect, url_for, request, Blueprint, jsonify
+from itsdangerous import SignatureExpired, URLSafeTimedSerializer
+from app import db
+import pandas as pd
+import secrets
+import os
+import app
+from app.Controller.auth_forms import AddIntrest, AddIntrestOld, AddKeywords, affiliateRegister
+from app.Controller.forms import EditForm, AddProjectsForm, editTagsForm
+from app.Model.models import Affiliate, Department, Interest, IntrestTest, Project, Subcategory
+from flask_login import login_user, current_user, logout_user, login_required
+from config import Config
+from flask import Flask
+from flask_mail import Mail, Message
+routes_blueprint = Blueprint('routes', __name__)
+routes_blueprint.template_folder = Config.TEMPLATE_FOLDER
+
+
+application = Flask(__name__)
+# app1.config.from_object(Config)
+# Flask-Mail Configuration
+# Example: Outlook/Office 365 SMTP server
+# https://stackoverflow.com/questions/17980351/flask-mail-not-sending-emails-no-error-is-being-reported
+# https://stackoverflow.com/questions/28466384/python-flask-email-keyerror-keyerror-mail
+application.config['MAIL_SERVER'] = 'smtp.office365.com'
+application.config['MAIL_PORT'] = 587
+application.config['MAIL_DEFAULT_SENDER'] = 'wsuaffiliateconfirmation@outlook.com'
+application.config['MAIL_USERNAME'] = 'wsuaffiliateconfirmation@outlook.com'
+application.config['MAIL_PASSWORD'] = 'changethislater!'
+application.config['MAIL_USE_TLS'] = True
+application.config['MAIL_USE_SSL'] = False
+
+application.config['MAIL_DEBUG'] = True
+
+application.config['MAIL_SUPPRESS_SEND'] = False
+application.config['TESTING'] = False
+mail = Mail(application)
+#DEBUG = True
+#from flask.ext.mail import Mail, Message
+# Flask-Mail Configuration
+
+s = URLSafeTimedSerializer('Thisisasecret!')
+
+
+@routes_blueprint.route('/email/<givenEmail>', methods=['GET', 'POST'])
+def email(givenEmail):
+    if request.method == 'GET':
+
+        # email = request.form['email']
+        print("1")
+        email = givenEmail
+        print(email)
+        token = s.dumps(email, salt='email-confirm')
+        print("2")
+        msg = Message(
+            'Confirm Email', sender='wsuaffiliateconfirmation@outlook.com', recipients=[email])
+        print("3")
+        link = url_for('routes.confirm_email', token=token,
+                       _external=True)  # look at later
+        print("this is test\n")
+        print(application.config['MAIL_SERVER'])
+        print(application.config['MAIL_PORT'])
+        msg.body = 'Your link is {}'.format(link)
+    # msg.body="test"ws1
+    # g@gmail.com
+
+        try:
+            mail.send(msg)
+        except Exception as e:
+            print("Email sending failed:", str(e))
+
+       # return '<h1>The email you entered is {}. The token is {}</h1>'.format(email, token)
+        return 'email sending...please check email'
+
+
+@routes_blueprint.route('/confirm_email/<token>')
+def confirm_email(token):
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=3600)
+
+    except SignatureExpired:
+        return '<h1>The token is expired!</h1>'
+
+    return redirect(url_for('routes.tData', givenEmail=email))
+
+
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(Config.STATIC_FOLDER, picture_fn)
+    form_picture.save(picture_path)
+
+    return picture_fn
+
+
+@routes_blueprint.route('/home', methods=['GET'])
+def tempIndex():
+    return render_template('cereoLink.html')
+
 
 @routes_blueprint.route('/index', methods=['GET'])
 @routes_blueprint.route('/', methods=['GET'])
@@ -125,7 +270,6 @@ def index():
 
     print(categories)
     return render_template('display_profile.html', title='Display Profile', affiliate=current_user, image_file=image_file)
-
 
 @routes_blueprint.route('/get_subcategories/<selected_interest_id>', methods=['GET'])
 def get_subcategories(selected_interest_id):
@@ -153,7 +297,6 @@ def get_subcategories(selected_interest_id):
     # Return an empty string if no matching interest is found
     return ''
 
-
 @routes_blueprint.route('/test_saved_tags', methods=['GET'])
 def test_saved_tags():
     user_interests = current_user.interests
@@ -177,12 +320,12 @@ def test_saved_tags():
         current_user.email: result_data
     })
 
-
 @routes_blueprint.route('/addTags', methods=['GET', 'POST'])
 @login_required
 def addTags():
     # Fetch interests and subcategories
-    interests = IntrestTest.query.order_by(IntrestTest.name).all()
+   # Fetch distinct interests
+    interests = db.session.query(IntrestTest).distinct(IntrestTest.name).order_by(IntrestTest.name).all()
     subcategories = Subcategory.query.all()
 
     # Instantiate the form
@@ -193,7 +336,6 @@ def addTags():
         (interest.id, interest.name) for interest in interests]
     eform.subcategory.choices = [(subcategory.id, subcategory.name)
                                  for subcategory in subcategories]
-
     if request.method == 'POST' and eform.validate_on_submit():
         selected_interest_id = eform.areaofinterest.data
         selected_interest = IntrestTest.query.get(selected_interest_id)
@@ -210,6 +352,9 @@ def addTags():
 
     # If it's a GET request or the form didn't validate, render the template
     return render_template('addTags.html', title='Add Tags', form=eform, interests=interests, subcategories=subcategories)
+
+
+
 
 
 @routes_blueprint.route('/edit_profile', methods=['GET', 'POST'])
@@ -956,23 +1101,8 @@ def user_interests():
 api_key = 'YOUR_API_KEY'
 
 
-@routes_blueprint.route('/search_publications', methods=['GET'])
-def search_publications():
-    query = "Jan Boll"
 
-    params = {
-        "engine": "google_scholar",
-        "q": query,
-        # Replace 'secret_api_key' with your actual SerpApi key
-        #  "api_key": "7b0dfdd55f413940ad0f7e70cd1eba865208e60506508f0a2d4825e98b0b5439"
-        # commented for now, so i dont accidently hit my limit
-    }
 
-    search = GoogleSearch(params)
-    results = search.get_dict()
-    # parseData(results)
-    parseData()
-    return results
 
 
 def parseData():

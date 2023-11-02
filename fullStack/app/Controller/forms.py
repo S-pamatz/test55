@@ -77,10 +77,11 @@ class EditForm(FlaskForm):
 
 class editTagsForm(FlaskForm):
     areaofinterest = SelectField(
-        'areaofinterest:')
-    #areaofinterest = SelectField('Area of Interest', coerce=int)
-    subcategory = SelectField('subcategory:')
+        'Area of Interest:')
+  #  areaofinterest = SelectField('Area of Interest', coerce=int, validate_choice=True)
+    subcategory = SelectField('Sub-Area of Interest:')
     submit = SubmitField('Submit')
+
 
 
 class EmptyForm(FlaskForm):
