@@ -19,9 +19,9 @@
 -- Table structure for table `affiliate`
 --
 
-DROP TABLE IF EXISTS `Affiliate`;
+DROP TABLE IF EXISTS `affiliate`;
 
-CREATE TABLE `Affiliate` (
+CREATE TABLE `affiliate` (
   `id`  int(11) NOT NULL AUTO_INCREMENT,
   `image_file` varchar(200) DEFAULT NULL,
   `email` varchar(200) DEFAULT NULL,
@@ -43,9 +43,9 @@ CREATE TABLE `Affiliate` (
 -- Dumping data for table `affiliate`
 --
 
-LOCK TABLES `Affiliate` WRITE;
+LOCK TABLES `afiliate` WRITE;
 /*!40000 ALTER TABLE `affiliate` DISABLE KEYS */;
-INSERT INTO `Affiliate` VALUES (1,'0c950a3167ccbefe.jpg','limchangthe@yahoo.com','pbkdf2:sha256:260000$QNhRuAlAFB3kQok2$06c86fde8c90ad4bf66224c486b17f25c829983487923ac2240b09f5a910198b','James','Lim',1,'','WSU Pullman','Art','www.howtobeagentleman.com'),(2,'Default_pic.png','brianjoo@gmail.com','pbkdf2:sha256:260000$2rtqZ2MK19nW7pvV$39d26d369a76095ff1b7f3f0728c9a2bca03c4481308ed4e3b821da46d1b2d24','Brian','Joo',0,'None','WSU Pullman','Criminal Justice and Criminology','www.loveyourpuppies.com'),(3,'20846a612d71d60c.jpg','b.kandaswamy@wsu.edu','pbkdf2:sha256:260000$yMDhE9wB6YcX8GEO$d602b5887e87b89544e69f1db9e73ebe165b13dc4ae316a63a1a97dd502e9365','Subu','Kandaswamy',1,'Artificial Intelligence','WSU Pullman','Digital Technology and Culture','ce.wsu.edu/faculty/boll/');
+INSERT INTO `affiliate` VALUES (1,'0c950a3167ccbefe.jpg','limchangthe@yahoo.com','pbkdf2:sha256:260000$QNhRuAlAFB3kQok2$06c86fde8c90ad4bf66224c486b17f25c829983487923ac2240b09f5a910198b','James','Lim',1,'','WSU Pullman','Art','www.howtobeagentleman.com'),(2,'Default_pic.png','brianjoo@gmail.com','pbkdf2:sha256:260000$2rtqZ2MK19nW7pvV$39d26d369a76095ff1b7f3f0728c9a2bca03c4481308ed4e3b821da46d1b2d24','Brian','Joo',0,'None','WSU Pullman','Criminal Justice and Criminology','www.loveyourpuppies.com'),(3,'20846a612d71d60c.jpg','b.kandaswamy@wsu.edu','pbkdf2:sha256:260000$yMDhE9wB6YcX8GEO$d602b5887e87b89544e69f1db9e73ebe165b13dc4ae316a63a1a97dd502e9365','Subu','Kandaswamy',1,'Artificial Intelligence','WSU Pullman','Digital Technology and Culture','ce.wsu.edu/faculty/boll/');
 /*!40000 ALTER TABLE `affiliate` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -89,6 +89,11 @@ CREATE TABLE `department` (
 --
 -- Dumping data for table `department`
 --
+CREATE TABLE works_departments (
+    id SERIAL PRIMARY KEY,
+    affiliate_id INTEGER REFERENCES affiliate(id),
+    department_id INTEGER REFERENCES department(id)
+);
 
 LOCK TABLES `department` WRITE;
 /*!40000 ALTER TABLE `department` DISABLE KEYS */;
@@ -191,11 +196,6 @@ CREATE TABLE subcategory (
 
 
 
-CREATE TABLE works_departments (
-    id SERIAL PRIMARY KEY,
-    affiliate_id INTEGER REFERENCES affiliate(id),
-    department_id INTEGER REFERENCES department(id)
-);
 
 
 
