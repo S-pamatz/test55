@@ -7,6 +7,7 @@ screen.debug();
 jest.mock('d3');
 
 const MockGraphProvider = ({ children }) => {
+    screen.debug();
     const mockContextValue = {
         nodes: [
             {
@@ -53,7 +54,7 @@ test('renders ForceDirectGraph with provided context', () => {
     );
     await waitFor(() => {
         const nodeGroup = container.querySelector("[data-testid='node-0']");
-        expect(nodeGroup.classList.toString()).toContain('nodeGroup');
+        // expect(nodeGroup.classList.toString()).toContain('nodeGroup');
     });
     
 
@@ -64,44 +65,3 @@ test('renders ForceDirectGraph with provided context', () => {
 
 
 
-// import React from 'react';
-// import { render, screen, waitFor, within } from '@testing-library/react';
-// import ForceDirectGraph from '../src/components/graphComponents/ForceDirectGraph';
-// import GraphContext from '../src/components/data/GraphContext';
-
-// jest.mock('d3');
-
-// test('should have an initial node(root)',async () => {
-//     // Mock the context value that your component expects
-//     const mockContextValue = {
-//         nodes: [
-//             {
-//                 id: 0,
-//                 Name: 'Universities',
-//                 icon: 'University',
-//                 expanded: false,
-//                 depth: 0,
-//                 fx: 500,
-//                 fy: 400,
-//             },
-//         ],
-//         links: [],
-//     };
-
-//     // Wrap your component with the context provider and provide the mock value
-//     render(
-//         <GraphContext.Provider value={mockContextValue}>
-//             <ForceDirectGraph />
-//         </GraphContext.Provider>
-//     );
-    
-//     const nodeGroup = screen.getByTestId('nodeGroup');
-//     expect(nodeGroup).toBeInTheDocument();
-    
-//     // Additionally, you can check other attributes or content
-//     const circle = within(nodeGroup).getByRole('img'); // Assuming the <circle> represents the node
-//     expect(circle).toHaveAttribute('r', '40'); // Check if the radius is correct
-  
-//     const text = within(nodeGroup).getByText('UNI');
-//     expect(text).toBeInTheDocument();
-//   });

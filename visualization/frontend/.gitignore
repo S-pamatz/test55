@@ -4,4 +4,4 @@ node_modules/
 /playwright/.cache/
 .vscode
 .eslintcache
-
+.eslintrc.json
