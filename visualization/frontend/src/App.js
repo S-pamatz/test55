@@ -7,7 +7,7 @@ import Sidebar from "./components/layouts/graphLayout/LeftSidebar";
 import NodeInforightSidebar from "./components/layouts/graphLayout/RightSidebar";
 import CategoriesBar from "./components/layouts/graphLayout/CategoriesBar";
 import "./index.css";
-import { populateNodesWithUniqueData } from "./components/data/nodeLibrary";
+import { populateNodesWithUniqueData } from "./components/data/uniqueData";
 
 
 
