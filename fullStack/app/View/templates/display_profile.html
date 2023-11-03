@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block app_content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* Your CSS styles here */
+    </style>
+</head>
+<body>
+    <div class="flex-container">
+        <div class="profile-pic">
+            <a href="http://{{ affiliate.url }}">
+                <img src="{{ image_file }}" alt="profile_pic" width="250px" height="250px">
+            </a>
+        </div>
+        <div class="flex-box">
+            <h1>{{ affiliate.firstname }} {{ affiliate.lastname }}</h1>
+            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Email:</span></b> {{ affiliate.email }}</p>
+            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Area of Interest:</span></b> {{ affiliate.areaofinterest }}</p>
+            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Department:</span></b>
+                {% for department in affiliate.departments %}
+                    {{ department.name }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Campus:</span></b> {{ affiliate.wsuCampus }}</p>
+            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Membership:</span></b> {{ affiliate.membership }}</p>
+            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Uni/Col:</span></b> {{ affiliate.university }}</p>
+            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Sponsor:</span></b> {{ affiliate.sponsor }}</p>
+            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Partner:</span></b> {{ affiliate.partners }}</p>
+            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Link:</span></b><a href="http://{{ affiliate.url }}"> {{ affiliate.url }}</a></p>
+          
+                <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Interests:</span></b>
+                    {% for data in combined_data %}
+    <b>{{ data.Interest }}:</b>
+    {% for subcat in data.SubCategories %}
+        {{ subcat }}{% if not loop.last %}, {% endif %}
+    {% endfor %}
+    {% if not loop.last %}, {% endif %}
+{% endfor %}
+
+                </p>
+            </p>
+            
+        </div>
+        <div class="flex-options">
+            <a href="{{ url_for('routes.add_projects') }}">Add Projects</a>
+        </div>
+    </div>
+    <div class="flex-info">
+        <h4><span style="color: rgb(166, 15, 45); font-weight: bold;">Publications and Projects</span></h4>
+        {% for project in affiliate.projects %}
+            <ul>
+                <li>
+                    <p>{{ project.name }} <b><span style="color: rgb(166, 15, 45); font-weight: bold; margin-left: 48px;">URL: </span></b><a href="http://{{ project.url }}">{{ project.url }}</a></p>
+                </li>
+            </ul>
+        {% endfor %}
+    </div>
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block app_content %}
+    <h1>{{ title }}</h1>
+    <form action="" method="POST">
+        <h2>Affiliates</h2>
+        <table>
+            <tr>
+                <th></th>
+                <th>Name:</th>
+                <th>Email:</th>
+                <th>Is Admin:</th>
+                <th>Menu:</th>
+            </tr>
+            {% for affiliate in all_affiliates %}
+                {% if not affiliate.is_admin %}
+                    <tr>
+                        <td><input type="checkbox" name="user_check" value="{{ affiliate.id }}"></td>
+                        <td><img src="{{ url_for('static', filename= affiliate.image_file) }}" alt="profile_pic" width="25" height="25px">{{ affiliate.firstname }} {{ affiliate.lastname }}</td>
+                        <td>{{ affiliate.email }}</td>
+                        {% if affiliate.is_admin %}
+                            <td><input type="checkbox" checked></td>
+                        {% else %}
+                        <td><input type="checkbox"></td>
+                        {% endif %}
+                        <td><a href="{{ url_for('auth.admin_edit_profile', user_id=affiliate.id) }}">Edit</a></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+        <h2>Admins</h2>
+        <table>
+            <tr>
+                <th></th>
+                <th>Name:</th>
+                <th>Email:</th>
+                <th>Is Admin:</th>
+                <th>Menu:</th>
+            </tr>
+            {% for affiliate in all_affiliates %}
+                {% if affiliate.is_admin %}
+                    <tr>
+                        <td><input type="checkbox" name="user_check" value="{{ affiliate.id }}"></td>
+                        <td><img src="{{ url_for('static', filename= affiliate.image_file) }}" alt="profile_pic" width="25" height="25px">{{ affiliate.firstname }} {{ affiliate.lastname }}</td>
+                        <td>{{ affiliate.email }}</td>
+                        {% if affiliate.is_admin %}
+                            <td><input type="checkbox" checked></td>
+                        {% else %}
+                        <td><input type="checkbox"></td>
+                        {% endif %}
+                        <td><a href="{{ url_for('auth.admin_edit_profile', user_id=affiliate.id) }}">Edit</a></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+
+        <input type="submit" name="submit_button" value="Delete">
+</form>
+{% endblock %}
