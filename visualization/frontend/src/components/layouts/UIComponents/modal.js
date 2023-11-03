@@ -51,15 +51,15 @@ const Modal = ({ content, image }) => {
   const getmModalBoday = (keyword) => {
     var allElements = [];
     var keywordId;
-    if(keyword === "Departments") {
-            // get the Id of the Others node
-            var othersId;
-            for (const node of nodesLibrary) {
-              if (node.Name === "Others") {
-                othersId = node.id;
-                break;
-              }
-            }
+    if (keyword === "Departments") {
+      // get the Id of the Others node
+      var othersId;
+      for (const node of nodesLibrary) {
+        if (node.Name === "Others") {
+          othersId = node.id;
+          break;
+        }
+      }
       for (const node of nodesLibrary) {
         if (node.parent === 6) {
           allElements.push(node);
@@ -94,7 +94,7 @@ const Modal = ({ content, image }) => {
 
   return (
     <div>
-      {buttons}
+      <div className="modalContainer">{buttons}</div>
       <button
         className="categoryButton"
         onClick={(e) => handleCloseButtonClick("University", e)}

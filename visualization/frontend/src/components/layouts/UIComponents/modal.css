@@ -1,3 +1,9 @@
+.modalContainer {
+  max-height: 200px;
+  max-width: 200px;
+  overflow-y: auto;
+}
+
 .modal {
   position: absolute;
   bottom: 10vh; /* This pins it to the bottom */
