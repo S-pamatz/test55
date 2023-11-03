@@ -86,33 +86,53 @@ const Sidebar = () => {
       )}
 
       {activeView === "view" && (
-        <>
+        <div className={classes.view}>
           <h3>Entries</h3>
           <ul>
             <li>
-              <button onClick={handleButtonClick.bind(this, "Entities")}>Entities</button>
+              <button
+                className={classes.button}
+                onClick={handleButtonClick.bind(this, "Entities")}
+              >
+                Entities
+              </button>
             </li>
             <li>
-              <button onClick={handleButtonClick.bind(this, "Universities")}>
+              <button
+                className={classes.button}
+                onClick={handleButtonClick.bind(this, "Universities")}
+              >
                 Universities
               </button>
             </li>
             <li>
-              <button onClick={handleButtonClick.bind(this, "Interests")}>
+              <button
+                className={classes.button}
+                onClick={handleButtonClick.bind(this, "Interests")}
+              >
                 Interests
               </button>
             </li>
             <li>
-              <button onClick={handleButtonClick.bind(this, "Projects")}> Projects</button>
+              <button
+                className={classes.button}
+                onClick={handleButtonClick.bind(this, "Projects")}
+              >
+                Projects
+              </button>
             </li>
             <li>
-              <button onClick={handleButtonClick.bind(this, "Publications")}>
+              <button
+                className={classes.button}
+                onClick={handleButtonClick.bind(this, "Publications")}
+              >
                 Publications
               </button>
             </li>
           </ul>
-        </>
+        </div>
       )}
+
       {activeView === "search" && (
         <>
           <div className={classes.search}>
