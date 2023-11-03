@@ -21,7 +21,7 @@ const ForceDirectGraph = () => {
     const defaultRadius = 40;
     const width = +svg.attr("width");
     const height = +svg.attr("height");
-    const fontSize = defaultRadius/2.5;
+    const fontSize = defaultRadius / 2.5;
 
     const simulation = d3
       .forceSimulation(nodes)
@@ -52,7 +52,7 @@ const ForceDirectGraph = () => {
       .enter()
       .append("line")
       .attr("class", "link")
-      .attr("stroke", '#9D2235')
+      .attr("stroke", "#9D2235")
       .attr("stroke-width", 2);
 
     const nodeGroup = g
@@ -65,29 +65,27 @@ const ForceDirectGraph = () => {
       .call(
         d3.drag().on("start", dragstart).on("drag", drag).on("end", dragend)
       );
-      const defs = svg.append('defs');
+    const defs = svg.append("defs");
 
-      const gradient = defs.append('linearGradient')
-        .attr('id', 'nodeGradient')
-        .attr('x1', '0%')     // Gradient starts at the top
-        .attr('y1', '20%')
-        .attr('x2', '30%')     // Gradient ends at the bottom
-        .attr('y2', '150%');
-      
-      gradient.append('stop')
-        .attr('offset', '0%')
-        .attr('stop-color', '#9D2235');
-      
-      gradient.append('stop')
-        .attr('offset', '80%')
-        .attr('stop-color', 'black');
-      
+    const gradient = defs
+      .append("linearGradient")
+      .attr("id", "nodeGradient")
+      .attr("x1", "0%") // Gradient starts at the top
+      .attr("y1", "20%")
+      .attr("x2", "30%") // Gradient ends at the bottom
+      .attr("y2", "150%");
+
+    gradient.append("stop").attr("offset", "0%").attr("stop-color", "#9D2235");
+
+    gradient.append("stop").attr("offset", "80%").attr("stop-color", "black");
 
     // Append a circle behind the image
     nodeGroup
       .append("circle")
       .attr("r", (d) => d.radius || defaultRadius) // needd to improve this to make it dynamic with state update )
-      .attr("fill", (d) => (d.fill !== undefined ? d.fill : "url(#nodeGradient)"))
+      .attr("fill", (d) =>
+        d.fill !== undefined ? d.fill : "url(#nodeGradient)"
+      )
       // if node has fill color, use it here else no color
       .attr("opacity", 0.8);
 
@@ -100,6 +98,25 @@ const ForceDirectGraph = () => {
       .attr("x", -defaultRadius / 2) // center the image
       .attr("y", -defaultRadius / 1.2); // center the image
 
+    const acronymize = (str) => {
+      // Split the name into words by spaces
+      const words = str.Name.split(" ");
+
+      // If the name is a single word or the split results in empty array,
+      // return the first three characters
+      if (words.length === 1 || words.length === 0) {
+        return str.Name.slice(0, 3).toUpperCase();
+      } else {
+        // Otherwise, create an acronym from the first letter of each word,
+        // convert to uppercase, and ensure it doesn't exceed three letters
+        return words
+          .map((word) => word[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 3);
+      }
+    };
+
     // Append the text to the group
     nodeGroup
       .append("text")
@@ -109,19 +126,23 @@ const ForceDirectGraph = () => {
       .attr("font-size", fontSize + "px")
       .attr("data-full-text", (d) => d.Name)
       .attr("fill", "white")
-      .text((d) => d.Name.slice(0, 3).toUpperCase());
+      .text((d) => acronymize(d));
 
     nodeGroup.select("text").on("mouseover", function (event, d) {
       // Show full name
-      d3.select(this).text(d3.select(this).attr("data-full-text"));
+      d3.select(this)
+        .text(d3.select(this).attr("data-full-text"))
+        .style("fill", "#006699");
     });
 
     nodeGroup.select("text").on("mouseout", function (event, d) {
-      d3.select(this).text(d.Name.slice(0, 3).toUpperCase()); // Limit name length to fit circle
+      d3.select(this)
+        .text((d) => acronymize(d))
+        .style("fill", "white");
     });
 
     nodeGroup.select("circle").on("mouseover", function (event, d) {
-      d3.select(this).attr("r", (d) => defaultRadius+10);
+      d3.select(this).attr("r", (d) => defaultRadius + 10);
     });
 
     nodeGroup.select("circle").on("mouseout", function (event, d) {
@@ -129,6 +150,10 @@ const ForceDirectGraph = () => {
     });
 
     nodeGroup.select("circle").on("click", (event, d) => {
+      // console.log("Node clicked: ", d);
+      ctx.onNodeClick(d); // Call the callback provided from the parent
+    });
+    nodeGroup.select("text").on("click", (event, d) => {
       // console.log("Node clicked: ", d);
       ctx.onNodeClick(d); // Call the callback provided from the parent
     });
@@ -207,7 +232,13 @@ const ForceDirectGraph = () => {
   }, [nodes, links]);
 
   return (
-    <svg className="graph" data-testid="force-graph" ref={graphRef} width={1500} height={1000}></svg>
+    <svg
+      className="graph"
+      data-testid="force-graph"
+      ref={graphRef}
+      width={1500}
+      height={1000}
+    ></svg>
   );
 };
 
