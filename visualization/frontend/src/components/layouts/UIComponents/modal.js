@@ -51,6 +51,29 @@ const Modal = ({ content, image }) => {
   const getmModalBoday = (keyword) => {
     var allElements = [];
     var keywordId;
+    if(keyword === "Departments") {
+            // get the Id of the Others node
+            var othersId;
+            for (const node of nodesLibrary) {
+              if (node.Name === "Others") {
+                othersId = node.id;
+                break;
+              }
+            }
+      for (const node of nodesLibrary) {
+        if (node.parent === 6) {
+          allElements.push(node);
+        }
+      }
+
+      for (const node of nodesLibrary) {
+        if (node.parent === othersId) {
+          allElements.push(node);
+        }
+      }
+      return allElements;
+    }
+
     // find the id of the keyword
     for (const node of nodesLibrary) {
       if (node.Name === keyword) {
@@ -58,6 +81,7 @@ const Modal = ({ content, image }) => {
         break;
       }
     }
+
     // if a node has the id as a parent node then add it to the allElements
     for (const node of nodesLibrary) {
       if (node.parent === keywordId) {
