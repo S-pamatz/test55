@@ -29,21 +29,29 @@
   margin-bottom: 10px;
 }
 
+
 .sidebar button {
   width: 100%;
-  text-align: left;
-  padding: 10px;
+  text-align: center;
+  padding: 12px;
   border: none;
   border-radius: 5px;
-  background-color: white;
+  background: linear-gradient(45deg, #007BFF, #00C6FF); /* Modern gradient background */
+  color: white; /* Text color change for better contrast */
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-weight: 600; /* Making the text a bit bolder */
+  transition: background 0.3s, transform 0.3s; /* Adding a transition effect */
 }
 
 .sidebar button:hover {
-  background-color: #e9e9e9;
+  background: linear-gradient(45deg, #0069D9, #009ACF); /* Darker shade on hover */
+  transform: scale(1.05); /* Slightly scale up the button on hover for a dynamic feel */
 }
 
+.sidebar button:active {
+  transform: scale(1); /* Reset the button size when active (clicked) */
+  background: linear-gradient(45deg, #005CBF, #007BAF); /* Even darker shade on active click */
+}
 .expandedSidebar {
   width: 25vw; /* expanded width */
   height: 70vh; /* expanded height */
@@ -99,4 +107,46 @@
 
 .icons img:last-child {
   border-bottom: none; /* Remove the border from the last icon */
+}
+
+.view {
+  font-family: Arial, sans-serif; /* A default font for consistency */
+  padding: 20px;
+  background-color: #f6f6f6; /* A subtle background color */
+}
+
+.view h3 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.view ul {
+  list-style-type: none; /* Remove bullet points */
+  padding: 0;
+}
+
+.view li {
+  margin-bottom: 10px; /* Spacing between each list item */
+}
+
+.classes.button {
+  background-color: #007BFF; /* A primary blue color */
+  color: #fff; /* White text */
+  padding: 10px 15px; /* Padding for button size */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Hand cursor on hover */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  text-align: center; /* Center the text */
+  display: block; /* To take the full width */
+  width: 100%;
+}
+
+.classes.button:hover {
+  background-color: #0056b3; /* A darker blue on hover */
+}
+
+.classes.button:focus {
+  outline: none; /* Remove focus outline */
+  box-shadow: 0 0 5px rgba(0,123,255,0.5); /* Add a subtle focus shadow */
 }
