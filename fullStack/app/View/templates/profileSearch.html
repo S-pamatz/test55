@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block app_content %}
+    <style>
+        #az-bar {
+            max-width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        #az-bar .fas {
+            font-size: 10px;
+            padding: 5px;
+            transition: transform 0.2s; /* Add a transition for a smooth hover effect */
+        }
+        #az-bar .fas:hover {
+            transform: scale(1.2); /* Enlarge the icon when hovered */
+            animation: beat 1s infinite; /* Apply the "beat" animation */
+        }
+        #az-bar .fas:not(:last-child) {
+            margin-right: 5px;
+        }
+        .data-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #f9f9f9;
+            width: 1000px;
+        }
+        .data-box ul {
+            list-style: none; /* Remove bullet points */
+            padding: 0;
+        }
+        .data-box li {
+            border-bottom: 1px solid #ccc; /* Add a border to separate profile entries */
+            margin-top: 5px;
+        }
+        .message {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        /* Define the "beat" animation */
+        @keyframes beat {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+    <script>
+        // Function to handle the icon click event
+        function filterAffiliatesByLetter(letter) {
+            const dataContainer = document.getElementById('data-container');
+            const affiliates = document.querySelectorAll('.affiliate-entry');
+
+            message.style.display = 'none';
+
+            // Hide all affiliates
+            for (const affiliate of affiliates) {
+                affiliate.style.display = 'none';
+            }
+
+            // Show affiliates whose last name starts with the clicked letter
+            const filteredAffiliates = document.querySelectorAll(`.affiliate-entry[data-lastname^="${letter}"]`);
+            for (const affiliate of filteredAffiliates) {
+                affiliate.style.display = 'block';
+            }
+
+            dataContainer.style.display = 'block';
+        }
+    </script>
+    <div>
+        <div>
+            <h2>Affiliate Profile Search</h2>
+            <div id="az-bar">
+                <i class="fas fa-a" onclick="filterAffiliatesByLetter('A')"></i>
+                <i class="fas fa-b" onclick="filterAffiliatesByLetter('B')"></i>
+                <i class="fas fa-c" onclick="filterAffiliatesByLetter('C')"></i>
+                <i class="fas fa-d" onclick="filterAffiliatesByLetter('D')"></i>
+                <i class="fas fa-e" onclick="filterAffiliatesByLetter('E')"></i>
+                <i class="fas fa-f" onclick="filterAffiliatesByLetter('F')"></i>
+                <i class="fas fa-g" onclick="filterAffiliatesByLetter('G')"></i>
+                <i class="fas fa-h" onclick="filterAffiliatesByLetter('H')"></i>
+                <i class="fas fa-i" onclick="filterAffiliatesByLetter('I')"></i>
+                <i class="fas fa-j" onclick="filterAffiliatesByLetter('J')"></i>
+                <i class="fas fa-k" onclick="filterAffiliatesByLetter('K')"></i>
+                <i class="fas fa-l" onclick="filterAffiliatesByLetter('L')"></i>
+                <i class="fas fa-m" onclick="filterAffiliatesByLetter('M')"></i>
+                <i class="fas fa-n" onclick="filterAffiliatesByLetter('N')"></i>
+                <i class="fas fa-o" onclick="filterAffiliatesByLetter('O')"></i>
+                <i class="fas fa-p" onclick="filterAffiliatesByLetter('P')"></i>
+                <i class="fas fa-q" onclick="filterAffiliatesByLetter('Q')"></i>
+                <i class="fas fa-r" onclick="filterAffiliatesByLetter('R')"></i>
+                <i class="fas fa-s" onclick="filterAffiliatesByLetter('S')"></i>
+                <i class="fas fa-t" onclick="filterAffiliatesByLetter('T')"></i>
+                <i class="fas fa-u" onclick="filterAffiliatesByLetter('U')"></i>
+                <i class="fas fa-v" onclick="filterAffiliatesByLetter('V')"></i>
+                <i class="fas fa-w" onclick="filterAffiliatesByLetter('W')"></i>
+                <i class="fas fa-x" onclick="filterAffiliatesByLetter('X')"></i>
+                <i class="fas fa-y" onclick="filterAffiliatesByLetter('Y')"></i>
+                <i class="fas fa-z" onclick="filterAffiliatesByLetter('Z')"></i>
+            </div>
+            <div class="data-box">
+            <div id="message" class="message">To Begin Please Click on the Character Corresponding to the First Letter of the Affiliate's Last Name</div>
+            <div id="data-container" style="display: none;">
+                <ul>
+                    {% for user in affiliates %}
+                        <li class="affiliate-entry" data-lastname="{{ user.lastname|first }}">
+                            <img src="{{ url_for('static', filename=user.image_file) }}" alt="Profile Picture" style="width:45px;height:45px;">
+                            {{ user.firstname }} {{ user.lastname }} <br>
+                            <strong>WSU Campus:</strong> {{ user.wsuCampus }}<br>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        </div>
+    </div>
+{% endblock %}
+

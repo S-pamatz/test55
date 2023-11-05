@@ -39,6 +39,7 @@ CREATE TABLE `affiliate` (
   `partners` varchar(200) DEFAULT NULL,
   `university` varchar(200) DEFAULT NULL,
   `url` varchar(200) DEFAULT NULL,
+  `is_validated` TINYINT(1) DEFAULT 0, 
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -181,7 +182,10 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
+/*
+removed 
+id from intrest_test
+*/
 CREATE TABLE intrest_test (
   
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -191,12 +195,19 @@ CREATE TABLE intrest_test (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
+
 CREATE TABLE subcategory (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(120) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
+CREATE TABLE interests_multiple (
+    intresttest_id INT,
+    subcategory_id INT,
+    FOREIGN KEY (intresttest_id) REFERENCES intrest_test(id),
+    FOREIGN KEY (subcategory_id) REFERENCES subcategory(id)
+);
 
 
 
@@ -240,4 +251,100 @@ CREATE TABLE interests (
     intresttest_id INT,
     FOREIGN KEY (affiliate_id) REFERENCES affiliate(id),
     FOREIGN KEY (intresttest_id) REFERENCES intrest_test(id)
+);
+
+--11/2/23: 5:29
+CREATE TABLE interestTest2 (
+    id INT AUTO_INCREMENT,
+    name VARCHAR(100) UNIQUE,
+    subcategory_id INT,
+    FOREIGN KEY (subcategory_id) REFERENCES subcategory(id),
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE interest_subcategory_association (
+    interest_id INT,
+    subcategory_id INT,
+    FOREIGN KEY (interest_id) REFERENCES interestTest2(id),
+    FOREIGN KEY (subcategory_id) REFERENCES subcategory(id)
+);
+CREATE TABLE air (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50)
+);
+CREATE TABLE water (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50)
+);
+
+
+CREATE TABLE publications (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    authors VARCHAR(255),
+    title VARCHAR(255),
+    journal VARCHAR(100),
+    volume INT,
+    issue INT,
+    publication_year INT,
+    page_range VARCHAR(20),
+    affiliate_id INT,  -- New column to hold the ID of the affiliate associated with the publication
+    FOREIGN KEY (affiliate_id) REFERENCES affiliate(id)
+);
+
+
+CREATE TABLE experience (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    location VARCHAR(255),
+    date_from DATE,
+    date_to DATE,
+    id INT DEFAULT 0
+);
+
+CREATE TABLE project (
+  id tinyint(4) DEFAULT NULL,
+  name varchar(4) DEFAULT NULL,
+  url varchar(25) DEFAULT NULL,
+  authorss varchar(120) DEFAULT NULL,
+  publisher varchar(120) DEFAULT NULL,
+  year date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+
+
+----JAMES
+CREATE TABLE project (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(400) DEFAULT NULL,
+  url VARCHAR(400) DEFAULT NULL,
+  authorss varchar(120) DEFAULT NULL,
+  publisher varchar(120) DEFAULT NULL,
+  year date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+CREATE TABLE education(
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255),
+  degree VARCHAR(255),
+  year DATE,
+  college VARCHAR(255)
+)
+
+CREATE TABLE experience (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    location VARCHAR(255),
+    date_from DATE,
+    date_to DATE
+); 
+CREATE TABLE edu (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    affiliate_id INT,
+    education_id INT,
+    FOREIGN KEY (affiliate_id) REFERENCES affiliate(id),
+    FOREIGN KEY (education_id) REFERENCES education(id)
 );

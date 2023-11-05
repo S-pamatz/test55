@@ -1,17 +1,112 @@
 {% extends "base.html" %}
-    {% block app_content%}
-        <h1> Admin Edit Profile </h1>
-        <img src="{{ url_for('static', filename= user.image_file) }}" alt="profile_pic" width="100px" height="100px">
+{% block app_content %}
+<style>
+    .styled-table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+                .styled-table th,
+                .styled-table td {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                    text-align: left;
+                }
+                .styled-table th {
+                    background-color: #f2f2f2;
+                }
+                .styled-table tr:nth-child(even) {
+                    background-color: #f2f2f2;
+                }
+</style>
+<div class="funny1">
+    <h1>Admin Edit Profile</h1>
+    <img src="{{ url_for('static', filename=user.image_file) }}" alt="profile_pic" width="100px" height="100px">
+   
+    {% if form %}
+        <div class = "row">
+            <div class="col-md-4">
+                {{wtf.quick_form(form, action= url_for('auth.admin_edit_profile', user_id=user.id))}}
+            </div>
+        </div>
+    {% endif %}
+</div>
+<div class="funny2">
+    <h1>Edit Education</h1>
+    <div class="flex-options">
+        <button>
+            <a href="{{url_for('routes.add_education')}}">Add Education</a>
+        </button>
+    </div>
 
-        <form method="POST" action="">
-            {{ form.hidden_tag() }}
-            <div class="">{{ form.firstname.label() }}{{ form.firstname(value=user.firstname) }}</div>
-            <div class="">{{ form.lastname.label() }}{{ form.lastname(value=user.lastname) }}</div>
-            <div class="">{{ form.campus.label() }}{{ form.campus(value=user.wsuCampus) }}</div>
-            <div class="">{{ form.department.label() }}{{ form.department(value=user.department) }}</div>
-            <div class="">{{ form.areaofinterest.label() }}{{ form.areaofinterest(value=user.areaofinterest) }}</div>
-            <div class="">{{ form.URL.label() }}{{ form.URL(value=user.url) }}</div>
-            <div class="">{{form.is_admin.label()}}{% if user.is_admin %}{{form.is_admin(checked=True)}}{% else %}{{form.is_admin()}}{% endif %}</div>
-            <div class="">{{ form.submit() }}</div>
-        </form>
+    <table class="styled-table">
+        <tr>
+            <th>Degree</th>
+            <th>Name of Degree</th>
+            <th>Date</th>
+            <th>College/University</th>
+            <th>Edit</th>
+        </tr>
+        {% for education in user.education %}
+        <tr>
+            <td>{{ education.degree }}</td>
+            <td>{{ education.title }}</td>
+            <td>{{ education.year }}</td>
+            <td>{{ education.college }} </td>
+            <td><a href="{{ url_for('routes.edit_education', education_id=education.id) }}">Edit</a></td>
+
+        </tr>
+        {% endfor %}
+    </table>
+    <h1>Edit Professional Experiences</h1>
+    <div class="flex-options">
+        <button>
+            <a href="{{url_for('routes.add_experiences')}}">Add Professional Experiences</a>
+        </button>
+    </div>
+    <table class="styled-table">
+        <tr>
+            <th>Title</th>
+            <th>Origin</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Edit</th>
+        </tr>
+        {% for experience in user.experience %}
+        <tr>
+            <td>{{ experience.title }}</td>
+            <td>{{ experience.location }}</td>
+            <td>{{ experience.date_from }}</td>
+            <td>{{ experience.date_to }} </td>
+            <td><a href="{{url_for('routes.edit_experience', exp_id=experience.id)}}">Edit</a></td>
+
+        </tr>
+        {% endfor %}
+    </table>
+    <h1>Edit Projects</h1>
+    <div class="flex-options">
+        <button>
+            <a href="{{ url_for('routes.add_projects') }}">Add Projects</a>
+        </button>
+    </div>
+    <table class="styled-table">
+        <tr>
+            <th>Name of Project</th>
+            <th>Contributers</th>
+            <th>Date</th>
+            <th>Publisher</th>
+            <th>URL</th>
+            <th>Edit</th>
+        </tr>
+        {% for project in user.projects %}
+        <tr>
+            <td>{{ project.name }}</td>
+            <td>{{ project.authorss }}</td>
+            <td>{{ project.year }}</td>
+            <td>{{ project.publisher }} </td>
+            <td>{{ project.url }}</td>
+            <td><a href="{{ url_for('routes.edit_project', project_id=project.id) }}">Edit</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
 {% endblock %}

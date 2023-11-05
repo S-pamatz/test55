@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block app_content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Semantic Scholar Author Search</title>
+</head>
+<body>
+    <h2>Search for an Author</h2>
+    <form method="post">
+        <label for="author_name">Author Name:</label><br>
+        <input type="text" id="author_name" name="author_name"><br><br>
+        <input type="submit" value="Search">
+    </form>
+</body>
+</html>
+{% endblock %}

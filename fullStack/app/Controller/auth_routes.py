@@ -1,18 +1,19 @@
 from datetime import datetime
 import mailbox
-from flask import Flask, render_template, flash, redirect, url_for, request, Blueprint
+from flask import Flask, jsonify, render_template, flash, redirect, url_for, request, Blueprint
 from itsdangerous import SignatureExpired, URLSafeTimedSerializer
+import urllib3
 from app import db
 
 from app.Controller.auth_forms import LoginForm, affiliateRegister, AddKeywords, AdminEditProfile
 from app.Controller.routes import email
-from app.Model.models import Affiliate, Interest, Campus
+from app.Model.models import Affiliate, Department, Interest, Campus
 from flask_login import login_user, current_user, logout_user, login_required
 from config import Config
 from flask_mail import Mail, Message
 auth_blueprint = Blueprint('auth', __name__)
 auth_blueprint.template_folder = Config.TEMPLATE_FOLDER
-
+import mysql.connector
 # for users that do not have their email in the db
 
 application = Flask(__name__)
@@ -41,17 +42,173 @@ mail = Mail(application)
 s = URLSafeTimedSerializer('Thisisasecret!')
 
 
+########################validate email for exisiting users
+@auth_blueprint.route('/validateEmailDB', methods=['GET', 'POST'])
+def validateEmailDB():
+
+    if request.method == 'GET':
+        return '<form action="/validateEmailDB" method="POST"><input name="email"><input type="submit"></form>'
+    email = request.form['email']
+
+    return redirect(url_for('auth.emailDB', givenEmail=email))
+    # return redirect(url_for('routes.tData', givenEmail=email))
+
+    
+@auth_blueprint.route('/emailDB/<givenEmail>', methods=['GET', 'POST'])
+def emailDB(givenEmail):
+    if request.method == 'GET':
+
+        # email = request.form['email']
+        print("1")
+        email = givenEmail
+        print(email)
+        token = s.dumps(email, salt='email-confirm')
+        print("2")
+        msg = Message(
+            'Confirm Email', sender='wsuaffiliateconfirmation@outlook.com', recipients=[email])
+        print("3")
+        link = url_for('auth.confirm_email_DB', token=token,
+                       _external=True)  # look at later
+        print("this is test\n")
+        print(application.config['MAIL_SERVER'])
+        print(application.config['MAIL_PORT'])
+        msg.body = 'Your link is {}'.format(link)
+    # msg.body="test"ws1
+    # g@gmail.com
+
+        try:
+            mail.send(msg)
+        except Exception as e:
+            print("Email sending failed:", str(e))
+
+       # return '<h1>The email you entered is {}. The token is {}</h1>'.format(email, token)
+        return 'email sending...please check email'
+    
+
+
+@auth_blueprint.route('/confirm_email_DB/<token>')
+def confirm_email_DB(token):
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=3600)
+        
+        return redirect(url_for('auth.registerDB', givenEmail=email))
+
+    except SignatureExpired:
+        return '<h1>The token is expired!</h1>'
+
+def testD(givenEmail):
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="teamFullStack",
+        database="our_users1"
+    )
+    print("thius is my given email")
+    mycursor = mydb.cursor()
+    
+    sql = "DELETE FROM affiliate WHERE email = %s"
+    val = (givenEmail,)
+  
+    mycursor.execute(sql, val)
+    mydb.commit()
+
+    print(mycursor.rowcount, "record(s) deleted")
+    return []
+
+ 
+
+@auth_blueprint.route('/registerDB/<givenEmail>', methods=['GET', 'POST'])
+def registerDB(givenEmail):
+    rform = affiliateRegister()
+    rform.email.data = givenEmail
+    rform.set_department_choices()
+    rform.email.render_kw = {'readonly': True}
+    
+    testD(givenEmail)
+    # Check if the form was submitted and valid
+    if rform.validate_on_submit():
+      
+        
+        user_to_delete = Affiliate.query.filter_by(email=givenEmail).first()
+        if user_to_delete:
+            db.session.delete(user_to_delete)
+            db.session.commit()
+            flash('Existing user deleted successfully.')
+
+        # Create a new user based on the form information
+        new_affiliate = Affiliate(
+            email=givenEmail,
+            firstname=rform.firstname.data,
+            lastname=rform.lastname.data,
+            membership=rform.membership.data,
+            url=rform.url.data,
+            # ... other fields you want to set for the new user
+        )
+        new_affiliate.set_password(password=rform.password.data)
+        
+        department_name = rform.department.data
+        department = Department.query.filter_by(name=department_name).first()
+        if department:
+            new_affiliate.departments = [department]
+            new_affiliate.department = department_name
+
+        if Affiliate.query.count() == 0:
+            new_affiliate.is_admin = True
+
+        new_affiliate.is_validated = 1
+        db.session.add(new_affiliate)
+        db.session.commit()
+
+        flash('New user created successfully.')
+        return redirect(url_for('routes.index'))
+
+    return render_template('registerDB.html', form=rform, givenEmail=givenEmail)
+
+
+
+########################validate email for existing users
+
+@auth_blueprint.route('/checkEmail', methods=['GET', 'POST'])
+def checkEmail():
+    all_affiliates = Affiliate.query.all()
+
+    # Extract emails from the affiliates
+    all_emails = [affiliate.email for affiliate in all_affiliates if affiliate.email]
+    for affiliate in all_affiliates:
+        if affiliate.email == "brian.joo@wsu.edu":
+            # Print "yes" for found email
+            print("yes")
+            # Print affiliate information
+            print(f"Affiliate ID: {affiliate.id}")
+            print(f"First Name: {affiliate.firstname}")
+            print(f"Last Name: {affiliate.lastname}")
+            # Print other affiliate information as needed
+            # You can also return the affiliate information as JSON
+           
+    return []
+   
 @auth_blueprint.route('/validateEmail', methods=['GET', 'POST'])
 def validateEmail():
 
     if request.method == 'GET':
-        return '<form action="/readFile" method="POST"><input name="email"><input type="submit"></form>'
+        return '<form action="/validateEmail" method="POST"><input name="email"><input type="submit"></form>'
     email = request.form['email']
 
     return redirect(url_for('auth.email1', givenEmail=email))
     # return redirect(url_for('routes.tData', givenEmail=email))
 
 
+
+
+@auth_blueprint.route('/confirm_email/<token>')
+def confirm_email(token):
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=3600)
+        return redirect(url_for('auth.register', givenEmail=email))
+
+    except SignatureExpired:
+        return '<h1>The token is expired!</h1>'
+    
 @auth_blueprint.route('/email/<givenEmail>', methods=['GET', 'POST'])
 def email1(givenEmail):
     if request.method == 'GET':
@@ -82,77 +239,53 @@ def email1(givenEmail):
        # return '<h1>The email you entered is {}. The token is {}</h1>'.format(email, token)
         return 'email sending...please check email'
 
+    
 
-@auth_blueprint.route('/confirm_email/<token>')
-def confirm_email(token):
-    try:
-        email = s.loads(token, salt='email-confirm', max_age=3600)
-
-    except SignatureExpired:
-        return '<h1>The token is expired!</h1>'
-
-    return redirect(url_for('auth.register', givenEmail=email))
 
 
 @auth_blueprint.route('/register/<givenEmail>', methods=['GET', 'POST'])
 def register(givenEmail):
     rform = affiliateRegister()
     rform.email.data = givenEmail
+    rform.set_department_choices()
     rform.email.render_kw = {'readonly': True}
     is_empty = Affiliate.query.count()
+    
     if rform.validate_on_submit():
-        affiliate = Affiliate(firstname=rform.firstname.data,
-                              lastname=rform.lastname.data,
-                              wsuCampus=rform.wsuCampus.data,
-                              membership=rform.membership.data,
-                              department=rform.department.data,
-                              url=check_url(rform.url.data),
-                              )
+        # Creating the Affiliate object
+        affiliate = Affiliate(
+            firstname=rform.firstname.data,
+            lastname=rform.lastname.data,
+            wsuCampus=rform.wsuCampus.data,
+            membership=rform.membership.data,
+            
+            url=check_url(rform.url.data),
+        )
         affiliate.set_password(password=rform.password.data)
-
-        print(rform.email.data)
+        
+        department_name = rform.department.data  # Get department name from the form
+        department = Department.query.filter_by(name=department_name).first()
+        
+        if department:
+            affiliate.departments = [department]  # Assign the department to the affiliate
+            affiliate.department = department_name  # Also assign the name for reference
+        
         if is_empty == 0:
             affiliate.is_admin = True
         else:
             affiliate.is_admin = False
-
+        
         db.session.add(affiliate)
+        affiliate.email = givenEmail 
+        affiliate.is_validated=1
         db.session.commit()
-        flash('You are  a registered user')
+        flash('You are a registered user')
         return redirect(url_for('routes.index'))
+    
+    return render_template('register.html', form=rform, givenEmail=givenEmail)
 
-    return render_template('register.html', form=rform)
 
 
-@auth_blueprint.route('/register1', methods=['GET', 'POST'])
-def register1():
-    rform = affiliateRegister()
-   # @ rform.email.data = "121@wsu.com"
-   # rform.email.render_kw = {'readonly': True}
-    is_empty = Affiliate.query.count()
-    if rform.validate_on_submit():
-        affiliate = Affiliate(firstname=rform.firstname.data,
-                              lastname=rform.lastname.data,
-                              wsuCampus=rform.wsuCampus.data,
-                              membership=rform.membership.data,
-                              email=rform.email.data,
-                              department=rform.department.data,
-                              url=check_url(rform.url.data),
-                              )
-        affiliate.set_password(password=rform.password.data)
-
-        print(rform.email.data)
-        if is_empty == 0:
-            affiliate.is_admin = True
-        else:
-            affiliate.is_admin = False
-
-        db.session.add(affiliate)
-        db.session.commit()
-        flash('You are  a registered user')
-        return redirect(url_for('routes.index'))
-
-    return render_template('register.html', form=rform)
 
 
 @auth_blueprint.route('/login', methods=['GET', 'POST'])
@@ -162,15 +295,27 @@ def login():
     lform = LoginForm()
 
     if lform.validate_on_submit():
-        affiliate = Affiliate.query.filter_by(email=lform.email.data).first()
-        if (affiliate is None) or (affiliate.check_password(lform.password.data) == False):  # if login fails
+        affiliate = Affiliate.query.filter_by(email=lform.email.data).first() 
+
+        if affiliate.is_validated==0:
+            # If is_validated is True, the user is validated
+            # Proceed with login
+            flash("You are in the db, but not validated. Please validate user")
+            return redirect(url_for('auth.login'))
+        
+
+
+        elif (affiliate is None) or (affiliate.check_password(lform.password.data) == False):  # if login fails
             flash('Invalid user or password')
             return redirect(url_for('auth.login'))
-
+        elif affiliate.is_ban:
+            flash('Your account has been deactivated. Please contact us.')
+            return redirect(url_for('routes.index'))
         login_user(affiliate, remember=lform.remember_me.data)
         return redirect(url_for('routes.index'))
 
     return render_template('login.html', title='Sign in', form=lform)
+
 
 
 @auth_blueprint.route('/user', methods=['GET', 'POST'])
@@ -179,12 +324,13 @@ def admin():
     if current_user.is_admin:
         all_affiliates = Affiliate.query.order_by(Affiliate.firstname).all()
         if request.method == "POST":
-            if request.form["submit_button"] == "Delete":
+            if request.form["submit_button"] == "Deactivate":
                 delete_users = request.form.getlist("user_check")
                 for user in delete_users:
                     delete_user = Affiliate.query.filter_by(
                         id=int(user)).first()
-                    db.session.delete(delete_user)
+                    delete_user.is_ban = True
+                    db.session.add(delete_user)
                 db.session.commit()
                 flash("You have successfully deleted users")
                 return redirect(url_for("auth.admin"))
@@ -232,19 +378,30 @@ def admin_edit_profile(user_id):
             user.wsuCampus = form.campus.data
             user.department = form.department.data
             user.areaofinterest = form.areaofinterest.data
-
             user.url = check_url(form.URL.data)
             user.is_admin = form.is_admin.data
+            user.is_ban = form.is_ban.data
             db.session.add(user)
             db.session.commit()
             flash("You have edited {first} {last} profile.".format(
                 first=user.firstname, last=user.lastname))
             return redirect(url_for('auth.admin'))
+        
+        elif request.method == 'GET':
+            form.firstname.data = user.firstname
+            form.lastname.data = user.lastname
+            form.campus.data = user.wsuCampus
+            if user.departments:
+                # Fill the form with the first department's name
+                form.department.data = user.departments[0].name
+            form.URL.data = user.url
+            form.is_ban.data = user.is_ban
+            form.is_admin.data = user.is_admin
+            
         return render_template('admin_edit_profile.html', form=form, user=user)
     else:
         flash("You are not authorised")
         return redirect(url_for("routes.index"))
-
 
 @auth_blueprint.route('/tags', methods=['GET', 'POST'])
 @login_required

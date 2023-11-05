@@ -1,9 +1,9 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import SelectMultipleField, StringField, SubmitField, TextAreaField, PasswordField, SelectField
+from wtforms import IntegerField, MonthField, SelectMultipleField, StringField, SubmitField, TextAreaField, PasswordField, SelectField
 from wtforms_sqlalchemy.fields import QuerySelectField
 from wtforms.validators import ValidationError, Length, DataRequired, Email, EqualTo
-from app.Model.models import Affiliate, Department, Partners, Sponsor, Universities_Colleges
+from app.Model.models import Affiliate, Air, Department, Partners, Sponsor, Universities_Colleges, Water
 from flask_login import current_user
 
 
@@ -20,21 +20,21 @@ class ProfileForm(FlaskForm):
 class EditForm(FlaskForm):
     picture = FileField('Update Profile Picture', validators=[
                         FileAllowed(['jpg', 'png'])])
-    firstname = StringField('First Name:')
-    lastname = StringField('Last Name:')
+    firstname = StringField('First Name')
+    lastname = StringField('Last Name')
     #email = StringField('Email:', validators=[DataRequired()])
-    campus = SelectField('Campus:', choices=[('Please Select an Option Below'), ('WSU Pullman'), ('WSU Spokane'), (
+    campus = SelectField('Campus', choices=[('Please Select an Option Below'), ('WSU Pullman'), ('WSU Spokane'), (
         'WSU Tri-Cities'), ('WSU Vancouver'), ('WSU Everett'), ("WSU Global Campus")])
-    department = SelectField('Department:', choices=[])
-    university = SelectField('University:')
-    sponsor = SelectField('sponsor:')
-    partners = SelectField('partners:')
+    department = SelectField('Department', choices=[])
+    university = SelectField('University')
+    sponsor = SelectField('Sponsor')
+    partners = SelectField('Partners')
 
-    membership = SelectField('membership:', choices=[(
+    membership = SelectField('Membership', choices=[(
         'Please Select an Option Below'), ('Yes, I am a member'), ('No, I am not a member')])
-    URL = StringField('URL:')
-    password = PasswordField('Password:', validators=[DataRequired()])
-    password2 = PasswordField('Repeat Password:', validators=[
+    URL = StringField('URL')
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField('Repeat Password', validators=[
                               DataRequired(), EqualTo('password')])
     submit = SubmitField('Submit')
 
@@ -85,10 +85,29 @@ class EmptyForm(FlaskForm):
 
 
 class AddProjectsForm(FlaskForm):
-    name = StringField('Name:', validators=[DataRequired()])
-    url = StringField('URL of project', validators=[DataRequired()])
+    authors = StringField('Authors', validators=[DataRequired()], render_kw={"placeholder": "e.g. 'Bruce Wayne, Mary Jane..."})
+    name = StringField('Name of Publication', validators=[DataRequired()], render_kw={"placeholder": "e.g. Quaternary Science Reviews"})
+    year = MonthField('Month-Year', validators=[DataRequired()])
+    url = StringField('URL of Project', render_kw={"placeholder": "e.g. dx.doi.org/10.1016/j.quascirev.2015.08.028"})
+    publisher = StringField('Publisher', render_kw={"placeholder": "e.g. Quaternary Science Reviews"})
     submit = SubmitField('Submit')
 
+class AddExperiencesForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()], render_kw={"placeholder": "e.g. Professor, Teaching Assistant"})
+    location = StringField('Origin', render_kw={"placeholder": "e.g. Washington State University"})
+    date_from = MonthField('From')
+    date_to = MonthField('To')
+    submit = SubmitField('Submit')
+
+
+class AddEducationForm(FlaskForm):
+    degree = SelectField("Degree", choices=[("Ph.D.", "Ph.D."), ("M.S.", "M.S."), ("B.S.","B.S.")])
+    name = StringField("Name of Degree", validators=[DataRequired()], render_kw={"placeholder": "e.g. Computer Science"})
+    year = MonthField("Date of Completion", validators=[DataRequired()])
+    college = StringField("College/University", validators=[DataRequired()], render_kw={"placeholder": "e.g. Washington State University"})
+    submit = SubmitField('Submit')
+
+    
 # def get_major():
 #     return Major.query.all()
 
@@ -100,3 +119,34 @@ class AddProjectsForm(FlaskForm):
 #     title = StringField('Course Title',validators=[DataRequired()])
 #     major=QuerySelectField('Majors',query_factory=get_major,get_label=get_majorlabel,allow_blank=False)#query facotry is where the data is coming from
 #     submit = SubmitField('Post')
+
+
+
+class Edit(FlaskForm):
+    air = SelectField('Air')
+    water = SelectField('Water')
+
+    def set_air_choices(self):
+        air_values = Air.query.with_entities(Air.name).all()
+        self.air.choices = [(air.name, air.name) for air in air_values]
+
+    def set_water_choices(self):
+        water_values = Water.query.with_entities(Water.name).all()
+        self.water.choices = [(water.name, water.name) for water in water_values]
+
+
+class ask(FlaskForm):
+    questiom = SelectField('Did you write:', choices=[('Please Select an Option Below'), ('Yes'), ('No')])
+    submit = SubmitField('Submit')
+
+
+
+class PublicationForm(FlaskForm):
+    authors = StringField('Authors', render_kw={"placeholder": "e.g. Boll, J., T. Link, M. Santelmann, R. Heinse, and B. Cosens."})
+    title = StringField('Title', render_kw={"placeholder": "e.g. Effects of road construction on soil degradation and nutrient transport in Caspian Hyrcanian mixed forests"})
+    journal = StringField('Journal', render_kw={"placeholder": "e.g. Nature Communications"})
+    volume = IntegerField('Volume', render_kw={"placeholder": "e.g. 11(8)"})
+    issue = IntegerField('Issue', render_kw={"placeholder": "e.g. 63"})
+    publication_year = IntegerField('Publication Year', render_kw={"placeholder": "e.g. 2001, 2002"})
+    page_range = StringField('Page Range', render_kw={"placeholder": "e.g. 0 - 100"})
+    submit = SubmitField('Submit')

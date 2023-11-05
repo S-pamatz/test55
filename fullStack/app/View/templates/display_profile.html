@@ -4,7 +4,46 @@
 <html>
 <head>
     <style>
-        /* Your CSS styles here */
+        .flex-container {
+            display: flex;
+        }
+
+        .profile-pic {
+            margin-right: -20px;
+        }
+
+        .profile-pic img {
+            width: 250px;
+            height: 250px;
+            margin-left: -10px;
+        }
+
+        .flex-info {
+            flex: 1;
+        }
+
+        .flex-info h4 {
+            color: rgb(166, 15, 45);
+            font-weight: bold;
+        }
+
+        .email {
+            color: rgb(166, 15, 45);
+            font-weight: bold;
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-list li {
+            margin: 0px 0;
+        }
+        .affiliate-link {
+            display: flex; /* Use a flex container */
+            align-items: center; /* Align items vertically to the center */
+        }
     </style>
 </head>
 <body>
@@ -14,48 +53,66 @@
                 <img src="{{ image_file }}" alt="profile_pic" width="250px" height="250px">
             </a>
         </div>
-        <div class="flex-box">
+        <div class="flex-info">
             <h1>{{ affiliate.firstname }} {{ affiliate.lastname }}</h1>
-            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Email:</span></b> {{ affiliate.email }}</p>
-            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Area of Interest:</span></b> {{ affiliate.areaofinterest }}</p>
-            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Department:</span></b>
+            <p><span class="email">Email |</span> <b>{{ affiliate.email }}</b></p>
+            <p>
+                <span class="email">Department |</span> 
+                <b>
                 {% for department in affiliate.departments %}
-                    {{ department.name }}{% if not loop.last %}, {% endif %}
+                {{ department.name }}
+                {% if not loop.last %}, 
+                {% endif %}
+                {% endfor %}</b></p>
+            <p><span class="email">Area of Interest |</span> <b>{{ affiliate.areaofinterest }}</b></p> 
+            <p><span class="email">Campus |</span> <b>{{ affiliate.wsuCampus }}</b></p>    
+            <p><span class="email">Interests |</span> <b>
+                {% for interest in affiliate.interests %}
+                    <b>{{ interest.name }}:</b>
+                    {% for sub_interest in interest.subcategory.interests %}
+                        {{ sub_interest.name }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                    {% if not loop.last %}, {% endif %}
                 {% endfor %}
-            </p>
-            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Campus:</span></b> {{ affiliate.wsuCampus }}</p>
-            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Membership:</span></b> {{ affiliate.membership }}</p>
-            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Uni/Col:</span></b> {{ affiliate.university }}</p>
-            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Sponsor:</span></b> {{ affiliate.sponsor }}</p>
-            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Partner:</span></b> {{ affiliate.partners }}</p>
-            <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Link:</span></b><a href="http://{{ affiliate.url }}"> {{ affiliate.url }}</a></p>
-          
-                <p><b><span style="color: rgb(166, 15, 45); font-weight: bold;">Interests:</span></b>
-                    {% for data in combined_data %}
-    <b>{{ data.Interest }}:</b>
-    {% for subcat in data.SubCategories %}
-        {{ subcat }}{% if not loop.last %}, {% endif %}
-    {% endfor %}
-    {% if not loop.last %}, {% endif %}
-{% endfor %}
-
-                </p>
-            </p>
-            
-        </div>
-        <div class="flex-options">
-            <a href="{{ url_for('routes.add_projects') }}">Add Projects</a>
+            </b></p> 
         </div>
     </div>
     <div class="flex-info">
-        <h4><span style="color: rgb(166, 15, 45); font-weight: bold;">Publications and Projects</span></h4>
+        <h4><span style="color: rgb(166, 15, 45); font-weight: bold;">Projects</span></h4>
         {% for project in affiliate.projects %}
-            <ul>
-                <li>
-                    <p>{{ project.name }} <b><span style="color: rgb(166, 15, 45); font-weight: bold; margin-left: 48px;">URL: </span></b><a href="http://{{ project.url }}">{{ project.url }}</a></p>
-                </li>
-            </ul>
+            <p>{{project.authors}}.{{ project.year }}.{{ project.name }}.{{project.publisher}}<b><span style="color: rgb(166, 15, 45); font-weight: bold; margin-left: 48px;"></span></b></p>
         {% endfor %}
+        <h4><span style="color: rgb(166, 15, 45); font-weight: bold;">Publications</span></h4>
+        {% for publication in publications %}
+                <strong>Title:</strong> {{ publication.title }}<br>
+                <strong>Authors:</strong> {{ publication.authors }}<br>
+                <strong>Journal:</strong> {{ publication.journal }}<br>
+            {% if current_user == publication.affiliate %}
+                <form method="post" action="{{ url_for('routes.delete_publication', publication_id=publication.id) }}">
+                    <input type="submit" value="Delete">
+                </form>
+            {% endif %}
+                <br>
+        {% endfor %}
+        <h4><span style="color: rgb(166, 15, 45); font-weight: bold;">Education</span></h4>
+        {% for education in affiliate.education %}
+            <div class="">
+                {{education.degree}}
+                {{education.title}}
+                {{education.year}}
+                {{education.college}}
+            </div>
+        {% endfor %}
+        <h4><span style="color: rgb(166, 15, 45); font-weight: bold;">Professional Experiences</span></h4>
+        {% for experience in affiliate.experience %}
+            <div class="">
+                {{experience.title}}
+                {{experience.location}}
+                {{experience.date_from}}
+                {{experience.date_to}}
+            </div>
+        {% endfor %}
+        <p class="affiliate-link"><span class="email">Personal Affiliate Link |</span> <b><a href="http://{{ affiliate.url }}"> {{ affiliate.url }}</a></b></p>
     </div>
 </body>
 </html>

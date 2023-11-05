@@ -1,4 +1,5 @@
 # Import Flask function for rendering templates
+import json
 from flask import Flask, render_template
 
 from flask import render_template
@@ -13,8 +14,8 @@ import secrets
 import os
 import app
 from app.Controller.auth_forms import AddIntrest, AddIntrestOld, AddKeywords, affiliateRegister
-from app.Controller.forms import EditForm, AddProjectsForm, editTagsForm
-from app.Model.models import Affiliate, Department, Interest, IntrestTest, Project, Subcategory
+from app.Controller.forms import AddEducationForm, AddExperiencesForm, Edit, EditForm, AddProjectsForm, PublicationForm, ask, editTagsForm
+from app.Model.models import Affiliate, Air, Department, Education, Experience, Interest, IntrestTest, Project, Publication, Subcategory, Water
 from flask_login import login_user, current_user, logout_user, login_required
 from config import Config
 from flask import Flask
@@ -44,6 +45,82 @@ application.config['MAIL_SUPPRESS_SEND'] = False
 application.config['TESTING'] = False
 application.config['DEBUG'] = True
 mail = Mail(application)
+
+####################ARVIN
+@routes_blueprint.route('/profileSearch', methods=['GET'])
+@routes_blueprint.route('/landing/<initial>', methods=['GET'])
+def profileSearch(initial=None):
+    affiliates = Affiliate.query.all()
+
+    if initial:
+        # Filter affiliates by the first letter of the last name
+        filtered_affiliates = [user for user in affiliates if user.lastname[0].upper() == initial]
+    else:
+        filtered_affiliates = affiliates
+
+    last_name_initials = set(user.lastname[0].upper() for user in affiliates)
+
+    return render_template('profileSearch.html', affiliates=affiliates, last_name_initials=sorted(last_name_initials))
+
+@routes_blueprint.route('/landing', methods=['GET'])
+def displayLanding():
+    return render_template('displayLanding.html')
+
+#################JAMES
+@routes_blueprint.route('/add_projects', methods=["POST", "GET"])
+@login_required
+def add_projects():
+    afform = AddProjectsForm()
+
+    if afform.validate_on_submit():
+        project = Project(name=afform.name.data, authorss=afform.authors.data,
+                          year=afform.year.data, publisher=afform.publisher.data,
+                          url=check_url(afform.url.data))
+        current_user.projects.append(project)
+        db.session.add(project)
+        db.session.commit()
+        flash("You have added {project_name}".format(
+            project_name=project.name))
+        return redirect(url_for('routes.index'))
+
+    return render_template('add_projects.html', title='Add Projects', form=afform)
+
+
+@routes_blueprint.route('/add_experiences', methods=["POST", "GET"])
+@login_required
+def add_experiences():
+    afform = AddExperiencesForm()
+
+    if afform.validate_on_submit():
+        experience = Experience(title=afform.title.data, location=afform.location.data,
+                          date_from=afform.date_from.data, date_to=afform.date_to.data)
+        current_user.experience.append(experience)
+        db.session.add(experience)
+        db.session.commit()
+        flash("You have added {experience_name}".format(
+            experience_name=experience.title))
+        return redirect(url_for('routes.index'))
+
+    return render_template('add_experience.html', title='Add Experiences', form=afform)
+
+@routes_blueprint.route('/add_education', methods=["POST", "GET"])
+@login_required
+def add_education():
+    afform = AddEducationForm()
+
+    if afform.validate_on_submit():
+        education = Education(degree=afform.degree.data, title=afform.name.data,
+                              year=afform.year.data, college=afform.college.data)
+        current_user.education.append(education)
+        db.session.add(education)
+        db.session.commit()
+        flash("You have added {education_name}".format(
+            education_name=education.title))
+        return redirect(url_for('routes.index'))
+    
+    return render_template('add_education.html', title='Add Education', form=afform)
+
+
 #DEBUG = True
 #from flask.ext.mail import Mail, Message
 # Flask-Mail Configuration
@@ -77,7 +154,7 @@ def scopus_search():
 @routes_blueprint.route('/semantic_scholar_author_search', methods=['GET'])# this gets the id
 def semantic_scholar_author_search():
     base_url = "https://api.semanticscholar.org/graph/v1/author/search"
-    s2_api_key = "7wIu7PY7cV8dXPxpaS744oKcXDsAhuAaDrM68GXi"  # Replace with your Semantic Scholar API key
+    s2_api_key = "7wIu7PY7cV8dXPxpaS744oKcXDsAhuAaDrM68GXi" 
 
     author_name = request.args.get('author_name')
 
@@ -93,11 +170,107 @@ def semantic_scholar_author_search():
         if response.status_code == 200:
             data = response.json()
             return jsonify(data)
+        
         else:
             return f"Error: {response.status_code}", response.status_code
     else:
         return "No author name provided", 400
+@routes_blueprint.route('/semantic_scholar_author_search_user_input', methods=['GET', 'POST'])
+def semantic_scholar_author_search_user_input():
+    if request.method == 'POST':
+        base_url = "https://api.semanticscholar.org/graph/v1/author/search"
+        s2_api_key = "7wIu7PY7cV8dXPxpaS744oKcXDsAhuAaDrM68GXi" 
 
+        author_name = request.form.get('author_name')
+
+        if author_name:
+            query = author_name.replace(' ', '+')  # Format the query for the URL
+
+            # Construct the URL with the query parameter
+            search_url = f"{base_url}?query={query}"
+            headers = {"x-api-key": s2_api_key}
+
+            response = requests.get(search_url, headers=headers)
+
+            if response.status_code == 200:
+                data = response.json()
+                print("hello ")
+                print("This is my parse function")
+                print(response)
+                dictNameID = {}
+                authors_data = data.get('data', [])
+                if authors_data:  
+                    for author in authors_data:
+                        dictNameID[author['authorId']] = author['name']
+               # print(dictNameID)
+                paperDict={}#conecting names with the papers
+                for key, items in dictNameID.items():
+                    paperDict[items]=get_author_papers(key)
+               
+                #print(first_paper)
+                   # print(items, " wrote ", type(get_author_papers(key)))
+                parseDict={}
+                for key, val in paperDict.items():
+                  #  print("this is the val ",key, " this is the type ",type(val))
+                    for key2,val2 in val.items():
+                     #   print("the key is ",key2," the val is ",type(val2))
+                       
+                        parseDict[key]=val2
+                list=[]
+                for key, val in parseDict.items():
+                 #   print("the key is ",key," the val is ",val)
+                    #print(type(val))
+                  # print(val[0])
+                    list.append(val[0])
+                   # print("\n\n")
+                print(len(list))
+                for val in list:
+                    for val2 in val.items():
+                        print(val2)
+                json_list = json.dumps(list)
+                return redirect(url_for('routes.submit_publicationAPI', paper_info_list=json_list))
+                  #  print("\n\n")
+                #since there can be multiple papers, we only need to check the first one
+             
+               
+            else:
+                return f"Error: {response.status_Wcode}", response.status_code
+        else:
+            return "No author name provided", 400
+
+    return render_template('author_search_form.html')
+
+def parsepaper(dict):
+   # for key, val in dict.items():
+        #print("new key is ",key)
+     #   for inner_key, inner_value in val.items():
+          #  print(f"  {inner_key}: {inner_value}")
+    tempDict={}
+    tempDict[2248598385]="offset: 0 data: [{'paperId': '05773cdfc3ed666d4c677dfbcf643da5fa2bdf7d', 'title': 'Deciphering complex groundwater age distributions and recharge processes in a tropical and fractured volcanic aquifer system'}, {'paperId': '5fc96eeac89d8ec4c25de9d9a13277c131267dc0', 'title': 'Baseflow recession analysis in the inland Pacific Northwest of the United States'}]"
+    tempDict[2086112355]="offset: 0 data: [{'paperId': '69de5db3f0c739b0f459fc54f47470d26cd56ec4', 'title': 'Isotope Discrimination of Source Waters, Flowpaths, and Travel Times at an Acid-Generating, Lead–Zinc–Silver Mine, Silver Valley, Idaho, USA'}]"
+    for key, val in tempDict.items():
+        data_value = val.split("data: ")[1]  # Extracting the data part
+        data_entries = data_value.split("},")  # Splitting individual data entries
+        for entry in data_entries:
+            entry = entry.strip() + '}'  # Ensuring valid JSON format
+            # Removing the "offset: 0 data: " part
+            entry = entry.replace("offset: 0 data: ", "")
+            print(entry)
+
+   
+def get_author_papers(author_id):
+    s2_api_key = "7wIu7PY7cV8dXPxpaS744oKcXDsAhuAaDrM68GXi"  # Replace with your Semantic Scholar API key
+
+    base_url = f"https://api.semanticscholar.org/graph/v1/author/{author_id}/papers"
+    headers = {"x-api-key": s2_api_key}
+
+    response = requests.get(base_url, headers=headers)
+
+    if response.status_code == 200:
+        data = response.json()
+        return data  # Return the papers data
+    else:
+        return None  # Return None
 #http://127.0.0.1:5000/semantic_scholar_author_papers?author_id=2248598385
 
 @routes_blueprint.route('/semantic_scholar_author_papers', methods=['GET'])# this gets the id abd searches up papers
@@ -118,9 +291,125 @@ def semantic_scholar_author_papers():
             return f"Error: {response.status_code}", response.status_code
     else:
         return "No author ID provided", 400
+    
+#using api to input
+from flask import request, json
+
+@routes_blueprint.route('/submit_publicationAPI2', methods=['GET', 'POST'])
+def submit_publicationAPI2():
+    eform = PublicationForm()
+    paper_info_list = request.args.get('paper_info_list')
+    if paper_info_list:
+        # Convert the received JSON string back to a list of dictionaries
+        paper_info_list = json.loads(paper_info_list)
+       # print("GOKU ARE YOU THERE\n",paper_info_list)
+    for n in range(3):
+        #print(n, " is ",paper_info_list[n])
+        pass
+    titles = [item['title'] for item in paper_info_list]
+    listTitle=[]
+    for title in titles:
+        print("GOKU ARE YOU THERE\n",title)
+        listTitle.append(title)
+    eform.title.data="is this being auto filled",
+    if eform.validate_on_submit():
+        # Create a new Publication object and associate it with the logged-in affiliate
+        new_publication = Publication(
+            authors=eform.authors.data,
+            
+            journal=eform.journal.data,
+            volume=eform.volume.data,
+            issue=eform.issue.data,
+            publication_year=eform.publication_year.data,
+            page_range=eform.page_range.data,
+            affiliate=current_user  # Assuming "current_affiliate" is the logged-in user
+        )
+        db.session.add(new_publication)
+        db.session.commit()
+        flash('Publication submitted successfully!', 'success')
+        return redirect(url_for('routes.index'))  # Redirect to the homepage after submission
+    return render_template('submit_publication.html', form=eform)
 
 
+@routes_blueprint.route('/submit_publicationAPI', methods=['GET', 'POST'])
+def submit_publicationAPI():
+    eform = PublicationForm()
+    paper_info_list = request.args.get('paper_info_list')
+    if paper_info_list:
+        # Convert the received JSON string back to a list of dictionaries
+        paper_info_list = json.loads(paper_info_list)
 
+    # Extract titles from the paper_info_list
+    titles = [item['title'] for item in paper_info_list]
+    print("GOKU ARE YOU THERE\n", titles)
+    # Get the name of the affiliate from current_user object
+  
+    name=current_user.firstname+" "+current_user.lastname
+    print("this is the name",name)
+
+    # Create and save a Publication object for each title in the list
+    for title in titles:
+        new_publication = Publication(
+            title=title, 
+            authors=name,
+            affiliate=current_user 
+            
+        )
+        db.session.add(new_publication)
+        db.session.commit()  # Commit each publication separately
+
+    
+
+    return redirect(url_for('routes.index'))
+
+#manually inputting
+@routes_blueprint.route('/submit_publication', methods=['GET', 'POST'])
+def submit_publication():
+    form = PublicationForm()
+    if form.validate_on_submit():
+        # Create a new Publication object and associate it with the logged-in affiliate
+        new_publication = Publication(
+            authors=form.authors.data,
+            title=form.title.data,
+            journal=form.journal.data,
+            volume=form.volume.data,
+            issue=form.issue.data,
+            publication_year=form.publication_year.data,
+            page_range=form.page_range.data,
+            affiliate=current_user  # Assuming "current_affiliate" is the logged-in user
+        )
+        db.session.add(new_publication)
+        db.session.commit()
+        flash('Publication submitted successfully!', 'success')
+        return redirect(url_for('routes.index'))  # Redirect to the homepage after submission
+    return render_template('submit_publication.html', form=form)
+
+
+@routes_blueprint.route('/mypub')
+def mypub():
+    if current_user:
+        publications = Publication.query.filter_by(affiliate=current_user).all()
+        return render_template('myPub.html', publications=publications)
+    else:
+        # Handle case if no user is logged in
+        return render_template('error.html', message="No user logged in")  # Or redirect to login, etc.
+    
+@routes_blueprint.route('/delete_publication/<int:publication_id>', methods=['POST'])
+def delete_publication(publication_id):
+    publication = Publication.query.get_or_404(publication_id)
+    
+    # Check if the current user has the authorization to delete this publication
+    if publication.affiliate == current_user:
+        db.session.delete(publication)
+        db.session.commit()
+        flash('Publication deleted successfully!', 'success')
+    else:
+        flash('You are not authorized to delete this publication', 'danger')
+
+    return redirect(url_for('routes.index'))
+################################################
+#code above is for api
+###########################################
 @routes_blueprint.route('/email/<givenEmail>', methods=['GET', 'POST'])
 def email(givenEmail):
     if request.method == 'GET':
@@ -201,7 +490,8 @@ def test_saved_tags1():
 @routes_blueprint.route('/', methods=['GET'])
 @login_required
 def index():
-    print("hiu")
+    publications = Publication.query.filter_by(affiliate=current_user).all()
+       
     #eform = EmptyForm()
     image_file = url_for('static', filename=current_user.image_file)
     # Assuming 'interests' is the relationship between Affiliate and IntrestTest
@@ -216,7 +506,7 @@ def index():
     print(subcategory_names)
 
     print(categories)
-    return render_template('display_profile.html', title='Display Profile', affiliate=current_user, image_file=image_file, combined_data= combined_data)
+    return render_template('display_profile.html', title='Display Profile', affiliate=current_user, image_file=image_file, combined_data= combined_data,publications=publications)
 
 
 
@@ -319,9 +609,86 @@ def addTags():
     # If it's a GET request or the form didn't validate, render the template
     return render_template('addTags.html', title='Add Tags', form=eform, interests=interests, subcategories=subcategories)
 
+@routes_blueprint.route('/edit_education/<education_id>', methods=['POST', 'GET'])
+@login_required
+def edit_education(education_id):
+    afform = AddEducationForm()
+    current_education = Education.query.filter_by(id=education_id).first()
+    if afform.validate_on_submit():
+        current_education.degree = afform.degree.data
+        current_education.title = afform.name.data
+        current_education.college = afform.college.data
+        current_education.year = afform.year.data
+        db.session.add(current_education)
+        db.session.commit()
+        flash("You have modified {education_name}".format(
+            education_name=current_education.title))
+        return redirect(url_for('routes.index'))
+    
+    elif request.method == 'GET':
+        afform.degree.data = current_education.degree
+        afform.name.data = current_education.title
+        afform.college.data = current_education.college
 
+    return render_template('edit_education.html', title='Edit Education', form=afform, education_id=education_id)
 
+@routes_blueprint.route('/edit_exp/<exp_id>', methods=['POST', 'GET'])
+@login_required
+def edit_experience(exp_id):
+    afform = AddExperiencesForm()
+    current_exp = Experience.query.filter_by(id=exp_id).first()
+    if afform.validate_on_submit():
+        # if afform.date_from.data[0] >= afform.date_to[0]:
+        #     if afform.date_from.data[1] < afform.date_to.data[1]:
+        #         pass
+        #     else:
+        #         flash("Invalid Date")
+        #         return redirect(url_for('routes.edit_experience', exp_id=exp_id))
+        current_exp.title = afform.title.data
+        current_exp.location = afform.location.data
+        current_exp.date_from = afform.date_from.data
+        current_exp.date_to = afform.date_to.data
+        db.session.add(current_exp)
+        db.session.commit()
+        flash("You have modified {current_exp_name}".format(
+            current_exp_name=current_exp.title))
+        return redirect(url_for('routes.index'))
+    
+    elif request.method == 'GET':
+        afform.title.data = current_exp.title
+        afform.location.data = current_exp.location
 
+    return render_template('edit_experience.html', title='Edit Professional Experience', form=afform, exp_id=exp_id)
+
+@routes_blueprint.route('/edit_publication/<publication_id>', methods=['POST', 'GET'])
+@login_required
+def edit_publication(publication_id):
+    afform = PublicationForm()
+    current_publication = Publication.query.filter_by(id=publication_id).first()
+    if afform.validate_on_submit():
+        current_publication.authors = afform.authors.data
+        current_publication.title = afform.title.data
+        current_publication.publication_year = afform.publication_year.data
+        current_publication.journal = afform.journal.data
+        current_publication.volume = afform.volume.data
+        current_publication.issue = afform.issue.data
+        current_publication.page_range = afform.page_range.data
+        db.session.add(current_publication)
+        db.session.commit()
+        flash("You have modified {current_publication_name}".format(
+            current_publication_name=current_publication.title))
+        return redirect(url_for('routes.index'))
+    
+    elif request.method == 'GET':
+        afform.title.data = current_publication.title
+        afform.authors.data = current_publication.authors
+        afform.publication_year.data = current_publication.publication_year
+        afform.journal.data = current_publication.journal
+        afform.volume.data = current_publication.volume
+        afform.issue.data = current_publication.issue
+        afform.page_range.data = current_publication.page_range
+
+    return render_template('edit_Publication.html', title='Edit Publication', form=afform, publication_id=publication_id)
 
 @routes_blueprint.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
@@ -333,7 +700,7 @@ def edit_profile():
     eform.set_sponsor()
     eform.set_partners()
     
-    # Within the function, after `eform.set_department_choices()`
+ # Within the function, after `eform.set_department_choices()`
 
   # Within the function, before querying the database for department
 
@@ -341,7 +708,7 @@ def edit_profile():
     print("Department Name from Form:", department_name)  # Add this line
 
     department = Department.query.filter_by(name=department_name).first()
-
+    publications = Publication.query.filter_by(affiliate=current_user).all()
     if request.method == 'POST' and eform.validate_on_submit():
         if eform.picture.data:
             picture_file = save_picture(eform.picture.data)
@@ -388,27 +755,32 @@ def edit_profile():
 
         eform.URL.data = current_user.url
 
-    return render_template('edit_profile.html', title='Edit Profile', form=eform, image_file=image_file)
+    return render_template('edit_profile.html', title='Edit Profile', form=eform, image_file=image_file, affiliate=current_user, publications=publications)
 
-
-
-@routes_blueprint.route('/add_projects', methods=["POST", "GET"])
+@routes_blueprint.route('/edit_project/<project_id>', methods=['POST', 'GET'])
 @login_required
-def add_projects():
+def edit_project(project_id):
     afform = AddProjectsForm()
-
+    current_project = Project.query.filter_by(id=project_id).first()
     if afform.validate_on_submit():
-        project = Project(name=afform.name.data,
-                          url=check_url(afform.url.data))
-        current_user.projects.append(project)
-        db.session.add(project)
+        current_project.name = afform.name.data
+        current_project.authorss = afform.authors.data
+        current_project.year = afform.year.data
+        current_project.publisher = afform.publisher.data
+        current_project.url = afform.url.data
+        db.session.add(current_project)
         db.session.commit()
-        flash("You have added {project_name}".format(
-            project_name=project.name))
+        flash("You have modified {current_project_name}".format(
+            current_project_name=current_project.name))
         return redirect(url_for('routes.index'))
+    
+    elif request.method == 'GET':
+        afform.name.data = current_project.name
+        afform.authors.data = current_project.authorss
+        afform.publisher.data = current_project.publisher
+        afform.url.data = current_project.url
 
-    return render_template('add_projects.html', title='Add project', form=afform)
-
+    return render_template('edit_project.html', title='Edit Project', form=afform, project_id=project_id)
 
 @routes_blueprint.route('/displayAllUsers', methods=['GET', 'POST'])
 def displayAll():
@@ -1187,3 +1559,37 @@ def parseData():
     #response.headers["Content-Type"] = "application/json"
 
     # return response
+
+
+
+
+from flask import request
+
+
+@routes_blueprint.route('/select_values', methods=['GET', 'POST'])
+def select_values():
+    form = Edit()
+
+    form.set_air_choices()
+    form.set_water_choices()
+
+    if request.method == 'POST':
+        selected_table = request.form.get('selected_table')
+        selected_value = request.form.get('selected_value')
+
+        if form.validate_on_submit():
+            if selected_table == 'Air':
+                air_instance = Air(name=selected_value)
+                db.session.add(air_instance)
+                db.session.commit()
+                return "Value saved to Air model"
+            elif selected_table == 'Water':
+                water_instance = Water(name=selected_value)
+                db.session.add(water_instance)
+                db.session.commit()
+                return "Value saved to Water model"
+            else:
+                return "Unexpected selection"
+
+    return render_template('dropdowns.html', form=form)
+

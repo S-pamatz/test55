@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block app_content %}
-    <h1>Add Tags1</h1>
+    <h1>Add New Tags</h1>
 
     <form method="POST" action="/addTags">
         {{ form.csrf_token }}
         <div class="form-group">
-            <label for="interestDropdown">Select Interest:</label>
+            <label for="interestDropdown">Select Interest</label>
             <select class="form-control" id="interestDropdown" name="areaofinterest">
                 <option value="">Select Interest</option>
                 {% for interest in interests %}
@@ -15,7 +15,7 @@
         </div>
 
         <div class="form-group">
-            <label for="subcategoryDropdown">Select Subcategory:</label>
+            <label for="subcategoryDropdown">Select Subcategory</label>
             <select class="form-control" id="subcategoryDropdown" name="subcategory">
                 <option value="">Select Subcategory</option>
             </select>
