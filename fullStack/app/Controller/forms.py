@@ -150,3 +150,9 @@ class PublicationForm(FlaskForm):
     publication_year = IntegerField('Publication Year', render_kw={"placeholder": "e.g. 2001, 2002"})
     page_range = StringField('Page Range', render_kw={"placeholder": "e.g. 0 - 100"})
     submit = SubmitField('Submit')
+
+
+
+class EmailForm(FlaskForm):
+    email=StringField('Email')
+    submit = SubmitField('Submit')

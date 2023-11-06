@@ -6,6 +6,7 @@ import urllib3
 from app import db
 
 from app.Controller.auth_forms import LoginForm, affiliateRegister, AddKeywords, AdminEditProfile
+from app.Controller.forms import EmailForm
 from app.Controller.routes import email
 from app.Model.models import Affiliate, Department, Interest, Campus
 from flask_login import login_user, current_user, logout_user, login_required
@@ -190,12 +191,16 @@ def checkEmail():
 @auth_blueprint.route('/validateEmail', methods=['GET', 'POST'])
 def validateEmail():
 
-    if request.method == 'GET':
-        return '<form action="/validateEmail" method="POST"><input name="email"><input type="submit"></form>'
-    email = request.form['email']
+    form = EmailForm()  # Creating an instance of the EmailForm class
 
-    return redirect(url_for('auth.email1', givenEmail=email))
-    # return redirect(url_for('routes.tData', givenEmail=email))
+    if form.validate_on_submit():  # If the form is submitted and validated
+        email = form.email.data  # Get the email entered by the user
+        return redirect(url_for('auth.email1', givenEmail=email))
+
+    return render_template('email_template.html', form=form)
+
+
+
 
 
 
