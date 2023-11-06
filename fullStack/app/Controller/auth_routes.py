@@ -310,29 +310,37 @@ def register(givenEmail):
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('routes.index'))
+
     lform = LoginForm()
 
     if lform.validate_on_submit():
-        affiliate = Affiliate.query.filter_by(email=lform.email.data).first() 
+        email = lform.email.data
 
-        if affiliate.is_validated==0:
-            # If is_validated is True, the user is validated
-            # Proceed with login
+        if not email or email.lower() == 'null':
+            flash('Invalid email. Please enter a valid email.')
+            return redirect(url_for('auth.login'))
+
+        affiliate = Affiliate.query.filter_by(email=email).first()
+        if  affiliate is None:
+            flash("That email is not registered. Please sign up")
+            return redirect(url_for('auth.login'))
+        if affiliate.is_validated == 0:
             flash("You are in the db, but not validated. Please validate user")
             return redirect(url_for('auth.login'))
-        
 
-
-        elif (affiliate is None) or (affiliate.check_password(lform.password.data) == False):  # if login fails
+        elif not affiliate.check_password(lform.password.data):
             flash('Invalid user or password')
             return redirect(url_for('auth.login'))
+
         elif affiliate.is_ban:
             flash('Your account has been deactivated. Please contact us.')
             return redirect(url_for('routes.index'))
+
         login_user(affiliate, remember=lform.remember_me.data)
         return redirect(url_for('routes.index'))
 
     return render_template('login.html', title='Sign in', form=lform)
+
 
 
 
