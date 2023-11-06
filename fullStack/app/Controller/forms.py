@@ -156,3 +156,15 @@ class PublicationForm(FlaskForm):
 class EmailForm(FlaskForm):
     email=StringField('Email')
     submit = SubmitField('Submit')
+
+
+
+class editPublication(FlaskForm):
+    authors = StringField('Authors', render_kw={"placeholder": "e.g. Boll, J., T. Link, M. Santelmann, R. Heinse, and B. Cosens."})
+    title = StringField('Title', render_kw={"placeholder": "e.g. Effects of road construction on soil degradation and nutrient transport in Caspian Hyrcanian mixed forests"})
+    journal = StringField('Journal', render_kw={"placeholder": "e.g. Nature Communications"})
+    volume = IntegerField('Volume', render_kw={"placeholder": "e.g. 11(8)"})
+    issue = IntegerField('Issue', render_kw={"placeholder": "e.g. 63"})
+    publication_year = IntegerField('Publication Year', render_kw={"placeholder": "e.g. 2001, 2002"})
+    page_range = StringField('Page Range', render_kw={"placeholder": "e.g. 0 - 100"})
+    submit = SubmitField('Submit')

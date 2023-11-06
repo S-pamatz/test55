@@ -87,9 +87,16 @@
                 <strong>Title:</strong> {{ publication.title }}<br>
                 <strong>Authors:</strong> {{ publication.authors }}<br>
                 <strong>Journal:</strong> {{ publication.journal }}<br>
+                <strong>Volume:</strong> {{ publication.volume }}<br>
+                <strong>Issue:</strong> {{ publication.issue }}<br>
+                <strong>Publication Year:</strong> {{ publication.publication_year }}<br>
+                <strong>Page Range:</strong> {{ publication. page_range }}<br>
             {% if current_user == publication.affiliate %}
                 <form method="post" action="{{ url_for('routes.delete_publication', publication_id=publication.id) }}">
                     <input type="submit" value="Delete">
+                </form>
+                <form method="get" action="{{ url_for('routes.edit_publication', publication_id=publication.id) }}">
+                    <input type="submit" value="Edit">
                 </form>
             {% endif %}
                 <br>

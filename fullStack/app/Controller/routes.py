@@ -14,7 +14,7 @@ import secrets
 import os
 import app
 from app.Controller.auth_forms import AddIntrest, AddIntrestOld, AddKeywords, affiliateRegister
-from app.Controller.forms import AddEducationForm, AddExperiencesForm, Edit, EditForm, AddProjectsForm, PublicationForm, ask, editTagsForm
+from app.Controller.forms import AddEducationForm, AddExperiencesForm, Edit, EditForm, AddProjectsForm, PublicationForm, ask, editPublication, editTagsForm
 from app.Model.models import Affiliate, Air, Department, Education, Experience, Interest, IntrestTest, Project, Publication, Subcategory, Water
 from flask_login import login_user, current_user, logout_user, login_required
 from config import Config
@@ -407,6 +407,13 @@ def delete_publication(publication_id):
         flash('You are not authorized to delete this publication', 'danger')
 
     return redirect(url_for('routes.index'))
+
+
+
+
+
+
+
 ################################################
 #code above is for api
 ###########################################
