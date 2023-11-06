@@ -44,16 +44,18 @@ s = URLSafeTimedSerializer('Thisisasecret!')
 
 
 ########################validate email for exisiting users
+
+   
 @auth_blueprint.route('/validateEmailDB', methods=['GET', 'POST'])
 def validateEmailDB():
 
-    if request.method == 'GET':
-        return '<form action="/validateEmailDB" method="POST"><input name="email"><input type="submit"></form>'
-    email = request.form['email']
+    form = EmailForm()  # Creating an instance of the EmailForm class
 
-    return redirect(url_for('auth.emailDB', givenEmail=email))
-    # return redirect(url_for('routes.tData', givenEmail=email))
+    if form.validate_on_submit():  # If the form is submitted and validated
+        email = form.email.data  # Get the email entered by the user
+        return redirect(url_for('auth.emailDB', givenEmail=email))
 
+    return render_template('email_template.html', form=form)
     
 @auth_blueprint.route('/emailDB/<givenEmail>', methods=['GET', 'POST'])
 def emailDB(givenEmail):
@@ -123,14 +125,25 @@ def registerDB(givenEmail):
     rform = affiliateRegister()
     rform.email.data = givenEmail
     rform.set_department_choices()
+    user_to_delete = Affiliate.query.filter_by(email=givenEmail).first()
+    finalF =  user_to_delete.firstname
+    finalL= user_to_delete.lastname
+    rform.firstname.data = finalF
+    rform.lastname.data = finalL
     rform.email.render_kw = {'readonly': True}
-    
-    testD(givenEmail)
+    print(finalF)
+    print(finalL)
+    print("GOKU ARE U THERE2")
+   # testD(givenEmail)
     # Check if the form was submitted and valid
     if rform.validate_on_submit():
       
         
         user_to_delete = Affiliate.query.filter_by(email=givenEmail).first()
+        print(f"user_to_delete: {user_to_delete}")  # Add this line for debugging
+        print("GOKU ARE U THERE1")
+        if user_to_delete:
+            print(f"User found: {user_to_delete.firstname}") 
         if user_to_delete:
             db.session.delete(user_to_delete)
             db.session.commit()
@@ -139,9 +152,9 @@ def registerDB(givenEmail):
         # Create a new user based on the form information
         new_affiliate = Affiliate(
             email=givenEmail,
-            firstname=rform.firstname.data,
-            lastname=rform.lastname.data,
-            membership=rform.membership.data,
+            firstname= finalF,
+            lastname=user_to_delete.lastname,
+            membership= finalL,
             url=rform.url.data,
             # ... other fields you want to set for the new user
         )
@@ -157,8 +170,8 @@ def registerDB(givenEmail):
             new_affiliate.is_admin = True
 
         new_affiliate.is_validated = 1
-        db.session.add(new_affiliate)
-        db.session.commit()
+       # db.session.add(new_affiliate)
+      #  db.session.commit()
 
         flash('New user created successfully.')
         return redirect(url_for('routes.index'))
