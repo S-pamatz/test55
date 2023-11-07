@@ -348,3 +348,38 @@ CREATE TABLE edu (
     FOREIGN KEY (affiliate_id) REFERENCES affiliate(id),
     FOREIGN KEY (education_id) REFERENCES education(id)
 );
+
+
+-----------------------------TESTING
+CREATE TABLE main_interests (
+    interest_id INT AUTO_INCREMENT PRIMARY KEY,
+    interest_name VARCHAR(255) UNIQUE
+);
+
+CREATE TABLE sub_interests (
+    sub_interest_id INT AUTO_INCREMENT PRIMARY KEY,
+    sub_interest_name VARCHAR(255),
+    interest_id INT,
+    FOREIGN KEY (interest_id) REFERENCES main_interests(interest_id)
+);
+CREATE TABLE user_interests (
+    user_interest_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    interest_id INT,
+    affiliate_id INT,
+    FOREIGN KEY (user_id) REFERENCES affiliate(id),
+    FOREIGN KEY (interest_id) REFERENCES main_interests(interest_id),
+    FOREIGN KEY (affiliate_id) REFERENCES affiliate(id)
+);
+CREATE TABLE user (
+    user_id INT AUTO_INCREMENT PRIMARY KEY
+);
+CREATE TABLE subinterests (
+    intresttest_id INT,
+    subcategory_id INT,
+    FOREIGN KEY (intresttest_id) REFERENCES intrest_test(id),
+    FOREIGN KEY (subcategory_id) REFERENCES subcategory(id),
+    PRIMARY KEY (intresttest_id, subcategory_id)
+);
+
+-----------------------------TESTING

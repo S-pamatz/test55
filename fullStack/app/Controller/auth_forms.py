@@ -59,3 +59,8 @@ class AddIntrestOld(FlaskForm):
     name = SelectField('Interest Name', choices=[])
     subcategory_id = SelectField('Subcategory', choices=[])
     submit = SubmitField('Submit')
+
+
+
+
+
