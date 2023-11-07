@@ -539,7 +539,7 @@ def get_subcategories(selected_interest_id):
     selected_interest = IntrestTest.query.get(selected_interest_id)
 
     if selected_interest:
-        subcategories = selected_interest.subcategories  # Fix the attribute name here
+        subcategories = selected_interest.subcategory
         subcategory_options = ''
 
         # Ensure subcategories are retrieved as a list
@@ -553,7 +553,6 @@ def get_subcategories(selected_interest_id):
             return subcategory_options
 
     return 'No subcategories found for the given interest.'
-
 
     # Return an empty string if no matching interest is found
     return ''
@@ -1003,31 +1002,27 @@ def createIntrests():
         # Check if the interest already exists in the database
         existing_interest = IntrestTest.query.filter_by(
             name=eForm.name.data).first()
+        print("hi")
+       # if existing_interest:
+        #    flash("Interest already exists", "warning")
+        #   return redirect(url_for('routes.createIntrests'))
 
-        if existing_interest:
-            # If the interest already exists, add the association with the selected subcategory
-            subcategory = Subcategory.query.get(eForm.subcategory_id.data)
-            existing_interest.subcategories.append(subcategory)
-            db.session.commit()
-
-            flash("Association added successfully", "success")
-            return redirect(url_for('routes.createIntrests'))
-
-        # If the interest doesn't exist, create a new interest and associate it with the selected subcategory
+        # If the interest doesn't exist, add it to the database
         interest = IntrestTest(
             name=eForm.name.data,
-            subcategories=[Subcategory.query.get(eForm.subcategory_id.data)]
+            subcategory_id=eForm.subcategory_id.data
         )
         db.session.add(interest)
         db.session.commit()
 
+        # Add a success message
         flash("Interest added successfully", "success")
+        # Redirect back to the form page
         return redirect(url_for('routes.createIntrests'))
-
     else:
+
         # Print out form errors to see why validation failed
         print(eForm.errors)
-
     return render_template('createIntrests.html', form=eForm)
 
 
@@ -1604,3 +1599,4 @@ def select_values():
                 return "Unexpected selection"
 
     return render_template('dropdowns.html', form=form)
+

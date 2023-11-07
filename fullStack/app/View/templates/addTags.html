@@ -28,10 +28,10 @@
         document.getElementById('interestDropdown').addEventListener('change', function() {
             var selectedInterest = this.value;
             var subcategoryDropdown = document.getElementById('subcategoryDropdown');
-    
+            
             // Clear existing subcategory dropdown options
             subcategoryDropdown.innerHTML = '<option value="">Select Subcategory</option>';
-    
+            
             // Fetch subcategories for the selected interest using AJAX
             fetch('/get_subcategories/' + selectedInterest)
                 .then(response => response.text())
@@ -42,13 +42,16 @@
                     // Filter out duplicate subcategories based on their names
                     subcategories.forEach(subcategory => {
                         if (subcategory.trim() !== '') {
-                            subcategoryDropdown.innerHTML += subcategory + '</option>';
+                            var subcategoryName = subcategory.split('">')[1];
+                            if (!uniqueSubcategories[subcategoryName]) {
+                                uniqueSubcategories[subcategoryName] = true;
+                                subcategoryDropdown.innerHTML += subcategory + '</option>';
+                            }
                         }
                     });
                 });
         });
     </script>
-    
     
     
 {% endblock %}  

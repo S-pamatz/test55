@@ -40,11 +40,7 @@ exp = db.Table(
     db.Column("affiliate_id", db.Integer, db.ForeignKey("affiliate.id")),
     db.Column("experience_id", db.Integer, db.ForeignKey("experience.id"))
 )
-subinterests = db.Table(
-    'subinterests',
-    db.Column('intresttest_id', db.Integer, db.ForeignKey('intrest_test.id')),
-    db.Column('subcategory_id', db.Integer, db.ForeignKey('subcategory.id'))
-)
+
 class Subcategory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
@@ -53,8 +49,9 @@ class Subcategory(db.Model):
 class IntrestTest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
-    subcategories = db.relationship('Subcategory', secondary=subinterests, backref=db.backref('interest_tests', lazy='dynamic'))
- 
+    subcategory_id = db.Column(db.Integer, db.ForeignKey('subcategory.id'))
+    subcategory = db.relationship('Subcategory', foreign_keys=[
+                                  subcategory_id], backref='interests')
 
 class Affiliate(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -170,16 +167,3 @@ class Air(db.Model):
 class Water(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
-
-
-
-
-
-
-
-
-
-
-
-
-#####################
