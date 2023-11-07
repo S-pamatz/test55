@@ -27,9 +27,11 @@ export const expandNodeUsingFilteredEntries = (
   const maxId = Math.max(...nodes.map((node) => node.id));
   const newNodes = filteredEntries.map((entry, index) => {
     console.log(entry);
+    const name = entry.Name.split(" ");
+    const affilateName = `${name[1]}, ${name[0]}`;
     return {
       id: maxId + 1 + index,
-      Name: entry.Name,
+      Name: affilateName,
       Interest: entry.Interest,
       Department: entry.Department,
       Email: entry.Email,
