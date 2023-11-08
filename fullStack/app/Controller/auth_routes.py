@@ -43,22 +43,7 @@ mail = Mail(application)
 s = URLSafeTimedSerializer('Thisisasecret!')
 
 ###############plz work
-postmark = PostmarkClient(server_token='07bab224-f16b-4c30-bca7-6cac281e6eed')
 
-@auth_blueprint.route('/plzwork', methods=['GET'])
-def send_email():
-    # Replace the email details with your own information
-    response = postmark.emails.send(
-        From='brian.joo@wsu.edu',
-        To='arvind.nambakam@wsu.edu',
-        Subject='this is subject',
-        HtmlBody='this is body'
-    )
-    # Check if the email was sent successfully
-    if response['ErrorCode'] == 0:
-        return 'Email sent'
-    else:
-        return 'Email failed: {}'.format(response['Message'])
 ########################validate email for exisiting users
 
    
@@ -69,10 +54,29 @@ def validateEmailDB():
 
     if form.validate_on_submit():  # If the form is submitted and validated
         email = form.email.data  # Get the email entered by the user
-        return redirect(url_for('auth.emailDB', givenEmail=email))
+        return redirect(url_for('auth.plzworkDB', givenEmail=email))
 
     return render_template('email_template.html', form=form)
-    
+
+@auth_blueprint.route('/plzworkDB/<givenEmail>', methods=['GET'])
+def plzworkDB(givenEmail):
+    if request.method == 'GET':
+        token = s.dumps(givenEmail, salt='email-confirm')
+        link = url_for('auth.confirm_email_DB', token=token,
+                       _external=True)
+        
+        response = postmark.emails.send(
+            From='brian.joo@wsu.edu',
+            To=givenEmail,
+            Subject='this is subject',
+            HtmlBody=link
+        )
+        # Check if the email was sent successfully
+        if response['ErrorCode'] == 0:
+            return 'Email sent'
+        else:
+            return 'Email failed: {}'.format(response['Message'])
+
 @auth_blueprint.route('/emailDB/<givenEmail>', methods=['GET', 'POST'])
 def emailDB(givenEmail):
     if request.method == 'GET':
@@ -142,6 +146,7 @@ def registerDB(givenEmail):
     rform.email.data = givenEmail
     rform.set_department_choices()
     user_to_delete = Affiliate.query.filter_by(email=givenEmail).first()
+    
     finalF =  user_to_delete.firstname
     finalL= user_to_delete.lastname
     rform.firstname.data = finalF
@@ -150,20 +155,13 @@ def registerDB(givenEmail):
     print(finalF)
     print(finalL)
     print("GOKU ARE U THERE2")
-   # testD(givenEmail)
+    
     # Check if the form was submitted and valid
     if rform.validate_on_submit():
       
         
         user_to_delete = Affiliate.query.filter_by(email=givenEmail).first()
-        print(f"user_to_delete: {user_to_delete}")  # Add this line for debugging
-        print("GOKU ARE U THERE1")
-        if user_to_delete:
-            print(f"User found: {user_to_delete.firstname}") 
-        if user_to_delete:
-            db.session.delete(user_to_delete)
-            db.session.commit()
-            flash('Existing user deleted successfully.')
+       
 
         # Create a new user based on the form information
         new_affiliate = Affiliate(
@@ -186,9 +184,17 @@ def registerDB(givenEmail):
             new_affiliate.is_admin = True
 
         new_affiliate.is_validated = 1
-       # db.session.add(new_affiliate)
-      #  db.session.commit()
-
+      
+        db.session.add(new_affiliate)
+        db.session.commit()
+        print(f"user_to_delete: {user_to_delete}")  # Add this line for debugging
+        print("GOKU ARE U THERE1")
+        if user_to_delete:
+            print(f"User found: {user_to_delete.firstname}") 
+        if user_to_delete:
+            db.session.delete(user_to_delete)
+            db.session.commit()
+            flash('Existing user deleted successfully.')
         flash('New user created successfully.')
         return redirect(url_for('routes.index'))
 
@@ -224,11 +230,30 @@ def validateEmail():
 
     if form.validate_on_submit():  # If the form is submitted and validated
         email = form.email.data  # Get the email entered by the user
-        return redirect(url_for('auth.email1', givenEmail=email))
+        return redirect(url_for('auth.plzwork', givenEmail=email))
 
     return render_template('email_template.html', form=form)
 
+postmark = PostmarkClient(server_token='07bab224-f16b-4c30-bca7-6cac281e6eed')
 
+@auth_blueprint.route('/plzwork/<givenEmail>', methods=['GET'])
+def plzwork(givenEmail):
+    if request.method == 'GET':
+        token = s.dumps(givenEmail, salt='email-confirm')
+        link = url_for('auth.confirm_email', token=token,
+                       _external=True)
+        
+        response = postmark.emails.send(
+            From='brian.joo@wsu.edu',
+            To=givenEmail,
+            Subject='this is subject',
+            HtmlBody=link
+        )
+        # Check if the email was sent successfully
+        if response['ErrorCode'] == 0:
+            return 'Email sent'
+        else:
+            return 'Email failed: {}'.format(response['Message'])
 
 
 
