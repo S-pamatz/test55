@@ -39,7 +39,7 @@ mail = Mail(application)
 #DEBUG = True
 #from flask.ext.mail import Mail, Message
 # Flask-Mail Configuration
-
+#
 s = URLSafeTimedSerializer('Thisisasecret!')
 
 ###############plz work
