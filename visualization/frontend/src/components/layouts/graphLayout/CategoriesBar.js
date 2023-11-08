@@ -6,8 +6,9 @@ import UniversityIcon from "../../../assets/UniversityB.png";
 import DepartmentsIcon from "../../../assets/DepartmentB.png";
 import Interests from "../../../assets/InterestB.png";
 import Projects from "../../../assets/ProjectB.png";
-import Sponsors from "../../../assets/SponsorsB.png";
+
 import Modal from "../UIComponents/modal";
+import Publication from "../../../assets/PublicationB.png";
 
 const CategoriesBar = () => {
   const [activeModalContent, setActiveModalContent] = React.useState(null);
@@ -65,7 +66,7 @@ const CategoriesBar = () => {
       <Modal
         content={"Publications"}
         position={buttonPosition}
-        image={<img src={Sponsors} alt="University" />}
+        image={<img src={Publication} alt="University" />}
         setActiveModalContent={setActiveModalContent}
       />
     </span>

@@ -42,6 +42,7 @@ export const expandNodeUsingFilteredEntries = (
       parent: clickedNode.id,
       depth: clickedNode.depth + 1,
       radius: clickedNode.radius / 4,
+      node: "affilate",
     };
   });
 
@@ -98,7 +99,6 @@ export const expandNode = (nodes, links, clickedNode, nodeLibrary) => {
       return {
         ...child,
         depth: clickedNode.depth + 1,
-        icon: Department,
         // radius: clickedNode.radius /2
       };
     });
