@@ -16,7 +16,7 @@ auth_blueprint = Blueprint('auth', __name__)
 auth_blueprint.template_folder = Config.TEMPLATE_FOLDER
 import mysql.connector
 # for users that do not have their email in the db
-
+from postmarker.core import PostmarkClient
 application = Flask(__name__)
 # app1.config.from_object(Config)
 # Flask-Mail Configuration
@@ -42,7 +42,23 @@ mail = Mail(application)
 
 s = URLSafeTimedSerializer('Thisisasecret!')
 
+###############plz work
+postmark = PostmarkClient(server_token='07bab224-f16b-4c30-bca7-6cac281e6eed')
 
+@auth_blueprint.route('/plzwork', methods=['GET'])
+def send_email():
+    # Replace the email details with your own information
+    response = postmark.emails.send(
+        From='brian.joo@wsu.edu',
+        To='arvind.nambakam@wsu.edu',
+        Subject='this is subject',
+        HtmlBody='this is body'
+    )
+    # Check if the email was sent successfully
+    if response['ErrorCode'] == 0:
+        return 'Email sent'
+    else:
+        return 'Email failed: {}'.format(response['Message'])
 ########################validate email for exisiting users
 
    

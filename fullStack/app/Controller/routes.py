@@ -1,5 +1,6 @@
 # Import Flask function for rendering templates
 import json
+from urllib import response
 from flask import Flask, render_template
 
 from flask import render_template
@@ -15,7 +16,7 @@ import os
 import app
 from app.Controller.auth_forms import AddIntrest, AddIntrestOld, AddKeywords, affiliateRegister
 from app.Controller.forms import AddEducationForm, AddExperiencesForm, Edit, EditForm, AddProjectsForm, EditInterest, EditInterestSmall, PublicationForm, ask, editPublication, editTagsForm
-from app.Model.models import Affiliate, Air, BigInterest, Department, Education, Experience, Interest, IntrestTest, Project, Publication, Subcategory, Water, smallInterest
+from app.Model.models import Affiliate, Air, BigInterest, Department, Education, Experience, Interest, IntrestTest, Project, Publication, Subcategory, Water, smallInterest, smallinterestform
 from flask_login import login_user, current_user, logout_user, login_required
 from config import Config
 from flask import Flask
@@ -45,6 +46,8 @@ application.config['MAIL_SUPPRESS_SEND'] = False
 application.config['TESTING'] = False
 application.config['DEBUG'] = True
 mail = Mail(application)
+#############
+
 
 ####################ARVIN
 @routes_blueprint.route('/profileSearch', methods=['GET'])
@@ -1237,6 +1240,46 @@ def search():
     return jsonify(response_data)
 
 
+################I WISH I CAN NOT CODE FOR 2 DAYS IN A ROW
+#http://localhost:5000/searchSAD?inputValue=small1
+@routes_blueprint.route('/searchSAD', methods=['GET'])
+def searchSAD():
+    inputValue = request.args.get("inputValue")
+
+    # Search through the relevant fields for the inputValue
+    affiliates = db.session.query(Affiliate).join(smallInterest).filter(
+        smallInterest.name.ilike(f"%{inputValue}%") |
+        Affiliate.firstname.ilike(f"%{inputValue}%") |
+        Affiliate.lastname.ilike(f"%{inputValue}%") |
+        Affiliate.wsuCampus.ilike(f"%{inputValue}%") |
+        Affiliate.department.ilike(f"%{inputValue}%") |
+        Affiliate.email.ilike(f"%{inputValue}%") |
+        Affiliate.url.ilike(f"%{inputValue}%") |
+        BigInterest.name.ilike(f"%{inputValue}%")
+    ).all()
+
+    # Construct the response data
+    response_data = []
+    for affiliate in affiliates:
+        big_interests = [interest.name for interest in affiliate.bigInterest]
+        small_interests = [interest.name for interest in affiliate.smallInterest if interest.name.lower() == inputValue.lower()]
+
+        response_data.append({
+            "Interest": {
+                "Big": big_interests,
+                "Small": small_interests
+            },
+            "Department": getattr(affiliate, 'department', ''),
+            "Name": f"{getattr(affiliate, 'firstname', '')} {getattr(affiliate, 'lastname', '')}".strip(),
+            "Membership": '',  # placeholder, adjust as needed
+            "WSUCampus": getattr(affiliate, 'wsuCampus', ''),
+            "Email": getattr(affiliate, 'email', ''),
+            "URL": getattr(affiliate, 'url', '')
+        })
+    return jsonify(response_data)
+
+
+
 @routes_blueprint.route('/search_Unique_interests', methods=['GET'])
 def search_unique_interests():
     # Get the search query from the request
@@ -1602,7 +1645,7 @@ def select_values():
 
 
 
-############SAD BOI
+############SAD BOI@routes_blueprint.route('/edit_interest', methods=['GET', 'POST'])
 @routes_blueprint.route('/edit_interest', methods=['GET', 'POST'])
 def edit_interest():
     form = EditInterest()
@@ -1611,6 +1654,9 @@ def edit_interest():
     # Populate the dropdown choices
     form.set_name()
     eform.set_name_small()
+
+    selected_big_interest = None
+    selected_small_interest = None
 
     if form.validate_on_submit():
         # Get the selected interest name from the big interest form
@@ -1626,6 +1672,11 @@ def edit_interest():
             db.session.add(new_interest)
             db.session.commit()
 
+            selected_big_interest = selected_interest
+
+            # Call set_name again to update choices with the new interest
+            form.set_name()
+
     elif eform.validate_on_submit():
         # Get the selected interest name from the small interest form
         selected_interest_small = eform.name.data
@@ -1640,4 +1691,21 @@ def edit_interest():
             db.session.add(new_interest_small)
             db.session.commit()
 
-    return render_template('edit_interest.html', form=form, eform=eform)
+            selected_small_interest = selected_interest_small
+
+            # Call set_name_small again to update choices with the new interest
+            eform.set_name_small()
+
+    # Check if search query is received
+    search_query = request.form.get('search_query')
+    print("this is the ", search_query)
+    if search_query:
+        print(f"Search Query: {search_query}")
+
+        # Perform the search and filter interests based on the query
+        big_interests = BigInterest.query.filter(BigInterest.name.ilike(f'%{search_query}%')).all()
+        small_interests = smallInterest.query.filter(smallInterest.name.ilike(f'%{search_query}%')).all()
+
+        return render_template('edit_interest.html', form=form, eform=eform, selected_big_interest=selected_big_interest, selected_small_interest=selected_small_interest, big_interests=big_interests, small_interests=small_interests, search_query=search_query)
+
+    return render_template('edit_interest.html', form=form, eform=eform, selected_big_interest=selected_big_interest, selected_small_interest=selected_small_interest)

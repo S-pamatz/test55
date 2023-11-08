@@ -1,4 +1,5 @@
 from wsgiref.validate import validator
+from flask import request
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from pyparsing import Optional
@@ -184,17 +185,21 @@ class editPublication(FlaskForm):
 
 
 class EditInterest(FlaskForm):
-    
-    name = SelectField('Interest', choices=[])
-    
+    name = SelectField('Big Interest', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
     def set_name(self):
-        big_interests = interestform.query.order_by(
-            interestform.id).all()
+        # Retrieve existing choices
+        existing_choices = [(interest.name, interest.name) for interest in interestform.query.all()]
 
-        # Add a blank option to the beginning of the choices list
-        self.name.choices = [('', 'Select an option')] + [(uni.name, uni.name) for uni in big_interests]
+        # Add the searched item to the choices if not already present
+        search_query = request.form.get('search_query')
+        if search_query and (search_query, search_query) not in existing_choices:
+            existing_choices.append((search_query, search_query))
+
+        # Set the choices for the SelectField
+        self.name.choices = existing_choices
+
         
 
 class EditInterestSmall(FlaskForm):

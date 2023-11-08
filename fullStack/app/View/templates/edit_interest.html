@@ -5,17 +5,57 @@
 {% block app_content %}
   <h1>Edit Interest</h1>
 
-
+  <!-- Search Form -->
   <form method="POST" action="{{ url_for('routes.edit_interest') }}">
-    {{ form.hidden_tag() }}
-    {{ wtf.form_field(form.name) }}
-    {{ wtf.form_field(form.submit) }}
+    <input type="text" name="search_query" id="search_query" placeholder="Search Interests">
+    <button type="submit">Search</button>
   </form>
 
+  <!-- Big Interest Form -->
+ <!-- Big Interest Form -->
+<form method="POST" action="{{ url_for('routes.edit_interest') }}">
+    {{ form.hidden_tag() }}
+    <label for="{{ form.name.id }}">Select Big Interest:</label>
+    {{ wtf.form_field(form.name, value=selected_big_interest) }}
+    {{ wtf.form_field(form.submit) }}
 
+    <select id="search_result_big" style="display: none;">
+        {% for interest in big_interests %}
+            {% if interest.name == search_query %}
+                <option value="{{ interest.name }}" selected>{{ interest.name }}</option>
+            {% else %}
+                <option value="{{ interest.name }}">{{ interest.name }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+</form>
+
+
+  <!-- Small Interest Form -->
   <form method="POST" action="{{ url_for('routes.edit_interest') }}">
     {{ eform.hidden_tag() }}
-    {{ wtf.form_field(eform.name) }}
+    <label for="{{ eform.name.id }}">Select Small Interest:</label>
+    {{ wtf.form_field(eform.name, value=selected_small_interest) }}
     {{ wtf.form_field(eform.submit) }}
+
+    {% if small_interests %}
+      <select name="search_result_small" id="search_result_small">
+        {% for interest in small_interests %}
+          <option value="{{ interest.name }}">{{ interest.name }}</option>
+        {% endfor %}
+      </select>
+    {% endif %}
   </form>
+
+  <script>
+    // JavaScript to update the Big Interest dropdown with search results
+    document.addEventListener('DOMContentLoaded', function() {
+      var searchResultBig = document.getElementById('search_result_big');
+      var bigInterestDropdown = document.getElementById('{{ form.name.id }}');
+
+      searchResultBig.addEventListener('change', function() {
+        bigInterestDropdown.value = searchResultBig.value;
+      });
+    });
+  </script>
 {% endblock %}
