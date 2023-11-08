@@ -4,7 +4,8 @@ import {
     getUniqueInterests,
     getData,
   } from "./getDataFromBackend";
-import University from "../../assets/UniversityW.png";
+import Other from "../../assets/OtherW.png";
+import Department from "../../assets/DepartmentW.png";
 
 export const populateNodesWithUniqueData = async () => {
     try {
@@ -27,6 +28,7 @@ export const populateNodesWithUniqueData = async () => {
           id: currentId,
           Name: department,
           parent: 6, // Assuming wsu node id as the parent
+          icon: Department, 
           expanded: false,
           fx: null,
           fy: null,
@@ -41,6 +43,7 @@ export const populateNodesWithUniqueData = async () => {
         id: otherId,
         Name: "Others",
         parent: 6, // Assuming wsu node id as the parent
+        icon: Other,
         expanded: false,
         fx: null,
         fy: null,
@@ -56,6 +59,7 @@ export const populateNodesWithUniqueData = async () => {
           id: currentId,
           Name: department,
           parent: otherId, // Assuming wsu node id as the parent
+          icon: Department,
           expanded: false,
           fx: null,
           fy: null,

@@ -99,7 +99,6 @@ export const expandNode = (nodes, links, clickedNode, nodeLibrary) => {
       return {
         ...child,
         depth: clickedNode.depth + 1,
-        icon: Department,
         // radius: clickedNode.radius /2
       };
     });

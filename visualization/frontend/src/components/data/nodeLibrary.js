@@ -2,6 +2,16 @@
 // affilate = [{id: __, Name: ___, Department: ___, Interest: ___, Email: ___, WSU Campus: ___, URL: ___}]
 
 import University from "../../assets/UniversityW.png";
+import Entity from "../../assets/EntityW.png";
+import Interest from "../../assets/InterestB.png";
+import Project from "../../assets/ProjectW.png";
+import Publication from "../../assets/PublicationW.png";
+import Department from "../../assets/DepartmentW.png";
+import Sponsor from "../../assets/SponsorW.png";
+import Partner from "../../assets/PartnerW.png";
+import Event from "../../assets/EventB.png";
+import Scholar from "../../assets/ScholarW.png";
+import Journal from "../../assets/JournalW.png";
 
 export let nodesLibrary = [
   // posible root nodes
@@ -17,7 +27,7 @@ export let nodesLibrary = [
   {
     id: 1,
     Name: "Entities",
-    icon: University,
+    icon: Entity,
     expanded: false,
     fx: 500,
     fy: 400,
@@ -26,7 +36,7 @@ export let nodesLibrary = [
   {
     id: 2,
     Name: "Interests",
-    icon: University,
+    icon: Interest,
     expanded: false,
     fx: 500,
     fy: 400,
@@ -35,7 +45,7 @@ export let nodesLibrary = [
   {
     id: 3,
     Name: "Projects",
-    icon: University,
+    icon: Project,
     expanded: false,
     fx: 500,
     fy: 400,
@@ -44,7 +54,7 @@ export let nodesLibrary = [
   {
     id: 4,
     Name: "Publications",
-    icon: University,
+    icon: Publication,
     expanded: false,
     fx: 500,
     fy: 400,
@@ -53,7 +63,7 @@ export let nodesLibrary = [
   {
     id: 5,
     Name: "Departments",
-    icon: University,
+    icon: Department,
     expanded: false,
     fx: 500,
     fy: 400,
@@ -80,7 +90,7 @@ export let nodesLibrary = [
   {
     id: 8,
     Name: "Sponsors",
-    icon: University,
+    icon: Sponsor,
     expanded: false,
     depth: 0,
     parent: 1,
@@ -88,7 +98,7 @@ export let nodesLibrary = [
   {
     id: 9,
     Name: "Partners",
-    icon: University,
+    icon: Partner,
     expanded: false,
     depth: 0,
     parent: 1,
@@ -105,7 +115,6 @@ export let nodesLibrary = [
   {
     id: 11,
     Name: "Ecol",
-    icon: University,
     expanded: false,
     depth: 0,
     parent: 8,
@@ -113,7 +122,6 @@ export let nodesLibrary = [
   {
     id: 12,
     Name: "NASA",
-    icon: University,
     expanded: false,
     depth: 0,
     parent: 8,
@@ -121,7 +129,7 @@ export let nodesLibrary = [
   {
     id: 13,
     Name: "USDA",
-    icon: University,
+
     expanded: false,
     depth: 0,
     parent: 8,
@@ -129,7 +137,7 @@ export let nodesLibrary = [
   {
     id: 14,
     Name: "USAID",
-    icon: University,
+
     expanded: false,
     depth: 0,
     parent: 8,
@@ -137,7 +145,6 @@ export let nodesLibrary = [
   {
     id: 15,
     Name: "NSF",
-    icon: University,
     expanded: false,
     depth: 0,
     parent: 8,
@@ -204,7 +211,7 @@ export let nodesLibrary = [
   {
     id: 23,
     Name: "Faculty",
-    icon: University,
+
     expanded: false,
     depth: 0,
     parent: 19,
@@ -212,7 +219,7 @@ export let nodesLibrary = [
   {
     id: 24,
     Name: "Non-Faculty",
-    icon: University,
+
     expanded: false,
     depth: 0,
     parent: 19,
@@ -221,7 +228,6 @@ export let nodesLibrary = [
   {
     id: 25,
     Name: "Project 1",
-    icon: University,
     expanded: false,
     depth: 0,
     parent: 3,
@@ -229,7 +235,6 @@ export let nodesLibrary = [
   {
     id: 26,
     Name: "Project 2",
-    icon: University,
     expanded: false,
     depth: 0,
     parent: 3,
@@ -238,7 +243,7 @@ export let nodesLibrary = [
   {
     id: 27,
     Name: "Event",
-    icon: University,
+    icon: Event,
     expanded: false,
     depth: 0,
     parent: 4,
@@ -246,7 +251,7 @@ export let nodesLibrary = [
   {
     id: 28,
     Name: "Journal Article",
-    icon: University,
+    icon: Journal,
     expanded: false,
     depth: 0,
     parent: 4,
@@ -255,7 +260,7 @@ export let nodesLibrary = [
   {
     id: 29,
     Name: "Publication",
-    icon: University,
+    icon: Publication,
     expanded: false,
     depth: 0,
     parent: 25,
@@ -263,7 +268,7 @@ export let nodesLibrary = [
   {
     id: 30,
     Name: "People",
-    icon: University,
+    icon: Scholar,
     expanded: false,
     depth: 0,
     parent: 25,
@@ -271,7 +276,7 @@ export let nodesLibrary = [
   {
     id: 31,
     Name: "Interest",
-    icon: University,
+    icon: Interest,
     expanded: false,
     depth: 0,
     parent: 25,
@@ -280,7 +285,7 @@ export let nodesLibrary = [
   {
     id: 32,
     Name: "People",
-    icon: University,
+    icon: Scholar,
     expanded: false,
     depth: 0,
     parent: 27,
@@ -288,7 +293,7 @@ export let nodesLibrary = [
   {
     id: 35,
     Name: "People",
-    icon: University,
+    icon: Scholar,
     expanded: false,
     depth: 0,
     parent: 28,
@@ -296,7 +301,7 @@ export let nodesLibrary = [
   {
     id: 36,
     Name: "Interest",
-    icon: University,
+    icon: Interest,
     expanded: false,
     depth: 0,
     parent: 28,
@@ -304,7 +309,7 @@ export let nodesLibrary = [
   {
     id: 37,
     Name: "Entities",
-    icon: University,
+    icon: Entity,
     expanded: false,
     depth: 0,
     parent: 28,
