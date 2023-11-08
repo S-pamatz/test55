@@ -23,19 +23,7 @@ application = Flask(__name__)
 # Example: Outlook/Office 365 SMTP server
 # https://stackoverflow.com/questions/17980351/flask-mail-not-sending-emails-no-error-is-being-reported
 # https://stackoverflow.com/questions/28466384/python-flask-email-keyerror-keyerror-mail
-application.config['MAIL_SERVER'] = 'smtp.office365.com'
-application.config['MAIL_PORT'] = 587
-application.config['MAIL_DEFAULT_SENDER'] = 'wsuaffiliateconfirmation@outlook.com'
-application.config['MAIL_USERNAME'] = 'wsuaffiliateconfirmation@outlook.com'
-application.config['MAIL_PASSWORD'] = 'changethislater!'
-application.config['MAIL_USE_TLS'] = True
-application.config['MAIL_USE_SSL'] = False
 
-application.config['MAIL_DEBUG'] = True
-
-application.config['MAIL_SUPPRESS_SEND'] = False
-application.config['TESTING'] = False
-mail = Mail(application)
 #DEBUG = True
 #from flask.ext.mail import Mail, Message
 # Flask-Mail Configuration
@@ -77,36 +65,7 @@ def plzworkDB(givenEmail):
         else:
             return 'Email failed: {}'.format(response['Message'])
 
-@auth_blueprint.route('/emailDB/<givenEmail>', methods=['GET', 'POST'])
-def emailDB(givenEmail):
-    if request.method == 'GET':
 
-        # email = request.form['email']
-        print("1")
-        email = givenEmail
-        print(email)
-        token = s.dumps(email, salt='email-confirm')
-        print("2")
-        msg = Message(
-            'Confirm Email', sender='wsuaffiliateconfirmation@outlook.com', recipients=[email])
-        print("3")
-        link = url_for('auth.confirm_email_DB', token=token,
-                       _external=True)  # look at later
-        print("this is test\n")
-        print(application.config['MAIL_SERVER'])
-        print(application.config['MAIL_PORT'])
-        msg.body = 'Your link is {}'.format(link)
-    # msg.body="test"ws1
-    # g@gmail.com
-
-        try:
-            mail.send(msg)
-        except Exception as e:
-            print("Email sending failed:", str(e))
-
-       # return '<h1>The email you entered is {}. The token is {}</h1>'.format(email, token)
-        return 'email sending...please check email'
-    
 
 
 @auth_blueprint.route('/confirm_email_DB/<token>')
@@ -267,37 +226,7 @@ def confirm_email(token):
 
     except SignatureExpired:
         return '<h1>The token is expired!</h1>'
-    
-@auth_blueprint.route('/email/<givenEmail>', methods=['GET', 'POST'])
-def email1(givenEmail):
-    if request.method == 'GET':
-
-        # email = request.form['email']
-        print("1")
-        email = givenEmail
-        print(email)
-        token = s.dumps(email, salt='email-confirm')
-        print("2")
-        msg = Message(
-            'Confirm Email', sender='wsuaffiliateconfirmation@outlook.com', recipients=[email])
-        print("3")
-        link = url_for('auth.confirm_email', token=token,
-                       _external=True)  # look at later
-        print("this is test\n")
-        print(application.config['MAIL_SERVER'])
-        print(application.config['MAIL_PORT'])
-        msg.body = 'Your link is {}'.format(link)
-    # msg.body="test"ws1
-    # g@gmail.com
-
-        try:
-            mail.send(msg)
-        except Exception as e:
-            print("Email sending failed:", str(e))
-
-       # return '<h1>The email you entered is {}. The token is {}</h1>'.format(email, token)
-        return 'email sending...please check email'
-
+  
     
 
 
