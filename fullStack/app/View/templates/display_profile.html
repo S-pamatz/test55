@@ -66,14 +66,23 @@
                 {% endfor %}</b></p>
             <p><span class="email">Area of Interest |</span> <b>{{ affiliate.areaofinterest }}</b></p> 
             <p><span class="email">Campus |</span> <b>{{ affiliate.wsuCampus }}</b></p>    
-            <p><span class="email">Interests |</span> <b>
-                {% for interest in affiliate.interests %}
-                    <b>{{ interest.name }}:</b>
-                    {% for sub_interest in interest.subcategory.interests %}
-                        {{ sub_interest.name }}{% if not loop.last %}, {% endif %}
-                    {% endfor %}
-                    {% if not loop.last %}, {% endif %}
-                {% endfor %}
+            
+                <p>
+                    <span class="email">Interests |</span>
+                    <b>
+                        {% for big_interest in affiliate.bigInterest %}
+                            {{ big_interest.name }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </b>
+                </p>
+                <p>
+                    <span class="email">Small Interests |</span>
+                    <b>
+                        {% for small_interest in affiliate.smallInterest %}
+                            {{ small_interest.name }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </b>
+                </p>
             </b></p> 
         </div>
     </div>

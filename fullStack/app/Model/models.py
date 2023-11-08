@@ -167,3 +167,33 @@ class Air(db.Model):
 class Water(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
+
+
+
+class BigInterest(db.Model):
+    __tablename__ = 'bigInterest'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    affiliate_id = db.Column(db.Integer, db.ForeignKey('affiliate.id'), nullable=False)
+    affiliate = db.relationship('Affiliate', backref=db.backref('bigInterest', lazy=True))
+
+class interestform(db.Model):
+    __tablename__ = 'interestform'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+
+
+
+class smallInterest(db.Model):
+    __tablename__ = 'smallInterest'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    affiliate_id = db.Column(db.Integer, db.ForeignKey('affiliate.id'), nullable=False)
+    affiliate = db.relationship('Affiliate', backref=db.backref('smallInterest', lazy=True))
+
+class smallinterestform(db.Model):
+    __tablename__ = 'smallinterestform'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))

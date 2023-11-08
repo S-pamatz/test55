@@ -1,9 +1,11 @@
+from wsgiref.validate import validator
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
+from pyparsing import Optional
 from wtforms import IntegerField, MonthField, SelectMultipleField, StringField, SubmitField, TextAreaField, PasswordField, SelectField
 from wtforms_sqlalchemy.fields import QuerySelectField
 from wtforms.validators import ValidationError, Length, DataRequired, Email, EqualTo
-from app.Model.models import Affiliate, Air, Department, Partners, Sponsor, Universities_Colleges, Water
+from app.Model.models import Affiliate, Air, Department, Partners, Sponsor, Universities_Colleges, Water, interestform, smallinterestform
 from flask_login import current_user
 
 
@@ -168,3 +170,52 @@ class editPublication(FlaskForm):
     publication_year = IntegerField('Publication Year', render_kw={"placeholder": "e.g. 2001, 2002"})
     page_range = StringField('Page Range', render_kw={"placeholder": "e.g. 0 - 100"})
     submit = SubmitField('Submit')
+
+
+
+
+
+
+
+
+
+
+
+
+
+class EditInterest(FlaskForm):
+    
+    name = SelectField('Big Interest Name', choices=[])
+    
+    submit = SubmitField('Submit')
+
+    def set_name(self):
+        big_interests = interestform.query.order_by(
+            interestform.id).all()
+
+        # Add a blank option to the beginning of the choices list
+        self.name.choices = [('', 'Select an option')] + [(uni.name, uni.name) for uni in big_interests]
+        
+
+class EditInterestSmall(FlaskForm):
+    
+    name = SelectField('Small Interest Name', choices=[], default='')
+    
+    submit = SubmitField('Submit')
+
+    def set_name_small(self):
+        small_interests = smallinterestform.query.order_by(
+            smallinterestform.id).all()
+
+        # Add a blank option to the beginning of the choices list
+        self.name.choices = [('', 'Select an option')] + [(uni.name, uni.name) for uni in small_interests]
+
+
+class CombinedInterestForm(FlaskForm):
+    name_big = SelectField('Big Interest', choices=[])
+    name_small = SelectField('Small Interest', choices=[])
+    submit = SubmitField('Submit')
+
+    def set_names(self, big_interests, small_interests):
+        self.name_big.choices = [(interest.name, interest.name) for interest in big_interests]
+        self.name_small.choices = [(interest.name, interest.name) for interest in small_interests]

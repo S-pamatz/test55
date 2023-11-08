@@ -14,8 +14,8 @@ import secrets
 import os
 import app
 from app.Controller.auth_forms import AddIntrest, AddIntrestOld, AddKeywords, affiliateRegister
-from app.Controller.forms import AddEducationForm, AddExperiencesForm, Edit, EditForm, AddProjectsForm, PublicationForm, ask, editPublication, editTagsForm
-from app.Model.models import Affiliate, Air, Department, Education, Experience, Interest, IntrestTest, Project, Publication, Subcategory, Water
+from app.Controller.forms import AddEducationForm, AddExperiencesForm, Edit, EditForm, AddProjectsForm, EditInterest, EditInterestSmall, PublicationForm, ask, editPublication, editTagsForm
+from app.Model.models import Affiliate, Air, BigInterest, Department, Education, Experience, Interest, IntrestTest, Project, Publication, Subcategory, Water, smallInterest
 from flask_login import login_user, current_user, logout_user, login_required
 from config import Config
 from flask import Flask
@@ -1600,3 +1600,44 @@ def select_values():
 
     return render_template('dropdowns.html', form=form)
 
+
+
+############SAD BOI
+@routes_blueprint.route('/edit_interest', methods=['GET', 'POST'])
+def edit_interest():
+    form = EditInterest()
+    eform = EditInterestSmall()
+
+    # Populate the dropdown choices
+    form.set_name()
+    eform.set_name_small()
+
+    if form.validate_on_submit():
+        # Get the selected interest name from the big interest form
+        selected_interest = form.name.data
+
+        if selected_interest:  # Check if not blank
+            print(f"Selected Big Interest: {selected_interest}")
+
+            # Create a new BigInterest instance with the selected interest name
+            new_interest = BigInterest(name=selected_interest, affiliate_id=current_user.id)
+
+            # Add the new interest to the database
+            db.session.add(new_interest)
+            db.session.commit()
+
+    elif eform.validate_on_submit():
+        # Get the selected interest name from the small interest form
+        selected_interest_small = eform.name.data
+
+        if selected_interest_small:  # Check if not blank
+            print(f"Selected Small Interest: {selected_interest_small}")
+
+            # Create a new smallInterest instance with the selected interest name
+            new_interest_small = smallInterest(name=selected_interest_small, affiliate_id=current_user.id)
+
+            # Add the new small interest to the database
+            db.session.add(new_interest_small)
+            db.session.commit()
+
+    return render_template('edit_interest.html', form=form, eform=eform)

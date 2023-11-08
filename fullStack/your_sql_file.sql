@@ -348,3 +348,32 @@ CREATE TABLE edu (
     FOREIGN KEY (affiliate_id) REFERENCES affiliate(id),
     FOREIGN KEY (education_id) REFERENCES education(id)
 );
+
+
+------------------------everyday want tro cry
+CREATE TABLE bigInterest (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255),
+    affiliate_id INT, 
+    FOREIGN KEY (affiliate_id) REFERENCES affiliate(id)
+);
+
+CREATE TABLE `interestform` (
+  `id`  int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE smallInterest (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255),
+    affiliate_id INT, 
+    FOREIGN KEY (affiliate_id) REFERENCES affiliate(id)
+);
+
+CREATE TABLE `smallinterestform` (
+  `id`  int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
