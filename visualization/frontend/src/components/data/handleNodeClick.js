@@ -42,6 +42,7 @@ export const expandNodeUsingFilteredEntries = (
       parent: clickedNode.id,
       depth: clickedNode.depth + 1,
       radius: clickedNode.radius / 4,
+      node: "affilate",
     };
   });
 

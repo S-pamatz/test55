@@ -21,7 +21,7 @@ const ForceDirectGraph = () => {
     const defaultRadius = 40;
     const width = +svg.attr("width");
     const height = +svg.attr("height");
-    const fontSize = defaultRadius / 2.5;
+    const fontSize = defaultRadius / 2;
 
     const simulation = d3
       .forceSimulation(nodes)
@@ -132,7 +132,7 @@ const ForceDirectGraph = () => {
       // Show full name
       d3.select(this)
         .text(d3.select(this).attr("data-full-text"))
-        .style("fill", "#006699");
+        .style("fill", "white");
     });
 
     nodeGroup.select("text").on("mouseout", function (event, d) {

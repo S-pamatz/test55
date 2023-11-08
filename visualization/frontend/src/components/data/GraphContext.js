@@ -61,19 +61,15 @@ export const GraphContextProvider = (props) => {
     // for when node is selected from filter
     const parentNode = nodesLibrary.find(node => node.id === clickedNode.parent);
     const isParentNode = parentNode && (parentNode.Name === "WSU" || parentNode.Name === "Others")
-    console.log("isParentNode: ", isParentNode)
-    console.log("parentNode: ", parentNode)
-    console.log("clickedNode: ", clickedNode)
-    console.log("nodesLibrary: ", nodesLibrary)
     const isInNodeLibrary = nodesLibrary.some(
       (node) => node.Name === clickedNode.Name
     );
 
-    if (clickedNode.depth >= 3 && !isInNodeLibrary && clickedNode != null && isParentNode) {
+    if (clickedNode.node === "affilate" && !isInNodeLibrary) {
       setSelectedNode(clickedNode);
     }
 
-    if (clickedNode.depth >= 4) {
+    if (clickedNode.node === "affilate") {
       return; // Early return if the node is not a top-level node
     }
     let updatedNodes, updatedLinks;
