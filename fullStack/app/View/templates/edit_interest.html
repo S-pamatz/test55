@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 
-{% block title %}Edit Interest{% endblock %}
+{% block title %}Edit Interests{% endblock %}
 
 {% block app_content %}
   <h1>Edit Interest</h1>
 
-  <!-- Big Interest Form -->
+
   <form method="POST" action="{{ url_for('routes.edit_interest') }}">
     {{ form.hidden_tag() }}
     {{ wtf.form_field(form.name) }}
     {{ wtf.form_field(form.submit) }}
   </form>
 
-  <!-- Small Interest Form -->
+
   <form method="POST" action="{{ url_for('routes.edit_interest') }}">
     {{ eform.hidden_tag() }}
     {{ wtf.form_field(eform.name) }}

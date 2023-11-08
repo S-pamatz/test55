@@ -185,7 +185,7 @@ class editPublication(FlaskForm):
 
 class EditInterest(FlaskForm):
     
-    name = SelectField('Big Interest Name', choices=[])
+    name = SelectField('Interest', choices=[])
     
     submit = SubmitField('Submit')
 
@@ -199,7 +199,7 @@ class EditInterest(FlaskForm):
 
 class EditInterestSmall(FlaskForm):
     
-    name = SelectField('Small Interest Name', choices=[], default='')
+    name = SelectField('Sub-Interests', choices=[], default='')
     
     submit = SubmitField('Submit')
 
