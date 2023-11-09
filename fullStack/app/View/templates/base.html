@@ -119,17 +119,22 @@
                 </a></li>
                 <li><a href="{{ url_for('routes.submit_publication') }}">
                     <i class="fas fa-copy"></i>
-                    <span class="nav-item">Add Publications</span>
+                    <span class="nav-item">Add Publications Manually</span>
+                </a></li>
+                <li><a href="{{ url_for('routes.semantic_scholar_author_search_user_input') }}">
+                    <i class="fas fa-copy"></i>
+                    <span class="nav-item">Add Publications Automatically</span>
+                </a></li>
+                <li><a href="{{ url_for('routes.edit_interest') }}">
+                    <i class="fas fa-copy"></i>
+                    <span class="nav-item">Add Interests</span>
                 </a></li>
             {% if current_user.is_admin %}
                 <li><a href="{{ url_for('auth.admin') }}">
                     <i class="fas fa-users-line"></i>
                     <span class="nav-item">Manage Users</span>
                 </a></li>
-                <li><a href="{{ url_for('routes.edit_interest') }}">
-                    <i class="fas fa-user-tag"></i>
-                    <span class="nav-item">Manage Tags</span>
-                </a></li>
+              
             {% endif %}
             <li><a href="{{ url_for('auth.logout') }}" class="logout">
                 <i class="fas fa-sign-out-alt"></i>
