@@ -1487,14 +1487,6 @@ def user_interests():
 
 # pip install google-search-results
 
-
-
-
-
-
-
-
-
 def parseData():
     # Read the data from the file
     with open('serpApi.txt', 'r') as file:

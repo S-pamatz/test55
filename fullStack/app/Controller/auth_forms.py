@@ -10,11 +10,11 @@ class affiliateRegister(FlaskForm):
     firstname = StringField('First Name', validators=[DataRequired()])
     lastname = StringField('Last Name', validators=[DataRequired()])
     wsuCampus = SelectField('Campus', choices=[('Please Select an Option Below'), ('WSU Pullman'), ('WSU Spokane'), (
-        'WSU Tri-Cities'), ('WSU Vancouver'), ('WSU Everett'), ("WSU Global Campus")], validators=[DataRequired()])
+        'WSU Tri-Cities'), ('WSU Vancouver'), ('WSU Everett'), ("WSU Global Campus")], validators=[])
     department = SelectField('Department', choices=[])
     membership = SelectField('Membership', choices=[(
         'Please Select an Option Below'), ('Yes'), ('No')], validators=[DataRequired()])
-    url = StringField('URL', validators=[DataRequired()])
+    url = StringField('URL')
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField('Repeat password', validators=[
@@ -40,8 +40,8 @@ class AddKeywords(FlaskForm):
 class AdminEditProfile(FlaskForm):
     firstname = StringField('First Name', validators=[DataRequired()])
     lastname = StringField('Last Name', validators=[DataRequired()])
-    campus = StringField('Campus', validators=[DataRequired()])
-    department = StringField('Department', validators=[DataRequired()])
+    campus = StringField('Campus', validators=[])
+    department = StringField('Department', validators=[])
     areaofinterest = StringField('Area of Interest')
     URL = StringField('URL')
     is_admin = BooleanField('Is Admin')
