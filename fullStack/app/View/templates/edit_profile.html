@@ -23,7 +23,7 @@
                     <td>{{ education.title }}</td>
                     <td>{{ education.year }}</td>
                     <td>{{ education.college }} </td>
-                    <td><a href="{{ url_for('routes.edit_education', education_id=education.id) }}">Edit</a>
+                    <td><a href="{{ url_for('routes.edit_education', education_id=education.id, user_id=affiliate.id) }}">Edit</a>
                         <a href="{{ url_for('routes.delete_education', education_id=education.id, user_id=affiliate.id) }}">Delete</a>
                     </td>
 
