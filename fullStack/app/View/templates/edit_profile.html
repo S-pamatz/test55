@@ -24,7 +24,7 @@
                     <td>{{ education.year }}</td>
                     <td>{{ education.college }} </td>
                     <td><a href="{{ url_for('routes.edit_education', education_id=education.id) }}">Edit</a>
-                        <a href="{{ url_for('routes.delete_education', education_id=education.id) }}">Delete</a>
+                        <a href="{{ url_for('routes.delete_education', education_id=education.id, user_id=affiliate.id) }}">Delete</a>
                     </td>
 
                 </tr>
@@ -46,7 +46,7 @@
                     <td>{{ experience.date_from }}</td>
                     <td>{{ experience.date_to }} </td>
                     <td><a href="{{url_for('routes.edit_experience', exp_id=experience.id)}}">Edit</a>
-                        <a href="{{url_for('routes.delete_experience', experience_id=experience.id)}}">Delete</a>
+                        <a href="{{url_for('routes.delete_experience', experience_id=experience.id, user_id=affiliate.id)}}">Delete</a>
                     </td>
 
                 </tr>
@@ -70,7 +70,7 @@
                     <td>{{ project.publisher }} </td>
                     <td>{{ project.url }}</td>
                     <td><a href="{{ url_for('routes.edit_project', project_id=project.id) }}">Edit</a>
-                        <a href="{{url_for('routes.delete_project', project_id=project.id)}}">Delete</a>
+                        <a href="{{url_for('routes.delete_project', project_id=project.id, user_id=affiliate.id)}}">Delete</a>
                     </td>
                 </tr>
                 {% endfor %}

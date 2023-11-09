@@ -1710,29 +1710,47 @@ def edit_interest():
 
     return render_template('edit_interest.html', form=form, eform=eform, selected_big_interest=selected_big_interest, selected_small_interest=selected_small_interest)
 
-@routes_blueprint.route('/delete_education/<education_id>', methods=['GET','POST'])
-def delete_education(education_id):
+@routes_blueprint.route('/delete_education/<user_id>/<education_id>', methods=['GET','POST'])
+@login_required
+def delete_education(education_id, user_id):
     education = Education.query.filter_by(id=education_id).first()
-    if education:
+    if int(user_id) == current_user.id or current_user.is_admin:
         db.session.delete(education)
         db.session.commit()
+    else:
+        flash("You are not authorized.")
+        return redirect(url_for("routes.index"))
     
+    if current_user.is_admin:
+        return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
     return redirect(url_for("routes.edit_profile"))
 
-@routes_blueprint.route('/delete_experience/<experience_id>', methods=['GET','POST'])
-def delete_experience(experience_id):
+@routes_blueprint.route('/delete_experience/<user_id>/<experience_id>', methods=['GET','POST'])
+@login_required
+def delete_experience(experience_id, user_id):
     experience = Experience.query.filter_by(id=experience_id).first()
-    if experience:
+    if int(user_id) == current_user or current_user.is_admin:
         db.session.delete(experience)
         db.session.commit()
-    
+    else:
+        flash("You are not authorized.")
+        return redirect(url_for("routes.index"))
+
+    if current_user.is_admin:
+        return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
     return redirect(url_for("routes.edit_profile"))
 
-@routes_blueprint.route('/delete_project/<project_id>', methods=['GET','POST'])
-def delete_project(project_id):
+@routes_blueprint.route('/delete_project/<user_id>/<project_id>', methods=['GET','POST'])
+@login_required
+def delete_project(project_id, user_id):
     project = Project.query.filter_by(id=project_id).first()
-    if project:
+    if int(user_id) == current_user.id or current_user.is_admin:
         db.session.delete(project)
         db.session.commit()
-    
+    else:
+        flash("You are not authorized.")
+        return redirect(url_for("routes.index"))
+
+    if current_user.is_admin:
+        return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
     return redirect(url_for("routes.edit_profile"))
