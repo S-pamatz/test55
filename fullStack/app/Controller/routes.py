@@ -57,13 +57,15 @@ def profileSearch(initial=None):
 
     if initial:
         # Filter affiliates by the first letter of the last name
-        filtered_affiliates = [user for user in affiliates if user.lastname[0].upper() == initial]
+        filtered_affiliates = [user for user in affiliates if user.lastname and user.lastname[0].upper() == initial]
     else:
         filtered_affiliates = affiliates
 
-    last_name_initials = set(user.lastname[0].upper() for user in affiliates)
+    # Ensure 'lastname' is not None and is not an empty string before accessing it
+    last_name_initials = set(user.lastname[0].upper() for user in affiliates if user.lastname)
 
     return render_template('profileSearch.html', affiliates=affiliates, last_name_initials=sorted(last_name_initials))
+
 
 @routes_blueprint.route('/landing', methods=['GET'])
 def displayLanding():
