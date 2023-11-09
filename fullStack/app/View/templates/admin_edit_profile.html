@@ -34,7 +34,7 @@
     <h1>Edit Education</h1>
     <div class="flex-options">
         <button>
-            <a href="{{url_for('routes.add_education')}}">Add Education</a>
+            <a href="{{url_for('routes.add_education', user_id=user.id)}}">Add Education</a>
         </button>
     </div>
 
@@ -52,7 +52,9 @@
             <td>{{ education.title }}</td>
             <td>{{ education.year }}</td>
             <td>{{ education.college }} </td>
-            <td><a href="{{ url_for('routes.edit_education', education_id=education.id) }}">Edit</a></td>
+            <td><a href="{{ url_for('routes.edit_education', education_id=education.id, user_id=user.id) }}">Edit</a>
+                <a href="{{ url_for('routes.delete_education', education_id=education.id, user_id=user.id) }}">Delete</a>
+            </td>
 
         </tr>
         {% endfor %}
@@ -60,7 +62,7 @@
     <h1>Edit Professional Experiences</h1>
     <div class="flex-options">
         <button>
-            <a href="{{url_for('routes.add_experiences')}}">Add Professional Experiences</a>
+            <a href="{{url_for('routes.add_experiences', user_id=user.id)}}">Add Professional Experiences</a>
         </button>
     </div>
     <table class="styled-table">
@@ -77,7 +79,9 @@
             <td>{{ experience.location }}</td>
             <td>{{ experience.date_from }}</td>
             <td>{{ experience.date_to }} </td>
-            <td><a href="{{url_for('routes.edit_experience', exp_id=experience.id)}}">Edit</a></td>
+            <td><a href="{{url_for('routes.edit_experience', exp_id=experience.id, user_id=user.id)}}">Edit</a>
+                <a href="{{url_for('routes.delete_experience', experience_id=experience.id, user_id=user.id)}}">Delete</a>
+            </td>
 
         </tr>
         {% endfor %}
@@ -85,7 +89,7 @@
     <h1>Edit Projects</h1>
     <div class="flex-options">
         <button>
-            <a href="{{ url_for('routes.add_projects') }}">Add Projects</a>
+            <a href="{{ url_for('routes.add_projects', user_id=user.id) }}">Add Projects</a>
         </button>
     </div>
     <table class="styled-table">
@@ -104,7 +108,9 @@
             <td>{{ project.year }}</td>
             <td>{{ project.publisher }} </td>
             <td>{{ project.url }}</td>
-            <td><a href="{{ url_for('routes.edit_project', project_id=project.id) }}">Edit</a></td>
+            <td><a href="{{ url_for('routes.edit_project', project_id=project.id, user_id=user.id) }}">Edit</a>
+                <a href="{{url_for('routes.delete_project', project_id=project.id, user_id=user.id)}}">Delete</a>
+            </td>
         </tr>
         {% endfor %}
     </table>

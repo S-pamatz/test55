@@ -37,9 +37,8 @@ class EditForm(FlaskForm):
     membership = SelectField('Membership', choices=[(
         'Please Select an Option Below'), ('Yes, I am a member'), ('No, I am not a member')])
     URL = StringField('URL')
-    password = PasswordField('Password', validators=[DataRequired()])
-    password2 = PasswordField('Repeat Password', validators=[
-                              DataRequired(), EqualTo('password')])
+    password = PasswordField('Password', validators=[])
+    password2 = PasswordField('Repeat Password', validators=[EqualTo('password')])
     submit = SubmitField('Submit')
 
     def set_sponsor(self):
@@ -91,7 +90,7 @@ class EmptyForm(FlaskForm):
 class AddProjectsForm(FlaskForm):
     authors = StringField('Authors', validators=[DataRequired()], render_kw={"placeholder": "e.g. 'Bruce Wayne, Mary Jane..."})
     name = StringField('Name of Publication', validators=[DataRequired()], render_kw={"placeholder": "e.g. Quaternary Science Reviews"})
-    year = MonthField('Month-Year', validators=[DataRequired()])
+    year = MonthField('Month-Year', validators=[])
     url = StringField('URL of Project', render_kw={"placeholder": "e.g. dx.doi.org/10.1016/j.quascirev.2015.08.028"})
     publisher = StringField('Publisher', render_kw={"placeholder": "e.g. Quaternary Science Reviews"})
     submit = SubmitField('Submit')
@@ -107,8 +106,8 @@ class AddExperiencesForm(FlaskForm):
 class AddEducationForm(FlaskForm):
     degree = SelectField("Degree", choices=[("Ph.D.", "Ph.D."), ("M.S.", "M.S."), ("B.S.","B.S.")])
     name = StringField("Name of Degree", validators=[DataRequired()], render_kw={"placeholder": "e.g. Computer Science"})
-    year = MonthField("Date of Completion", validators=[DataRequired()])
-    college = StringField("College/University", validators=[DataRequired()], render_kw={"placeholder": "e.g. Washington State University"})
+    year = MonthField("Date of Completion", validators=[])
+    college = StringField("College/University", validators=[], render_kw={"placeholder": "e.g. Washington State University"})
     submit = SubmitField('Submit')
 
     

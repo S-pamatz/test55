@@ -72,58 +72,77 @@ def displayLanding():
     return render_template('displayLanding.html')
 
 #################JAMES
-@routes_blueprint.route('/add_projects', methods=["POST", "GET"])
+@routes_blueprint.route('/add_projects/<user_id>', methods=["POST", "GET"])
 @login_required
-def add_projects():
-    afform = AddProjectsForm()
+def add_projects(user_id):
+    if int(user_id) == current_user.id or current_user.is_admin:
+        afform = AddProjectsForm()
+        if afform.validate_on_submit():
+            user = Affiliate.query.filter_by(id=user_id).first()
+            project = Project(name=afform.name.data, authorss=afform.authors.data,
+                            year=afform.year.data, publisher=afform.publisher.data,
+                            url=check_url(afform.url.data))
+            user.projects.append(project)
+            db.session.add(project)
+            db.session.commit()
+            flash("You have added {project_name}".format(
+                project_name=project.name))
+            
+            if current_user.is_admin:
+                return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
+            return redirect(url_for('routes.edit_profile'))
 
-    if afform.validate_on_submit():
-        project = Project(name=afform.name.data, authorss=afform.authors.data,
-                          year=afform.year.data, publisher=afform.publisher.data,
-                          url=check_url(afform.url.data))
-        current_user.projects.append(project)
-        db.session.add(project)
-        db.session.commit()
-        flash("You have added {project_name}".format(
-            project_name=project.name))
-        return redirect(url_for('routes.index'))
-
-    return render_template('add_projects.html', title='Add Projects', form=afform)
+        return render_template('add_projects.html', title='Add Projects', form=afform, user_id=user_id)
+    else:
+        flash("You are not authorized.")
+        return redirect(url_for("routes.index"))
 
 
-@routes_blueprint.route('/add_experiences', methods=["POST", "GET"])
+@routes_blueprint.route('/add_experiences/<user_id>', methods=["POST", "GET"])
 @login_required
-def add_experiences():
-    afform = AddExperiencesForm()
+def add_experiences(user_id):
+    if int(user_id) == current_user.id or current_user.is_admin:
+        afform = AddExperiencesForm()
+        user = Affiliate.query.filter_by(id=user_id).first()
+        if afform.validate_on_submit():
+            experience = Experience(title=afform.title.data, location=afform.location.data,
+                            date_from=afform.date_from.data, date_to=afform.date_to.data)
+            user.experience.append(experience)
+            db.session.add(experience)
+            db.session.commit()
+            flash("You have added {experience_name}".format(
+                experience_name=experience.title))
+            if current_user.is_admin:
+                return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
+            return redirect(url_for('routes.index'))
 
-    if afform.validate_on_submit():
-        experience = Experience(title=afform.title.data, location=afform.location.data,
-                          date_from=afform.date_from.data, date_to=afform.date_to.data)
-        current_user.experience.append(experience)
-        db.session.add(experience)
-        db.session.commit()
-        flash("You have added {experience_name}".format(
-            experience_name=experience.title))
-        return redirect(url_for('routes.index'))
+        return render_template('add_experience.html', title='Add Experiences', form=afform, user_id=user_id)
+    else:
+        flash("You are not authorized")
+        return redirect(url_for("routes.index"))
 
-    return render_template('add_experience.html', title='Add Experiences', form=afform)
-
-@routes_blueprint.route('/add_education', methods=["POST", "GET"])
+@routes_blueprint.route('/add_education/<user_id>', methods=["POST", "GET"])
 @login_required
-def add_education():
-    afform = AddEducationForm()
-
-    if afform.validate_on_submit():
-        education = Education(degree=afform.degree.data, title=afform.name.data,
-                              year=afform.year.data, college=afform.college.data)
-        current_user.education.append(education)
-        db.session.add(education)
-        db.session.commit()
-        flash("You have added {education_name}".format(
-            education_name=education.title))
-        return redirect(url_for('routes.index'))
-    
-    return render_template('add_education.html', title='Add Education', form=afform)
+def add_education(user_id):
+    if int(user_id) == current_user.id or current_user.is_admin:
+        afform = AddEducationForm()
+        if afform.validate_on_submit():
+            user = Affiliate.query.filter_by(id=user_id).first()
+            education = Education(degree=afform.degree.data, title=afform.name.data,
+                                year=afform.year.data, college=afform.college.data)
+            user.education.append(education)
+            db.session.add(education)
+            db.session.commit()
+            flash("You have added {education_name}".format(
+                education_name=education.title))
+            if current_user.is_admin:
+                return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
+            return redirect(url_for('routes.index'))
+        
+        return render_template('add_education.html', title='Add Education', form=afform, user_id=user_id)
+    else:
+        flash("You are not authorized")
+        return redirect(url_for("routes.index"))
 
 
 #DEBUG = True
@@ -399,7 +418,7 @@ def mypub():
         # Handle case if no user is logged in
         return render_template('error.html', message="No user logged in")  # Or redirect to login, etc.
     
-@routes_blueprint.route('/delete_publication/<int:publication_id>', methods=['POST'])
+@routes_blueprint.route('/delete_publication/<int:publication_id>', methods=['GET', 'POST'])
 def delete_publication(publication_id):
     publication = Publication.query.get_or_404(publication_id)
     
@@ -621,57 +640,62 @@ def addTags():
     # If it's a GET request or the form didn't validate, render the template
     return render_template('addTags.html', title='Add Tags', form=eform, interests=interests, subcategories=subcategories)
 
-@routes_blueprint.route('/edit_education/<education_id>', methods=['POST', 'GET'])
+@routes_blueprint.route('/edit_education/<user_id>/<education_id>', methods=['POST', 'GET'])
 @login_required
-def edit_education(education_id):
-    afform = AddEducationForm()
-    current_education = Education.query.filter_by(id=education_id).first()
-    if afform.validate_on_submit():
-        current_education.degree = afform.degree.data
-        current_education.title = afform.name.data
-        current_education.college = afform.college.data
-        current_education.year = afform.year.data
-        db.session.add(current_education)
-        db.session.commit()
-        flash("You have modified {education_name}".format(
-            education_name=current_education.title))
-        return redirect(url_for('routes.index'))
+def edit_education(education_id, user_id):
+    if int(user_id) == current_user.id or current_user.is_admin:
+        afform = AddEducationForm()
+        current_education = Education.query.filter_by(id=education_id).first()
+        if afform.validate_on_submit():
+            current_education.degree = afform.degree.data
+            current_education.title = afform.name.data
+            current_education.college = afform.college.data
+            current_education.year = afform.year.data
+            db.session.add(current_education)
+            db.session.commit()
+            flash("You have modified {education_name}".format(
+                education_name=current_education.title))
+            if current_user.is_admin:
+                return redirect(url_for('auth.admin_edit_profile', user_id=user_id))
+            return redirect(url_for('routes.index'))
+        
+        elif request.method == 'GET':
+            afform.degree.data = current_education.degree
+            afform.name.data = current_education.title
+            afform.college.data = current_education.college
+
+        return render_template('edit_education.html', title='Edit Education', form=afform, education_id=education_id, user_id=user_id)
+    else:
+        flash("You are not authorized")
+        return redirect(url_for("routes.index"))
     
-    elif request.method == 'GET':
-        afform.degree.data = current_education.degree
-        afform.name.data = current_education.title
-        afform.college.data = current_education.college
-
-    return render_template('edit_education.html', title='Edit Education', form=afform, education_id=education_id)
-
-@routes_blueprint.route('/edit_exp/<exp_id>', methods=['POST', 'GET'])
+@routes_blueprint.route('/edit_exp/<user_id>/<exp_id>', methods=['POST', 'GET'])
 @login_required
-def edit_experience(exp_id):
-    afform = AddExperiencesForm()
-    current_exp = Experience.query.filter_by(id=exp_id).first()
-    if afform.validate_on_submit():
-        # if afform.date_from.data[0] >= afform.date_to[0]:
-        #     if afform.date_from.data[1] < afform.date_to.data[1]:
-        #         pass
-        #     else:
-        #         flash("Invalid Date")
-        #         return redirect(url_for('routes.edit_experience', exp_id=exp_id))
-        current_exp.title = afform.title.data
-        current_exp.location = afform.location.data
-        current_exp.date_from = afform.date_from.data
-        current_exp.date_to = afform.date_to.data
-        db.session.add(current_exp)
-        db.session.commit()
-        flash("You have modified {current_exp_name}".format(
-            current_exp_name=current_exp.title))
-        return redirect(url_for('routes.index'))
-    
-    elif request.method == 'GET':
-        afform.title.data = current_exp.title
-        afform.location.data = current_exp.location
+def edit_experience(exp_id, user_id):
+    if int(user_id) == current_user.id or current_user.is_admin:
+        afform = AddExperiencesForm()
+        current_exp = Experience.query.filter_by(id=exp_id).first()
+        if afform.validate_on_submit():
+            current_exp.title = afform.title.data
+            current_exp.location = afform.location.data
+            current_exp.date_from = afform.date_from.data
+            current_exp.date_to = afform.date_to.data
+            db.session.add(current_exp)
+            db.session.commit()
+            flash("You have modified {current_exp_name}".format(
+                current_exp_name=current_exp.title))
+            if current_user.is_admin:
+                return redirect(url_for('auth.admin_edit_profile', user_id=user_id))
+            return redirect(url_for('routes.index'))
+        
+        elif request.method == 'GET':
+            afform.title.data = current_exp.title
+            afform.location.data = current_exp.location
 
-    return render_template('edit_experience.html', title='Edit Professional Experience', form=afform, exp_id=exp_id)
-
+        return render_template('edit_experience.html', title='Edit Professional Experience', form=afform, exp_id=exp_id, user_id=user_id)
+    else:
+        flash("You are not authorized")
+        return redirect(url_for("routes.index"))
 @routes_blueprint.route('/edit_publication/<publication_id>', methods=['POST', 'GET'])
 @login_required
 def edit_publication(publication_id):
@@ -769,30 +793,36 @@ def edit_profile():
 
     return render_template('edit_profile.html', title='Edit Profile', form=eform, image_file=image_file, affiliate=current_user, publications=publications)
 
-@routes_blueprint.route('/edit_project/<project_id>', methods=['POST', 'GET'])
+@routes_blueprint.route('/edit_project/<user_id>/<project_id>', methods=['POST', 'GET'])
 @login_required
-def edit_project(project_id):
-    afform = AddProjectsForm()
-    current_project = Project.query.filter_by(id=project_id).first()
-    if afform.validate_on_submit():
-        current_project.name = afform.name.data
-        current_project.authorss = afform.authors.data
-        current_project.year = afform.year.data
-        current_project.publisher = afform.publisher.data
-        current_project.url = afform.url.data
-        db.session.add(current_project)
-        db.session.commit()
-        flash("You have modified {current_project_name}".format(
-            current_project_name=current_project.name))
-        return redirect(url_for('routes.index'))
-    
-    elif request.method == 'GET':
-        afform.name.data = current_project.name
-        afform.authors.data = current_project.authorss
-        afform.publisher.data = current_project.publisher
-        afform.url.data = current_project.url
+def edit_project(project_id, user_id):
+    if int(user_id) == current_user.id or current_user.is_admin:
+        afform = AddProjectsForm()
+        current_project = Project.query.filter_by(id=project_id).first()
+        if afform.validate_on_submit():
+            current_project.name = afform.name.data
+            current_project.authorss = afform.authors.data
+            current_project.year = afform.year.data
+            current_project.publisher = afform.publisher.data
+            current_project.url = afform.url.data
+            db.session.add(current_project)
+            db.session.commit()
+            flash("You have modified {current_project_name}".format(
+                current_project_name=current_project.name))
+            if current_user.is_admin:
+                return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
+            return redirect(url_for('routes.edit_profile'))
+        
+        elif request.method == 'GET':
+            afform.name.data = current_project.name
+            afform.authors.data = current_project.authorss
+            afform.publisher.data = current_project.publisher
+            afform.url.data = current_project.url
 
-    return render_template('edit_project.html', title='Edit Project', form=afform, project_id=project_id)
+        return render_template('edit_project.html', title='Edit Project', form=afform, project_id=project_id, user_id=user_id)
+    else:
+        flash("You are not authorized")
+        return redirect(url_for("routes.index"))
 
 @routes_blueprint.route('/displayAllUsers', methods=['GET', 'POST'])
 def displayAll():
@@ -1489,14 +1519,6 @@ def user_interests():
 
 # pip install google-search-results
 
-
-
-
-
-
-
-
-
 def parseData():
     # Read the data from the file
     with open('serpApi.txt', 'r') as file:
@@ -1704,3 +1726,50 @@ def edit_interest():
         return render_template('edit_interest.html', form=form, eform=eform, selected_big_interest=selected_big_interest, selected_small_interest=selected_small_interest)
 
     return render_template('edit_interest.html', form=form, eform=eform, selected_big_interest=selected_big_interest, selected_small_interest=selected_small_interest)
+
+@routes_blueprint.route('/delete_education/<user_id>/<education_id>', methods=['GET','POST'])
+@login_required
+def delete_education(education_id, user_id):
+    education = Education.query.filter_by(id=education_id).first()
+    if int(user_id) == current_user.id or current_user.is_admin:
+        db.session.delete(education)
+        db.session.commit()
+    else:
+        flash("You are not authorized.")
+        return redirect(url_for("routes.index"))
+    flash("You have deleted {name}".format(name=education.title))
+    if current_user.is_admin:
+        return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
+    return redirect(url_for("routes.edit_profile"))
+
+@routes_blueprint.route('/delete_experience/<user_id>/<experience_id>', methods=['GET','POST'])
+@login_required
+def delete_experience(experience_id, user_id):
+    experience = Experience.query.filter_by(id=experience_id).first()
+    if int(user_id) == current_user or current_user.is_admin:
+        db.session.delete(experience)
+        db.session.commit()
+    else:
+        flash("You are not authorized.")
+        return redirect(url_for("routes.index"))
+
+    flash("You have deleted {name}".format(name=experience.title))
+    if current_user.is_admin:
+        return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
+    return redirect(url_for("routes.edit_profile"))
+
+@routes_blueprint.route('/delete_project/<user_id>/<project_id>', methods=['GET','POST'])
+@login_required
+def delete_project(project_id, user_id):
+    project = Project.query.filter_by(id=project_id).first()
+    if int(user_id) == current_user.id or current_user.is_admin:
+        db.session.delete(project)
+        db.session.commit()
+    else:
+        flash("You are not authorized.")
+        return redirect(url_for("routes.index"))
+
+    flash("You have deleted {name}".format(name=project.name))
+    if current_user.is_admin:
+        return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
+    return redirect(url_for("routes.edit_profile"))
