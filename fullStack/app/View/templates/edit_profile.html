@@ -23,7 +23,9 @@
                     <td>{{ education.title }}</td>
                     <td>{{ education.year }}</td>
                     <td>{{ education.college }} </td>
-                    <td><a href="{{ url_for('routes.edit_education', education_id=education.id) }}">Edit</a></td>
+                    <td><a href="{{ url_for('routes.edit_education', education_id=education.id) }}">Edit</a>
+                        <a href="{{ url_for('routes.delete_education', education_id=education.id) }}">Delete</a>
+                    </td>
 
                 </tr>
                 {% endfor %}
@@ -43,7 +45,9 @@
                     <td>{{ experience.location }}</td>
                     <td>{{ experience.date_from }}</td>
                     <td>{{ experience.date_to }} </td>
-                    <td><a href="{{url_for('routes.edit_experience', exp_id=experience.id)}}">Edit</a></td>
+                    <td><a href="{{url_for('routes.edit_experience', exp_id=experience.id)}}">Edit</a>
+                        <a href="{{url_for('routes.delete_experience', experience_id=experience.id)}}">Delete</a>
+                    </td>
 
                 </tr>
                 {% endfor %}
@@ -65,7 +69,9 @@
                     <td>{{ project.year }}</td>
                     <td>{{ project.publisher }} </td>
                     <td>{{ project.url }}</td>
-                    <td><a href="{{ url_for('routes.edit_project', project_id=project.id) }}">Edit</a></td>
+                    <td><a href="{{ url_for('routes.edit_project', project_id=project.id) }}">Edit</a>
+                        <a href="{{url_for('routes.delete_project', project_id=project.id)}}">Delete</a>
+                    </td>
                 </tr>
                 {% endfor %}
             </table>
@@ -90,7 +96,9 @@
                     <td>{{ publication.issue }}</td>
                     <td>{{ publication.publication_year }}</td>
                     <td>{{ publication.page_range }}</td>
-                    <td><a href="{{ url_for('routes.edit_publication', publication_id=publication.id) }}">Edit</a></td>
+                    <td><a href="{{ url_for('routes.edit_publication', publication_id=publication.id) }}">Edit</a>
+                        <a href="{{ url_for('routes.delete_publication', publication_id=publication.id) }}">Delete</a>
+                    </td>
                 </tr>
                 {% endfor %}
             </table>

@@ -397,7 +397,7 @@ def mypub():
         # Handle case if no user is logged in
         return render_template('error.html', message="No user logged in")  # Or redirect to login, etc.
     
-@routes_blueprint.route('/delete_publication/<int:publication_id>', methods=['POST'])
+@routes_blueprint.route('/delete_publication/<int:publication_id>', methods=['GET', 'POST'])
 def delete_publication(publication_id):
     publication = Publication.query.get_or_404(publication_id)
     
@@ -1709,3 +1709,30 @@ def edit_interest():
         return render_template('edit_interest.html', form=form, eform=eform, selected_big_interest=selected_big_interest, selected_small_interest=selected_small_interest, big_interests=big_interests, small_interests=small_interests, search_query=search_query)
 
     return render_template('edit_interest.html', form=form, eform=eform, selected_big_interest=selected_big_interest, selected_small_interest=selected_small_interest)
+
+@routes_blueprint.route('/delete_education/<education_id>', methods=['GET','POST'])
+def delete_education(education_id):
+    education = Education.query.filter_by(id=education_id).first()
+    if education:
+        db.session.delete(education)
+        db.session.commit()
+    
+    return redirect(url_for("routes.edit_profile"))
+
+@routes_blueprint.route('/delete_experience/<experience_id>', methods=['GET','POST'])
+def delete_experience(experience_id):
+    experience = Experience.query.filter_by(id=experience_id).first()
+    if experience:
+        db.session.delete(experience)
+        db.session.commit()
+    
+    return redirect(url_for("routes.edit_profile"))
+
+@routes_blueprint.route('/delete_project/<project_id>', methods=['GET','POST'])
+def delete_project(project_id):
+    project = Project.query.filter_by(id=project_id).first()
+    if project:
+        db.session.delete(project)
+        db.session.commit()
+    
+    return redirect(url_for("routes.edit_profile"))
