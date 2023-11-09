@@ -34,7 +34,7 @@
     <h1>Edit Education</h1>
     <div class="flex-options">
         <button>
-            <a href="{{url_for('routes.add_education')}}">Add Education</a>
+            <a href="{{url_for('routes.add_education', user_id=user.id)}}">Add Education</a>
         </button>
     </div>
 
@@ -62,7 +62,7 @@
     <h1>Edit Professional Experiences</h1>
     <div class="flex-options">
         <button>
-            <a href="{{url_for('routes.add_experiences')}}">Add Professional Experiences</a>
+            <a href="{{url_for('routes.add_experiences', user_id=user.id)}}">Add Professional Experiences</a>
         </button>
     </div>
     <table class="styled-table">
@@ -89,7 +89,7 @@
     <h1>Edit Projects</h1>
     <div class="flex-options">
         <button>
-            <a href="{{ url_for('routes.add_projects') }}">Add Projects</a>
+            <a href="{{ url_for('routes.add_projects', user_id=user.id) }}">Add Projects</a>
         </button>
     </div>
     <table class="styled-table">
