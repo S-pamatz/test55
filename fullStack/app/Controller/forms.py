@@ -186,7 +186,7 @@ class editPublication(FlaskForm):
 
 
 class EditInterest(FlaskForm):
-    name = SelectField('Big Interest', validators=[DataRequired()])
+    name = SelectField('Interest', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
     def set_name(self):

@@ -10,7 +10,7 @@
  <!-- Big Interest Form -->
 <form method="POST" action="{{ url_for('routes.edit_interest') }}">
     {{ form.hidden_tag() }}
-    <label for="{{ form.name.id }}">Select Big Interest:</label>
+    <label for="{{ form.name.id }}"></label>
     {{ wtf.form_field(form.name, value=selected_big_interest) }}
     {{ wtf.form_field(form.submit) }}
 
@@ -29,7 +29,7 @@
   <!-- Small Interest Form -->
   <form method="POST" action="{{ url_for('routes.edit_interest') }}">
     {{ eform.hidden_tag() }}
-    <label for="{{ eform.name.id }}">Select Small Interest:</label>
+    <label for="{{ eform.name.id }}"></label>
     {{ wtf.form_field(eform.name, value=selected_small_interest) }}
     {{ wtf.form_field(eform.submit) }}
 
