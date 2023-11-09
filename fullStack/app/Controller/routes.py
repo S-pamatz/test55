@@ -1696,16 +1696,9 @@ def edit_interest():
             # Call set_name_small again to update choices with the new interest
             eform.set_name_small()
 
-    # Check if search query is received
-    search_query = request.form.get('search_query')
-    print("this is the ", search_query)
-    if search_query:
-        print(f"Search Query: {search_query}")
+ 
 
-        # Perform the search and filter interests based on the query
-        big_interests = BigInterest.query.filter(BigInterest.name.ilike(f'%{search_query}%')).all()
-        small_interests = smallInterest.query.filter(smallInterest.name.ilike(f'%{search_query}%')).all()
 
-        return render_template('edit_interest.html', form=form, eform=eform, selected_big_interest=selected_big_interest, selected_small_interest=selected_small_interest, big_interests=big_interests, small_interests=small_interests, search_query=search_query)
+        return render_template('edit_interest.html', form=form, eform=eform, selected_big_interest=selected_big_interest, selected_small_interest=selected_small_interest)
 
     return render_template('edit_interest.html', form=form, eform=eform, selected_big_interest=selected_big_interest, selected_small_interest=selected_small_interest)
