@@ -71,6 +71,7 @@ class Affiliate(db.Model, UserMixin):
     )
     department = db.Column(db.String(128))  # Single department
     university = db.Column(db.String(128))
+  #  wsu_faculty = db.Column(db.String(128))
     partners = db.Column(db.String(128))
     url = db.Column(db.String(128))
     projects = db.relationship("Project", secondary=works, backref="authors")

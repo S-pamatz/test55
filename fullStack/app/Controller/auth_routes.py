@@ -186,7 +186,7 @@ def checkEmail():
 def validateEmail():
 
     form = EmailForm()  # Creating an instance of the EmailForm class
-
+    
     if form.validate_on_submit():  # If the form is submitted and validated
         email = form.email.data  # Get the email entered by the user
         return redirect(url_for('auth.plzwork', givenEmail=email))
@@ -198,6 +198,15 @@ postmark = PostmarkClient(server_token='07bab224-f16b-4c30-bca7-6cac281e6eed')
 @auth_blueprint.route('/plzwork/<givenEmail>', methods=['GET'])
 def plzwork(givenEmail):
     if request.method == 'GET':
+        all_affiliates = Affiliate.query.all()
+
+        # Extract emails from the affiliates
+        all_emails = [affiliate.email for affiliate in all_affiliates if affiliate.email]
+        for affiliate in all_affiliates:
+            if affiliate.email == givenEmail:
+                flash("That email is already in the db")
+                return redirect(url_for('auth.login'))
+
         token = s.dumps(givenEmail, salt='email-confirm')
         link = url_for('auth.confirm_email', token=token,
                        _external=True)

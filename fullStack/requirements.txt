@@ -12,4 +12,5 @@ email-validator==1.1.2
 pytest==7.1.2
 SQLAlchemy==1.4.23  # Specify an earlier version
 flask_mail==0.9.0
+postmarker==1.0
 

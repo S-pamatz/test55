@@ -30,6 +30,7 @@ class EditForm(FlaskForm):
         'WSU Tri-Cities'), ('WSU Vancouver'), ('WSU Everett'), ("WSU Global Campus")])
     department = SelectField('Department', choices=[])
     university = SelectField('University')
+  #  wsu_faculty = SelectField('wsu_faculty', choices=[('Please Select an Option Below'), ('WSU professor'), ('WSU faculty')])
     sponsor = SelectField('Sponsor')
     partners = SelectField('Partners')
 

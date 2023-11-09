@@ -33,6 +33,7 @@ CREATE TABLE `affiliate` (
   `is_admin` tinyint(4) DEFAULT NULL,
   `areaofinterest` varchar(200) DEFAULT NULL,
   `wsuCampus` varchar(200) DEFAULT NULL,
+  `wsu_faculty` varchar(200) DEFAULT NULL,
   `department` varchar(200) DEFAULT NULL,
   `membership` varchar(200) DEFAULT NULL,
   `sponsor` varchar(200) DEFAULT NULL,
