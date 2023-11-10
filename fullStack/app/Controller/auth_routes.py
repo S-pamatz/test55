@@ -127,7 +127,7 @@ def registerDB(givenEmail):
             email=givenEmail,
             firstname= finalF,
             lastname=user_to_delete.lastname,
-            membership= finalL,
+           # membership= finalL,
             url=rform.url.data,
             # ... other fields you want to set for the new user
         )
@@ -254,7 +254,10 @@ def register(givenEmail):
             firstname=rform.firstname.data,
             lastname=rform.lastname.data,
             wsuCampus=rform.wsuCampus.data,
-            membership=rform.membership.data,
+           #
+           # 
+           # 
+           #  membership=rform.membership.data,
             
             url=check_url(rform.url.data),
         )

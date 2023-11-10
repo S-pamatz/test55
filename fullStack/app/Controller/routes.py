@@ -733,7 +733,7 @@ def edit_profile():
     eform = EditForm()
     eform.set_department_choices()
     eform.set_university_choices()
-    eform.set_sponsor()
+ #   eform.set_sponsor()
     eform.set_partners()
     
  # Within the function, after `eform.set_department_choices()`
@@ -753,9 +753,9 @@ def edit_profile():
         current_user.firstname = eform.firstname.data
         current_user.lastname = eform.lastname.data
         current_user.wsuCampus = eform.campus.data
-        current_user.membership = eform.membership.data
+      #  current_user.membership = eform.membership.data
         current_user.university = eform.university.data
-        current_user.sponsor = eform.sponsor.data
+     #   current_user.sponsor = eform.sponsor.data
         current_user.partners = eform.partners.data
         current_user.url = eform.URL.data
 
@@ -781,9 +781,9 @@ def edit_profile():
         eform.firstname.data = current_user.firstname
         eform.lastname.data = current_user.lastname
         eform.campus.data = current_user.wsuCampus
-        eform.membership.data = current_user.membership
+      #  eform.membership.data = current_user.membership
         eform.university.data = current_user.university
-        eform.sponsor.data = current_user.sponsor
+       # eform.sponsor.data = current_user.sponsor
         eform.partners.data = current_user.partners
         if current_user.departments:
             # Fill the form with the first department's name

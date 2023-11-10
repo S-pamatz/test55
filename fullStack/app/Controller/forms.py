@@ -31,11 +31,11 @@ class EditForm(FlaskForm):
     department = SelectField('Department', choices=[])
     university = SelectField('University')
   #  wsu_faculty = SelectField('wsu_faculty', choices=[('Please Select an Option Below'), ('WSU professor'), ('WSU faculty')])
-    sponsor = SelectField('Sponsor')
+    #sponsor = SelectField('Sponsor')
     partners = SelectField('Partners')
 
-    membership = SelectField('Membership', choices=[(
-        'Please Select an Option Below'), ('Yes, I am a member'), ('No, I am not a member')])
+ #   membership = SelectField('Membership', choices=[(
+   #     'Please Select an Option Below'), ('Yes, I am a member'), ('No, I am not a member')])
     URL = StringField('URL')
     password = PasswordField('Password', validators=[])
     password2 = PasswordField('Repeat Password', validators=[EqualTo('password')])

@@ -60,11 +60,11 @@ class Affiliate(db.Model, UserMixin):
     password_hash = db.Column(db.String(128), nullable=False, default=None)
     firstname = db.Column(db.String(128), nullable=False, default=None)
     lastname = db.Column(db.String(128), nullable=False, default=None)
-    sponsor = db.Column(db.String(128))
+   # sponsor = db.Column(db.String(128))
     is_ban = db.Column(db.Boolean, default=False)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
     is_validated = db.Column(db.Boolean, default=False)  # New column
-    membership = db.Column(db.String(128))
+  #  membership = db.Column(db.String(128))
     wsuCampus = db.Column(db.String(128))
     departments = db.relationship(
         "Department", secondary=works_departments, backref="affiliates"
