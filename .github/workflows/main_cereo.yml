@@ -18,13 +18,10 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Create and start virtual environment
-        run: |
-          python -m venv venv
-          source venv/bin/activate
-
-      - name: Install dependencies
+      # Install Python Dependencies in fullStack/
+      - name: Install Flask app dependencies
         run: pip install -r requirements.txt
+        working-directory: fullStack/
 
       # React Build Step
       - name: Build React Application
@@ -72,5 +69,3 @@ jobs:
           app-name: 'cereo'
           slot-name: 'production'
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_5c38d702ef5544c3b6cf06985cfd06be }}
-
-      # Add any additional steps here for post-deployment operations
