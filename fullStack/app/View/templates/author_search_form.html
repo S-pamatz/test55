@@ -7,11 +7,16 @@
 </head>
 <body>
     <h2>Search for an Author</h2>
+    <p>Please enter the full name(First and last name):</p>
+    <p>We will be pulling the data from scopus . By searching for the full name, this will automatically bring up 3 publications. If the publications is not yours, please delete. If it is, you may edit or pull more data. The options will be provided.</p>
+    <p>If you wish to manually enter the publication data, please click on button "Submit Publication manually" </p>
+    <a href="{{ url_for('routes.submit_publication') }}"><button>Submit Publication manually</button></a>
     <form method="post">
         <label for="author_name">Author Name:</label><br>
         <input type="text" id="author_name" name="author_name"><br><br>
         <input type="submit" value="Search">
     </form>
 </body>
+
 </html>
 {% endblock %}
