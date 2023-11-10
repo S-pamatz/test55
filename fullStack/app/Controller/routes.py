@@ -725,7 +725,6 @@ def edit_publication(publication_id):
         afform.page_range.data = current_publication.page_range
 
     return render_template('edit_Publication.html', title='Edit Publication', form=afform, publication_id=publication_id)
-
 @routes_blueprint.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
@@ -733,18 +732,14 @@ def edit_profile():
     eform = EditForm()
     eform.set_department_choices()
     eform.set_university_choices()
- #   eform.set_sponsor()
     eform.set_partners()
-    
- # Within the function, after `eform.set_department_choices()`
-
-  # Within the function, before querying the database for department
 
     department_name = eform.department.data
-    print("Department Name from Form:", department_name)  # Add this line
+    print("Department Name from Form:", department_name)
 
     department = Department.query.filter_by(name=department_name).first()
     publications = Publication.query.filter_by(affiliate=current_user).all()
+
     if request.method == 'POST' and eform.validate_on_submit():
         if eform.picture.data:
             picture_file = save_picture(eform.picture.data)
@@ -753,24 +748,20 @@ def edit_profile():
         current_user.firstname = eform.firstname.data
         current_user.lastname = eform.lastname.data
         current_user.wsuCampus = eform.campus.data
-      #  current_user.membership = eform.membership.data
         current_user.university = eform.university.data
-     #   current_user.sponsor = eform.sponsor.data
         current_user.partners = eform.partners.data
-        current_user.url = eform.URL.data
+        current_user.URL = eform.URL.data
 
-        if eform.password.data:  # Set password only if it's provided
+        if eform.password.data:
             current_user.set_password(eform.password.data)
 
-        # Fetch the department instance based on the form data
         department_name = eform.department.data
         print("1", department_name)
         department = Department.query.filter_by(name=department_name).first()
         print("2", department)
         if department:
             print("1")
-            # Assign the department to the current user's departments
-            current_user.departments = [department]  # Set as a list
+            current_user.departments = [department]
             print("3", current_user.departments)
             current_user.department = department_name
         db.session.commit()
@@ -781,17 +772,19 @@ def edit_profile():
         eform.firstname.data = current_user.firstname
         eform.lastname.data = current_user.lastname
         eform.campus.data = current_user.wsuCampus
-      #  eform.membership.data = current_user.membership
         eform.university.data = current_user.university
-       # eform.sponsor.data = current_user.sponsor
         eform.partners.data = current_user.partners
+
         if current_user.departments:
-            # Fill the form with the first department's name
             eform.department.data = current_user.departments[0].name
 
-        eform.URL.data = current_user.url
+      
+     
+    eform.URL.data = current_user.URL if hasattr(current_user, 'URL') else None
+
 
     return render_template('edit_profile.html', title='Edit Profile', form=eform, image_file=image_file, affiliate=current_user, publications=publications)
+
 
 @routes_blueprint.route('/edit_project/<user_id>/<project_id>', methods=['POST', 'GET'])
 @login_required

@@ -64,8 +64,9 @@
                 {% if not loop.last %}, 
                 {% endif %}
                 {% endfor %}</b></p>
-            <p><span class="email">Area of Interest |</span> <b>{{ affiliate.areaofinterest }}</b></p> 
+       
             <p><span class="email">Campus |</span> <b>{{ affiliate.wsuCampus }}</b></p>    
+            <p><span class="email">URL |</span> <b>{{ affiliate.URL }}</b></p>    
             
             <p>
                 <span class="email">Interests |</span>
@@ -82,7 +83,7 @@
             
           
 <p>
-    <span class="email">Small Interests |</span>
+    <span class="email">Sub-Interests |</span>
     <b>
         {% set unique_small_interests = [] %}
         {% for small_interest in affiliate.smallInterest %}
