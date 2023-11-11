@@ -315,9 +315,55 @@ def semantic_scholar_author_papers():
             return f"Error: {response.status_code}", response.status_code
     else:
         return "No author ID provided", 400
-    
-#using api to input
-from flask import request, json
+
+
+
+
+s2_api_key = "7wIu7PY7cV8dXPxpaS744oKcXDsAhuAaDrM68GXi"
+
+
+
+#IRONMAN
+def semantic_scholar_paper_authors(paper_title):
+    base_url = "https://api.semanticscholar.org/graph/v1/paper/search"
+
+    if paper_title:
+        query = paper_title.replace(' ', '+')  # Format the query for the URL
+
+        # Construct the URL with the query parameter
+        search_url = f"{base_url}?query={query}"
+        headers = {"x-api-key": s2_api_key}
+
+        response = requests.get(search_url, headers=headers)
+
+        if response.status_code == 200:
+            data = response.json()
+            papers_data = data.get('data', [])
+
+            if papers_data:
+                # Assuming we want information about the first paper in the result
+                first_paper_id = papers_data[0]['paperId']
+
+                # Make another request to get the authors of the paper
+                paper_url = f"https://api.semanticscholar.org/graph/v1/paper/{first_paper_id}?fields=authors"
+                paper_response = requests.get(paper_url, headers=headers)
+
+                if paper_response.status_code == 200:
+                    paper_data = paper_response.json()
+                    author_data = paper_data.get('authors', [])
+
+                    # Process the author data as needed
+                    author_list = [{"name": author.get('name')} for author in author_data]
+                    return jsonify({"authors": author_list})
+                else:
+                    return jsonify({"error": f"Error {paper_response.status_code} when fetching paper authors"}), paper_response.status_code
+            else:
+                return jsonify({"error": "No papers found"}), 404
+        else:
+            return jsonify({"error": f"Error {response.status_code} when searching for papers"}), response.status_code
+    else:
+        return jsonify({"error": "No paper title provided"}), 400
+
 
 @routes_blueprint.route('/submit_publicationAPI2', methods=['GET', 'POST'])
 def submit_publicationAPI2():
@@ -725,6 +771,17 @@ def edit_publication(publication_id):
         afform.page_range.data = current_publication.page_range
 
     return render_template('edit_Publication.html', title='Edit Publication', form=afform, publication_id=publication_id)
+
+
+@routes_blueprint.route('/edit_publication_add/<publication_id>', methods=['POST', 'GET'])
+@login_required
+def edit_publication_add(publication_id):
+   
+    current_publication = Publication.query.filter_by(id=publication_id).first()
+   #return current_publication.title
+    test= semantic_scholar_paper_authors( current_publication.title)
+   
+    return semantic_scholar_paper_authors( current_publication.title)
 @routes_blueprint.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():

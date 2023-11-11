@@ -119,6 +119,9 @@
                 <form method="get" action="{{ url_for('routes.edit_publication', publication_id=publication.id) }}">
                     <input type="submit" value="Edit">
                 </form>
+                <form method="get" action="{{ url_for('routes.edit_publication_add', publication_id=publication.id) }}">
+                    <input type="submit" value="Add more">
+                </form>
             {% endif %}
                 <br>
         {% endfor %}
