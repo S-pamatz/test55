@@ -1,5 +1,6 @@
 # Import Flask function for rendering templates
 import json
+import unicodedata
 from urllib import response
 from flask import Flask, render_template
 
@@ -324,6 +325,10 @@ s2_api_key = "7wIu7PY7cV8dXPxpaS744oKcXDsAhuAaDrM68GXi"
 
 
 #IRONMAN
+
+
+import requests
+
 def semantic_scholar_paper_authors(paper_title):
     base_url = "https://api.semanticscholar.org/graph/v1/paper/search"
 
@@ -352,17 +357,19 @@ def semantic_scholar_paper_authors(paper_title):
                     paper_data = paper_response.json()
                     author_data = paper_data.get('authors', [])
 
-                    # Process the author data as needed
-                    author_list = [{"name": author.get('name')} for author in author_data]
-                    return jsonify({"authors": author_list})
+                    # Extract the list of names directly
+                    author_names = [author.get('name') for author in author_data]
+                    return author_names
                 else:
-                    return jsonify({"error": f"Error {paper_response.status_code} when fetching paper authors"}), paper_response.status_code
+                    return ["Error", f"Error {paper_response.status_code} when fetching paper authors"]
             else:
-                return jsonify({"error": "No papers found"}), 404
+                return ["Error", "No papers found"]
         else:
-            return jsonify({"error": f"Error {response.status_code} when searching for papers"}), response.status_code
+            return ["Error", f"Error {response.status_code} when searching for papers"]
     else:
-        return jsonify({"error": "No paper title provided"}), 400
+        return ["Error", "No paper title provided"]
+
+
 
 
 @routes_blueprint.route('/submit_publicationAPI2', methods=['GET', 'POST'])
@@ -772,16 +779,21 @@ def edit_publication(publication_id):
 
     return render_template('edit_Publication.html', title='Edit Publication', form=afform, publication_id=publication_id)
 
+#ironman
 
+def remove_unicode_escape_sequences(author_name):
+    return unicodedata.normalize("NFKD", author_name)
 @routes_blueprint.route('/edit_publication_add/<publication_id>', methods=['POST', 'GET'])
 @login_required
 def edit_publication_add(publication_id):
    
     current_publication = Publication.query.filter_by(id=publication_id).first()
    #return current_publication.title
+    authors = semantic_scholar_paper_authors(current_publication.title)
     test= semantic_scholar_paper_authors( current_publication.title)
-   
-    return semantic_scholar_paper_authors( current_publication.title)
+    cleaned_authors = ' '.join([remove_unicode_escape_sequences(author) for author in authors])
+    print(type(cleaned_authors))
+    return cleaned_authors
 @routes_blueprint.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
