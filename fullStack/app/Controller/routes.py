@@ -329,11 +329,15 @@ s2_api_key = "7wIu7PY7cV8dXPxpaS744oKcXDsAhuAaDrM68GXi"
 
 import requests
 
+import requests
+
+import requests
+
 def semantic_scholar_paper_authors(paper_title):
     base_url = "https://api.semanticscholar.org/graph/v1/paper/search"
 
     if paper_title:
-        query = paper_title.replace(' ', '+')  # Format the query for the URL
+        query = paper_title.replace(' ', '+')  # Replace space with '+'
 
         # Construct the URL with the query parameter
         search_url = f"{base_url}?query={query}"
@@ -359,7 +363,17 @@ def semantic_scholar_paper_authors(paper_title):
 
                     # Extract the list of names directly
                     author_names = [author.get('name') for author in author_data]
-                    return author_names
+
+                    # Format names with a comma and a space
+                    formatted_names = []
+                    for name in author_names:
+                        name_parts = name.split(',')
+                        formatted_names.append(', '.join(name_parts).strip())
+
+                    # Join the names with a comma and a space between every two names
+                    author_names_formatted = ', '.join(formatted_names)
+
+                    return [author_names_formatted]
                 else:
                     return ["Error", f"Error {paper_response.status_code} when fetching paper authors"]
             else:
@@ -368,6 +382,8 @@ def semantic_scholar_paper_authors(paper_title):
             return ["Error", f"Error {response.status_code} when searching for papers"]
     else:
         return ["Error", "No paper title provided"]
+
+
 
 
 
@@ -407,13 +423,13 @@ def submit_publicationAPI2():
         return redirect(url_for('routes.index'))  # Redirect to the homepage after submission
     return render_template('submit_publication.html', form=eform)
 
-
+#IRONMAN
 @routes_blueprint.route('/submit_publicationAPI', methods=['GET', 'POST'])
 def submit_publicationAPI():
     eform = PublicationForm()
     paper_info_list = request.args.get('paper_info_list')
     if paper_info_list:
-        # Convert the received JSON string back to a list of dictionaries
+        
         paper_info_list = json.loads(paper_info_list)
 
     # Extract titles from the paper_info_list
@@ -424,7 +440,7 @@ def submit_publicationAPI():
     name=current_user.firstname+" "+current_user.lastname
     print("this is the name",name)
 
-    # Create and save a Publication object for each title in the list
+    
     for title in titles:
         new_publication = Publication(
             title=title, 
@@ -433,7 +449,7 @@ def submit_publicationAPI():
             
         )
         db.session.add(new_publication)
-        db.session.commit()  # Commit each publication separately
+        db.session.commit() 
 
     
 
@@ -779,13 +795,12 @@ def edit_publication(publication_id):
 
     return render_template('edit_Publication.html', title='Edit Publication', form=afform, publication_id=publication_id)
 
-#ironman
+
 
 def remove_unicode_escape_sequences(author_name):
     return unicodedata.normalize("NFKD", author_name)
-@routes_blueprint.route('/edit_publication_add/<publication_id>', methods=['POST', 'GET'])
-@login_required
-def edit_publication_add(publication_id):
+
+def edit_publication_add_parse(publication_id):
    
     current_publication = Publication.query.filter_by(id=publication_id).first()
    #return current_publication.title
@@ -794,6 +809,26 @@ def edit_publication_add(publication_id):
     cleaned_authors = ' '.join([remove_unicode_escape_sequences(author) for author in authors])
     print(type(cleaned_authors))
     return cleaned_authors
+
+#ironman
+@routes_blueprint.route('/edit_publication_add/<publication_id>', methods=['POST', 'GET'])
+@login_required
+def edit_publication_add(publication_id):
+    afform = PublicationForm()
+    authors=edit_publication_add_parse(publication_id)# returns list of authors
+    current_publication = Publication.query.filter_by(id=publication_id).first()#print paper id
+    
+
+    # Update current_publication.authors with the form data
+    current_publication.authors = authors
+    print(authors)
+    # Save the changes
+    db.session.commit()
+
+
+    return redirect(url_for('routes.index'))
+
+
 @routes_blueprint.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
