@@ -1,13 +1,14 @@
 .categoriesBar {
   /* background-color: red; */
   position: fixed;
-  bottom: 0;
+  top: 10px;
   left: 0;
   width: 100%;
-  height: auto; /* Adjust height to auto so it can expand based on content */
-  display: flex;
+  height: auto; 
+  display:flex;
+  flex-direction: row;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: flex-start;
   padding: 0 20px 10px 20px;
 }
 
@@ -33,7 +34,7 @@
 
 /* Additional style to ensure each div with button and modal is stacked vertically */
 .categoriesBar > div {
-  display: flex;
-  flex-direction: column;
+  display: flex ;
+  flex-direction:column-reverse;
   align-items: center;
 }

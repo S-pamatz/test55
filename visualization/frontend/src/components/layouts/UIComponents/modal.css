@@ -6,7 +6,7 @@
 
 .modal {
   position: absolute;
-  bottom: 10vh; /* This pins it to the bottom */
+  bottom: 10vh; 
   visibility: visible;
   height: fit-content;
   background-color: rgb(75, 75, 75);
@@ -15,7 +15,7 @@
 }
 
 .modal-content {
-  bottom: 0; /* This pins it to the bottom */
+  bottom: 0; 
   width: 100%;
   max-width: 20vw;
   max-height: 200px;

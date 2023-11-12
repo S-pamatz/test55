@@ -89,7 +89,7 @@ const ForceDirectGraph = () => {
         d.fill !== undefined ? d.fill : "url(#nodeGradient)"
       )
       // if node has fill color, use it here else no color
-      .attr("opacity", 0.8);
+      .attr("opacity", 1);
 
     // Append the circle (or other shape) to the group
     nodeGroup

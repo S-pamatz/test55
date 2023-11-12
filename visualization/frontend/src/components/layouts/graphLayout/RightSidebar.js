@@ -13,7 +13,8 @@ const NodeInfoRightSidebar = () => {
     setIsSidebarOpen(true);
   }, [selectedNode]);
 
-  const handleSidebarToggle = () => {
+  const handleSidebarToggle = (event) => {
+    event.stopPropagation();
     setIsSidebarOpen(!isSidebarOpen);
   };
 
