@@ -14,6 +14,7 @@ import { useHighlightPath } from "../function/searchHelper";
 const GraphContext = createContext({
   nodes: [],
   links: [],
+  setNodes: (newNodes) => {},
   selectedNode: null,
   onNodeClick: (clickedNode) => {},
   onSearchClick: (search) => {},
@@ -54,6 +55,8 @@ export const GraphContextProvider = (props) => {
   // };
 
   const [selectedNode, setSelectedNode] = useState(null);
+
+  const highlightPath = useHighlightPath();
 
   // const { highlightPath } = useHighlightPath();
 
@@ -123,19 +126,22 @@ export const GraphContextProvider = (props) => {
 
     // Search for the Department node
     let searchNodes = nodes.find((node) => node.Name === search);
+    let updatedNodes;
 
     if (searchNodes) {
-      highlightPath(searchNodes);
+      updatedNodes = highlightPath(searchNodes);
+
     } else {
       try {
         const filteredEntries = await filterEntries(search);
+        updatedNodes = nodes;
 
         if (!filteredEntries || filteredEntries.length === 0) return;
 
         const entry = filteredEntries[0];
 
         // Insert or find Department node
-        let departmentNode = nodes.find(
+        let departmentNode = updatedNodes.find(
           (node) => node.Name === entry.Department
         );
         if (!departmentNode) {
@@ -152,7 +158,7 @@ export const GraphContextProvider = (props) => {
         }
 
         // Insert or find the Name node and link it to the Department
-        let nameNode = nodes.find((node) => node.Name === entry.Name);
+        let nameNode = updatedNodes.find((node) => node.Name === entry.Name);
         if (!nameNode) {
           nameNode = {
             id: nodes.length,
@@ -170,23 +176,18 @@ export const GraphContextProvider = (props) => {
       }
     }
     // Update state
-    setNodes([...nodes]);
+    setNodes([...updatedNodes]);
     setLinks([...links]);
   };
 
-  const highlightPath = (targetNode) => {
-    console.log("targetNode: ", targetNode)
-    // change the targetNode to red and it parent and link to red
-    targetNode.fill = "red";
-    const parentNode = nodes.find((node) => node.id === targetNode.parent);
-    parentNode.fill = "red";
-  };
+
 
   return (
     <GraphContext.Provider
       value={{
         nodes: nodes,
         links: links,
+        setNodes: setNodes,
         selectedNode: selectedNode,
         onNodeClick: handleNodesClick,
         onSearchClick: handleSearchClick,

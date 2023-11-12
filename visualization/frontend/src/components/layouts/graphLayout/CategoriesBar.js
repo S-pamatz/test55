@@ -50,7 +50,7 @@ const CategoriesBar = () => {
       />
 
       <Modal
-        content={"Intrests"}
+        content={"Interests"}
         position={buttonPosition}
         image={<img src={Interests} alt="University" />}
         setActiveModalContent={setActiveModalContent}
