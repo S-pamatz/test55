@@ -19,6 +19,8 @@ const ForceDirectGraph = () => {
     const svg = d3.select(graphRef.current);
     const g = svg.append("g"); // create a group to apply zoom transformations
     const defaultRadius = 40;
+    const nodeColor = "#A60F2D";
+    const nodeTextColor = "white";
     const width = +svg.attr("width");
     const height = +svg.attr("height");
     const fontSize = defaultRadius / 2;
@@ -52,7 +54,7 @@ const ForceDirectGraph = () => {
       .enter()
       .append("line")
       .attr("class", "link")
-      .attr("stroke", "#9D2235")
+      .attr("stroke", nodeColor)
       .attr("stroke-width", 2);
 
     const nodeGroup = g
@@ -75,7 +77,7 @@ const ForceDirectGraph = () => {
       .attr("x2", "30%") // Gradient ends at the bottom
       .attr("y2", "150%");
 
-    gradient.append("stop").attr("offset", "0%").attr("stop-color", "#9D2235");
+    gradient.append("stop").attr("offset", "0%").attr("stop-color", nodeColor);
 
     gradient.append("stop").attr("offset", "80%").attr("stop-color", "black");
 
@@ -125,7 +127,7 @@ const ForceDirectGraph = () => {
       .attr("dx", 0)
       .attr("font-size", fontSize + "px")
       .attr("data-full-text", (d) => d.Name)
-      .attr("fill", "white")
+      .attr("fill", nodeTextColor)
       .text((d) => acronymize(d));
 
     nodeGroup.select("text").on("mouseover", function (event, d) {

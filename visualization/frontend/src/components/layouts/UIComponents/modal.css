@@ -64,8 +64,8 @@
   font-size: 12px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: rgb(171, 73, 88);
-  opacity: 0.5;
+  background-color: #A60F2D;
+  opacity: 0.9;
 }
 
 .modalContentButton:hover {
