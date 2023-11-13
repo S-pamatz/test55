@@ -448,6 +448,54 @@ def get_paper_publication_year(paper_id):
       #  return jsonify({'paper_id': paper_id, 'publication_year': publication_year})
     else:
         return jsonify({'error': f'Unable to retrieve paper information. Status code: {response.status_code}'}), 500
+    
+# i need to get the volume of the paper lets code that up real quiock using the above route as our base
+def get_paper_details_volume(paper_id):
+    # Get the paper details from the Semantic Scholar API
+    
+    if not paper_id:
+        return jsonify({'error': 'Paper ID is required'}), 400
+
+    # Make a GET request to the Semantic Scholar API
+    api_url = f'https://api.semanticscholar.org/v1/paper/{paper_id}'
+    response = requests.get(api_url)
+
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        # Parse the JSON response
+        paper_data = response.json()
+
+        
+   
+        paper_volume = str(paper_data.get('volume', 'volume not available'))
+        return paper_volume
+    else:
+        return jsonify({'error': f'Unable to retrieve paper information. Status code: {response.status_code}'}), 500
+def get_paper_DOI(paper_id):
+    # Get the paper details from the Semantic Scholar API
+    
+    if not paper_id:
+        return jsonify({'error': 'Paper ID is required'}), 400
+
+    # Make a GET request to the Semantic Scholar API
+    api_url = f'https://api.semanticscholar.org/v1/paper/{paper_id}'
+    response = requests.get(api_url)
+
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        # Parse the JSON response
+        paper_data = response.json()
+
+       
+        doi = str(paper_data.get('doi', 'DOI not available'))
+
+        return {
+          
+            'doi': doi,
+        }
+    else:
+        return jsonify({'error': f'Unable to retrieve paper information. Status code: {response.status_code}'}), 500
+
 @routes_blueprint.route('/submit_publicationAPI', methods=['GET', 'POST'])
 def submit_publicationAPI():
     eform = PublicationForm()
@@ -465,6 +513,8 @@ def submit_publicationAPI():
     # Get the name of the affiliate from current_user object
     publishDATE = [get_paper_publication_year(paper_id) for paper_id in paperID]
     print(publishDATE)
+    paperDOI=[get_paper_DOI(paper_id) for paper_id in paperID]
+    print("here are my paper DOI",paperDOI)
     name=current_user.firstname+" "+current_user.lastname
     print("this is the name",name)
     print("this is the type of my titles", type(titles))
@@ -475,7 +525,8 @@ def submit_publicationAPI():
             title=titles[x], 
             authors=name,
             affiliate=current_user,
-            publication_year=publishDATE[x] 
+            publication_year=publishDATE[x],
+            journal=paperDOI[x].get('doi', 'DOI not available')
             
             
         )

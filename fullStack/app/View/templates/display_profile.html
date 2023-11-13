@@ -107,7 +107,7 @@
         {% for publication in publications %}
                 <strong>Title:</strong> {{ publication.title }}<br>
                 <strong>Authors:</strong> {{ publication.authors }}<br>
-                <strong>Journal:</strong> {{ publication.journal }}<br>
+                <strong>Journal: </strong><a href="https://doi.org/{{ publication.journal }}" target="_blank">{{ publication.journal }}</a></p>
                 <strong>Volume:</strong> {{ publication.volume }}<br>
                 <strong>Issue:</strong> {{ publication.issue }}<br>
                 <strong>Publication Year:</strong> {{ publication.publication_year }}<br>
