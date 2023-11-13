@@ -9,7 +9,7 @@ import {
 import { filterEntries } from "./getDataFromBackend";
 import University from "../../assets/UniversityW.png";
 import { nodesLibrary } from "./nodeLibrary";
-import { useHighlightPath } from "../function/searchHelper";
+import { findBestMatchingNode, useHighlightPath } from "../function/searchHelper";
 
 const GraphContext = createContext({
   nodes: [],
@@ -57,8 +57,6 @@ export const GraphContextProvider = (props) => {
   const [selectedNode, setSelectedNode] = useState(null);
 
   const highlightPath = useHighlightPath();
-
-  // const { highlightPath } = useHighlightPath();
 
   const handleNodesClick = async (clickedNode) => {
     // for when node is selected from filter
@@ -115,69 +113,74 @@ export const GraphContextProvider = (props) => {
         ));
       }
     }
-    console.log("updatedNodes: ", updatedNodes);
-    console.log("updatedLinks: ", updatedLinks);
     setNodes(updatedNodes);
     setLinks(updatedLinks);
   };
 
   const handleSearchClick = async (search) => {
-    if (!search) return; // If search is empty, do nothing
-
-    // Search for the Department node
-    let searchNodes = nodes.find((node) => node.Name === search);
-    let updatedNodes;
-
-    if (searchNodes) {
-      updatedNodes = highlightPath(searchNodes);
-
+    if (!search) return;
+  
+    let updatedNodes = [...nodes];
+    let updatedLinks = [...links];
+  
+    // Use the search helper function to find the best matching node
+    const bestMatchNode = findBestMatchingNode(search, nodes);
+  
+    if (bestMatchNode) {
+      const result = highlightPath(updatedNodes, updatedLinks, bestMatchNode);
+      updatedNodes = result.updatedNodes;
+      updatedLinks = result.updatedLinks;
     } else {
-      try {
-        const filteredEntries = await filterEntries(search);
-        updatedNodes = nodes;
 
-        if (!filteredEntries || filteredEntries.length === 0) return;
-
-        const entry = filteredEntries[0];
-
-        // Insert or find Department node
-        let departmentNode = updatedNodes.find(
-          (node) => node.Name === entry.Department
-        );
-        if (!departmentNode) {
-          departmentNode = {
-            id: nodes.length,
-            Name: entry.Department,
-            expanded: false,
-            fill: "#9D2235",
-          };
-          nodes.push(departmentNode);
-          links.push({ source: 0, target: departmentNode.id }); // 0 is the ID for WSU
-        } else {
-          departmentNode.fill = "#9D2235";
-        }
-
-        // Insert or find the Name node and link it to the Department
-        let nameNode = updatedNodes.find((node) => node.Name === entry.Name);
-        if (!nameNode) {
-          nameNode = {
-            id: nodes.length,
-            Name: entry.Name,
-            expanded: false,
-            fill: "#9D2235",
-          };
-          nodes.push(nameNode);
-          links.push({ source: departmentNode.id, target: nameNode.id });
-        } else {
-          nameNode.fill = "#9D2235";
-        }
-      } catch (error) {
-        console.error("Error searching and expanding nodes:", error);
-      }
     }
+
+// if(!found) {
+//       try {
+//         const filteredEntries = await filterEntries(search);
+//         updatedNodes = nodes;
+
+//         if (!filteredEntries || filteredEntries.length === 0) return;
+
+//         const entry = filteredEntries[0];
+
+//         // Insert or find Department node
+//         let departmentNode = updatedNodes.find(
+//           (node) => node.Name === entry.Department
+//         );
+//         if (!departmentNode) {
+//           departmentNode = {
+//             id: nodes.length,
+//             Name: entry.Department,
+//             expanded: false,
+//             fill: "#9D2235",
+//           };
+//           nodes.push(departmentNode);
+//           links.push({ source: 0, target: departmentNode.id }); // 0 is the ID for WSU
+//         } else {
+//           departmentNode.fill = "#9D2235";
+//         }
+
+//         // Insert or find the Name node and link it to the Department
+//         let nameNode = updatedNodes.find((node) => node.Name === entry.Name);
+//         if (!nameNode) {
+//           nameNode = {
+//             id: nodes.length,
+//             Name: entry.Name,
+//             expanded: false,
+//             fill: "#9D2235",
+//           };
+//           nodes.push(nameNode);
+//           links.push({ source: departmentNode.id, target: nameNode.id });
+//         } else {
+//           nameNode.fill = "#9D2235";
+//         }
+//       } catch (error) {
+//         console.error("Error searching and expanding nodes:", error);
+//       }
+//     }
     // Update state
     setNodes([...updatedNodes]);
-    setLinks([...links]);
+    setLinks([...updatedLinks]);
   };
 
 

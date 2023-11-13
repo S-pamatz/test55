@@ -1,27 +1,73 @@
 import { useContext } from "react";
 import GraphContext from "../data/GraphContext";
 
-export const useHighlightPath = () => {
-    const ctx = useContext(GraphContext);
-    const nodes = ctx.nodes;
-    
+// searchHelper.js
+export const findBestMatchingNode = (search, nodes) => {
+  if (!search) return null;
 
-    const highlightPath = (targetNode) => {
-        console.log("targetNode: ", targetNode);
+  const searchWords = search.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+                            .toLowerCase()
+                            .split(/\s+/)
+                            .map(word => word.trim());
 
-        // Create a new array with updated nodes
-        const updatedNodes = nodes.map(node => {
-            if (node.id === targetNode.id || node.id === targetNode.parent) {
-                return { ...node, fill: "red" };
-            }
-            return node;
-        });
+  let bestMatchNode = null;
+  let highestScore = 0;
 
-        return updatedNodes;
-    };
+  nodes.forEach(node => {
+    const nodeWords = node.Name.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+                               .toLowerCase()
+                               .split(/\s+/)
+                               .map(word => word.trim());
 
-    return  highlightPath ;
+    let score = searchWords.reduce((acc, searchWord) => {
+      return acc + (nodeWords.includes(searchWord) ? 1 : 0);
+    }, 0);
 
+    if (score > highestScore) {
+      highestScore = score;
+      bestMatchNode = node;
+    }
+  });
+
+  return bestMatchNode;
+};
+
+export const useHighlightPath = (highlightColor = '#4d4d4d', linkHighlightColor = '#4d4d4d') => {
+  const highlightPath = (nodes, links, targetNode) => {
+      let updatedNodes = [...nodes];
+      let updatedLinks = [...links];
+
+      const highlightNodeAndParents = (currentNode) => {
+          const nodeIndex = updatedNodes.findIndex(node => node.id === currentNode.id);
+          if (nodeIndex !== -1) {
+              updatedNodes[nodeIndex] = { ...updatedNodes[nodeIndex], fill: highlightColor };
+
+              const parentNodeId = updatedNodes[nodeIndex].parent;
+              if (parentNodeId !== null && parentNodeId !== undefined) {
+                  const parentNode = updatedNodes.find(node => node.id === parentNodeId);
+                  if (parentNode) {
+                      // Highlight the link between the current node and its parent
+                      const linkIndex = updatedLinks.findIndex(link => 
+                          link.source.id  === currentNode.id && 
+                          link.target.id  === currentNode.parent
+                      );
+                      console.log(linkIndex);
+                      console.log(updatedLinks);
+                      if (linkIndex !== -1) {
+                          updatedLinks[linkIndex] = { ...updatedLinks[linkIndex], stroke: highlightColor, strokeWidth: '3px' };
+                      }
+
+                      highlightNodeAndParents(parentNode);
+                  }
+              }
+          }
+      };
+
+      highlightNodeAndParents(targetNode);
+      return { updatedNodes, updatedLinks };
+  };
+
+  return highlightPath;
 };
 
 // export const useHighlightPath = () => {
