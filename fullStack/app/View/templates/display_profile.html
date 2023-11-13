@@ -107,7 +107,9 @@
         {% for publication in publications %}
                 <strong>Title:</strong> {{ publication.title }}<br>
                 <strong>Authors:</strong> {{ publication.authors }}<br>
-                <strong>Journal: </strong><a href="https://doi.org/{{ publication.journal }}" target="_blank">{{ publication.journal }}</a></p>
+           
+                <strong></strong>Press the DOI to get more information about the paper <br>
+                <strong>DOI: </strong><a href="https://doi.org/{{ publication.journal }}" target="_blank">{{ publication.journal }}</a></p>
                 <strong>Volume:</strong> {{ publication.volume }}<br>
                 <strong>Issue:</strong> {{ publication.issue }}<br>
                 <strong>Publication Year:</strong> {{ publication.publication_year }}<br>
@@ -120,7 +122,7 @@
                     <input type="submit" value="Edit">
                 </form>
                 <form method="get" action="{{ url_for('routes.edit_publication_add', publication_id=publication.id) }}">
-                    <input type="submit" value="Add more">
+                    <input type="submit" value="Add Name">
                 </form>
             {% endif %}
                 <br>

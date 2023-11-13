@@ -515,6 +515,7 @@ def submit_publicationAPI():
     print(publishDATE)
     paperDOI=[get_paper_DOI(paper_id) for paper_id in paperID]
     print("here are my paper DOI",paperDOI)
+    print("why is are  breaking. are u stupid like me? ",len(paperDOI))
     name=current_user.firstname+" "+current_user.lastname
     print("this is the name",name)
     print("this is the type of my titles", type(titles))
