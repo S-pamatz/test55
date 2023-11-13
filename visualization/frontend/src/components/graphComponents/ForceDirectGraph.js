@@ -55,7 +55,7 @@ const ForceDirectGraph = () => {
       .append("line")
       .attr("class", "link")
       .attr("stroke", d => d.stroke || nodeColor)
-      .attr("stroke-width", d => d.strokeWidth || 2);
+      .attr("stroke-width", d => d.strokeWidth || '2');
 
     const nodeGroup = g
       .selectAll(".nodeGroup")

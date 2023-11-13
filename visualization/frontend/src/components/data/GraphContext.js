@@ -9,7 +9,10 @@ import {
 import { filterEntries } from "./getDataFromBackend";
 import University from "../../assets/UniversityW.png";
 import { nodesLibrary } from "./nodeLibrary";
-import { findBestMatchingNode, useHighlightPath } from "../function/searchHelper";
+import {
+  findBestMatchingNode,
+  useHighlightPath,
+} from "../function/searchHelper";
 
 const GraphContext = createContext({
   nodes: [],
@@ -60,8 +63,11 @@ export const GraphContextProvider = (props) => {
 
   const handleNodesClick = async (clickedNode) => {
     // for when node is selected from filter
-    const parentNode = nodesLibrary.find(node => node.id === clickedNode.parent);
-    const isParentNode = parentNode && (parentNode.Name === "WSU" || parentNode.Name === "Others")
+    const parentNode = nodesLibrary.find(
+      (node) => node.id === clickedNode.parent
+    );
+    const isParentNode =
+      parentNode && (parentNode.Name === "WSU" || parentNode.Name === "Others");
     const isInNodeLibrary = nodesLibrary.some(
       (node) => node.Name === clickedNode.Name
     );
@@ -89,7 +95,7 @@ export const GraphContextProvider = (props) => {
           nodesLibrary
         ));
       } else if (clickedNode.depth >= 2 || isParentNode) {
-        console.log("clickedNode: ", clickedNode)
+        console.log("clickedNode: ", clickedNode);
         // If the node is a top-level node (depth = 1) and it is not expanded, expand it
         try {
           const filteredEntries = await filterEntries(clickedNode.Name);
@@ -119,71 +125,59 @@ export const GraphContextProvider = (props) => {
 
   const handleSearchClick = async (search) => {
     if (!search) return;
-  
+    const highlightColor = "#4d4d4d";
+
     let updatedNodes = [...nodes];
     let updatedLinks = [...links];
-  
+
     // Use the search helper function to find the best matching node
     const bestMatchNode = findBestMatchingNode(search, nodes);
-  
+
     if (bestMatchNode) {
-      const result = highlightPath(updatedNodes, updatedLinks, bestMatchNode);
+      const result = highlightPath(
+        updatedNodes,
+        updatedLinks,
+        bestMatchNode,
+        highlightColor
+      );
       updatedNodes = result.updatedNodes;
       updatedLinks = result.updatedLinks;
     } else {
+      try {
+        const filteredEntries = await filterEntries(search);
+        updatedNodes = [nodesLibrary[1]];
+        updatedNodes[0].id =0;
 
+        if (!filteredEntries || filteredEntries.length === 0) return;
+
+        const entry = filteredEntries[0];
+
+        let nameNode = {
+          id: updatedNodes.length,
+          Name: entry.Name,
+          Interest: entry.Interest,
+          Department: entry.Department,
+          Email: entry.Email,
+          Membership: entry.Membership,
+          URL: entry.URL,
+          WSUCampus: entry.WSUCampus,
+          expanded: false,
+          parent: updatedNodes[0].id,
+          depth: updatedNodes[0].depth + 1,
+          node: "affilate",
+        };
+        updatedNodes.push(nameNode);
+        updatedLinks.push({ source: updatedNodes[0].id, target: nameNode.id });
+
+        console.log("updatedNodes: ", updatedNodes);
+        console.log("updatedLinks: ", updatedLinks);
+      } catch (error) {
+        console.error("Error searching and expanding nodes:", error);
+      }
     }
-
-// if(!found) {
-//       try {
-//         const filteredEntries = await filterEntries(search);
-//         updatedNodes = nodes;
-
-//         if (!filteredEntries || filteredEntries.length === 0) return;
-
-//         const entry = filteredEntries[0];
-
-//         // Insert or find Department node
-//         let departmentNode = updatedNodes.find(
-//           (node) => node.Name === entry.Department
-//         );
-//         if (!departmentNode) {
-//           departmentNode = {
-//             id: nodes.length,
-//             Name: entry.Department,
-//             expanded: false,
-//             fill: "#9D2235",
-//           };
-//           nodes.push(departmentNode);
-//           links.push({ source: 0, target: departmentNode.id }); // 0 is the ID for WSU
-//         } else {
-//           departmentNode.fill = "#9D2235";
-//         }
-
-//         // Insert or find the Name node and link it to the Department
-//         let nameNode = updatedNodes.find((node) => node.Name === entry.Name);
-//         if (!nameNode) {
-//           nameNode = {
-//             id: nodes.length,
-//             Name: entry.Name,
-//             expanded: false,
-//             fill: "#9D2235",
-//           };
-//           nodes.push(nameNode);
-//           links.push({ source: departmentNode.id, target: nameNode.id });
-//         } else {
-//           nameNode.fill = "#9D2235";
-//         }
-//       } catch (error) {
-//         console.error("Error searching and expanding nodes:", error);
-//       }
-//     }
-    // Update state
     setNodes([...updatedNodes]);
     setLinks([...updatedLinks]);
   };
-
-
 
   return (
     <GraphContext.Provider
