@@ -251,7 +251,7 @@ def semantic_scholar_author_search_user_input():
                 print(len(list))
                 for val in list:
                     for val2 in val.items():
-                        print(val2)
+                        print("this is my val 2",val2)
                 json_list = json.dumps(list)
                 return redirect(url_for('routes.submit_publicationAPI', paper_info_list=json_list))
                   #  print("\n\n")
@@ -327,17 +327,15 @@ s2_api_key = "7wIu7PY7cV8dXPxpaS744oKcXDsAhuAaDrM68GXi"
 #IRONMAN
 
 
-import requests
 
 import requests
-
-import requests
-
+#this is my rouyte that takes in the papers name and returns the list of authors
+# i tested it with a small sample case and it seems to be returning the correct values
 def semantic_scholar_paper_authors(paper_title):
     base_url = "https://api.semanticscholar.org/graph/v1/paper/search"
 
     if paper_title:
-        query = paper_title.replace(' ', '+')  # Replace space with '+'
+        query = paper_title.replace(' ', '+') 
 
         # Construct the URL with the query parameter
         search_url = f"{base_url}?query={query}"
@@ -388,10 +386,13 @@ def semantic_scholar_paper_authors(paper_title):
 
 
 
+#lock
 @routes_blueprint.route('/submit_publicationAPI2', methods=['GET', 'POST'])
 def submit_publicationAPI2():
     eform = PublicationForm()
     paper_info_list = request.args.get('paper_info_list')
+    print("idk if this is what i am supposed to be doing")
+    print(paper_info_list)
     if paper_info_list:
         # Convert the received JSON string back to a list of dictionaries
         paper_info_list = json.loads(paper_info_list)
@@ -423,11 +424,35 @@ def submit_publicationAPI2():
         return redirect(url_for('routes.index'))  # Redirect to the homepage after submission
     return render_template('submit_publication.html', form=eform)
 
-#IRONMAN
+#11_12
+# i need to get the year that a paper too
+def get_paper_publication_year(paper_id):
+    # Get the paper ID from the request parameters
+    
+    
+    if not paper_id:
+        return jsonify({'error': 'Paper ID is required'}), 400
+
+    # Make a GET request to the Semantic Scholar API
+    api_url = f'https://api.semanticscholar.org/v1/paper/{paper_id}'
+    response = requests.get(api_url)
+
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        # Parse the JSON response
+        paper_data = response.json()
+        
+        # Extract the publication year
+        publication_year = str(paper_data.get('year', 'Publication year not available'))
+        return publication_year
+      #  return jsonify({'paper_id': paper_id, 'publication_year': publication_year})
+    else:
+        return jsonify({'error': f'Unable to retrieve paper information. Status code: {response.status_code}'}), 500
 @routes_blueprint.route('/submit_publicationAPI', methods=['GET', 'POST'])
 def submit_publicationAPI():
     eform = PublicationForm()
     paper_info_list = request.args.get('paper_info_list')
+
     if paper_info_list:
         
         paper_info_list = json.loads(paper_info_list)
@@ -435,21 +460,28 @@ def submit_publicationAPI():
     # Extract titles from the paper_info_list
     titles = [item['title'] for item in paper_info_list]
     print("GOKU ARE YOU THERE\n", titles)
+    paperID = [item['paperId'] for item in paper_info_list]
+    print("this is my paperid", paperID)
     # Get the name of the affiliate from current_user object
-  
+    publishDATE = [get_paper_publication_year(paper_id) for paper_id in paperID]
+    print(publishDATE)
     name=current_user.firstname+" "+current_user.lastname
     print("this is the name",name)
-
-    
-    for title in titles:
+    print("this is the type of my titles", type(titles))
+    print("this is the type of my publishdate",type(publishDATE))
+    print(len(publishDATE))
+    for x in range(len(publishDATE)):
         new_publication = Publication(
-            title=title, 
+            title=titles[x], 
             authors=name,
-            affiliate=current_user 
+            affiliate=current_user,
+            publication_year=publishDATE[x] 
+            
             
         )
         db.session.add(new_publication)
         db.session.commit() 
+   
 
     
 
@@ -811,6 +843,8 @@ def edit_publication_add_parse(publication_id):
     return cleaned_authors
 
 #ironman
+#this is the current route that updates the name of the title
+#title->author->
 @routes_blueprint.route('/edit_publication_add/<publication_id>', methods=['POST', 'GET'])
 @login_required
 def edit_publication_add(publication_id):
