@@ -497,7 +497,16 @@ def get_paper_DOI(paper_id):
         }
     else:
         return jsonify({'error': f'Unable to retrieve paper information. Status code: {response.status_code}'}), 500
+#one of your girls
+def get_author_names_title(title):
+   
 
+   #return current_publication.title
+    authors = semantic_scholar_paper_authors(title)
+
+    cleaned_authors = ' '.join([remove_unicode_escape_sequences(author) for author in authors])
+    print(type(cleaned_authors))
+    return cleaned_authors
 @routes_blueprint.route('/submit_publicationAPI', methods=['GET', 'POST'])
 def submit_publicationAPI():
     eform = PublicationForm()
@@ -521,12 +530,15 @@ def submit_publicationAPI():
     name=current_user.firstname+" "+current_user.lastname
     print("this is the name",name)
     print("this is the type of my titles", type(titles))
+    print("why are u breaking plz stop ",titles)
     print("this is the type of my publishdate",type(publishDATE))
     print(len(publishDATE))
+   
     for x in range(len(publishDATE)):
+        authors=get_author_names_title(titles[x])
         new_publication = Publication(
             title=titles[x], 
-            authors=name,
+            authors=authors,
             affiliate=current_user,
             publication_year=publishDATE[x],
             journal=paperDOI[x].get('doi', 'DOI not available')
@@ -885,7 +897,7 @@ def edit_publication(publication_id):
 
 def remove_unicode_escape_sequences(author_name):
     return unicodedata.normalize("NFKD", author_name)
-
+#one of 
 def edit_publication_add_parse(publication_id):
    
     current_publication = Publication.query.filter_by(id=publication_id).first()
@@ -896,9 +908,7 @@ def edit_publication_add_parse(publication_id):
     print(type(cleaned_authors))
     return cleaned_authors
 
-#ironman
-#this is the current route that updates the name of the title
-#title->author->
+#one of your girls tonight~
 @routes_blueprint.route('/edit_publication_add/<publication_id>', methods=['POST', 'GET'])
 @login_required
 def edit_publication_add(publication_id):
@@ -1728,99 +1738,6 @@ def parseData():
             # You can save this to another file or perform further parsing as needed
             print(pub)
             i = i+1
-
-# @routes_blueprint.route('/', methods=['GET'])#/=root pathx
-# @routes_blueprint.route('/index', methods=['GET'])
-# @login_required
-# def index():
-#     #eform = EmptyForm()
-#     #retrieve all classes in the data base
-#     allclasses= Class.query.order_by(Class.major).all()#this is sorting by major
-
-#     return render_template('index.html', title="Course List",classes=allclasses)#to display all the classes, i need to put in in the parameters
-#                                                         #the second classes is the classes on line 15
-#                                                         #the first classes is the argument name that we pass through to render the template
-#                                                         #and it will be available when we render the index.html
-
-# @routes_blueprint.route('/createclass/',methods=['GET','POST'])
-# @login_required
-# def createclass():
-#     cform = ClassForm()
-#     if cform.validate_on_submit():
-#         newClass=Class(coursenum=cform.coursenum.data,title=cform.title.data,major=cform.major.data.name,)#since major is a drop down we need to get the name from the data
-#         db.session.add(newClass)
-#         db.session.commit()
-#         flash('Class "'+newClass.major+'-'+newClass.coursenum+'" is created')
-#         return redirect(url_for('routes.index'))
-#     return render_template('create_class.html', form=cform)
-
-# @routes_blueprint.route('/display_profile',methods=['GET'])
-# @login_required
-# def display_profile():
-#     #eform=EmptyForm()
-#     return render_template('display_profile.html',title='Display Profile',student=current_user)
-
-# @routes_blueprint.route('/roster/<classid>',methods=['GET'])#we will include the class id in the path
-# @login_required
-# def roster(classid):
-#     theclass=Class.query.filter_by(id=classid).first()
-#     return render_template('roster.html',title="Class Roster",current_class=theclass)
-
-# @routes_blueprint.route('/enroll/<classid>',methods=['POST'])
-# @login_required
-# def enroll(classid):
-#     #eform=EmptyForm()
-#     #if eform.validate_on_submit():
-#     theclass=Class.query.filter_by(id=classid).first()
-#     if theclass is None:
-#         flash('Class with id "{}" not found '.format(classid))
-#         return redirect(url_for('routes.index'))
-#     current_user.enroll(theclass)
-#     db.session.commit()
-#     flash('You are now enrolled in class {} {}!'.format(theclass.major,theclass.coursenum))
-#     return redirect(url_for('routes.index'))
-#     #else:
-#       #  return redirect(url_for('index'))
-
-# @routes_blueprint.route('/unenroll/<classid>',methods=['POST'])
-# @login_required
-# def unenroll(classid):
-#     #eform=EmptyForm()
-#     #if eform.validate_on_submit():
-#     theclass=Class.query.filter_by(id=classid).first()
-#     if theclass is None:
-#         flash('Class with id "{}" not found '.format(classid))
-#         return redirect(url_for('routes.index'))
-#     current_user.unenroll(theclass)
-#     db.session.commit()
-#     flash('You are now un-enrolled in class {} {}!'.format(theclass.major,theclass.coursenum))
-#     return redirect(url_for('routes.index'))
-#    # else:
-#       #  return redirect(url_for('index'))
-
-# @routes_blueprint.route('/jsnDerulo', methods=['GET'])
-# def jsonD():
- #   jsonData = []
-
-  #  affiliates = Affiliate.query.all()
-   # for user in affiliates:
-    #   # print(user.email)
-    #   jsonData.append({
-    #      "firstName": user.firstname,
-    #     "lastName": user.lastname,
-    #    "wsu campus": user.wsuCampus,
-    #   "department": user.department,
-    #  "email": user.email
-    # })
-    # Convert the data to a JSON string
-    #json_data = jsonify(jsonData)
-
-    # Create a Response with the JSON data and set headers for download
-    #response = make_response(json_data)
-    #response.headers["Content-Disposition"] = "attachment; filename=affiliates.json"
-    #response.headers["Content-Type"] = "application/json"
-
-    # return response
 
 
 
