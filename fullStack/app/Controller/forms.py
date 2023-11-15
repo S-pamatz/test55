@@ -108,7 +108,7 @@ class AddProjectsForm(FlaskForm):
 
 class AddExperiencesForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()], render_kw={"placeholder": "e.g. Professor, Teaching Assistant"})
-    location = StringField('Insitution', render_kw={"placeholder": "e.g. Washington State University"})
+    location = StringField('Institute', render_kw={"placeholder": "e.g. Washington State University"})
     date_from = SelectField('From', choices=[("Present", "Present") if date == get__current_year() else (date,date) for date in range(get__current_year(), 1900, -1) ])
     date_to = SelectField('To', choices=[("Present", "Present") if date == get__current_year() else (date,date) for date in range(get__current_year(), 1900, -1) ])
     submit = SubmitField('Submit')

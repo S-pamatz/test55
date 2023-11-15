@@ -108,6 +108,9 @@ def add_experiences(user_id):
         afform = AddExperiencesForm()
         user = Affiliate.query.filter_by(id=user_id).first()
         if afform.validate_on_submit():
+            if afform.date_to.data != "Present" and int(afform.date_to.data) < int(afform.date_from.data):
+                flash("Invalid Date")
+                return redirect(url_for('routes.add_experiences', user_id=user_id))
             experience = Experience(title=afform.title.data, location=afform.location.data,
                             date_from=afform.date_from.data, date_to=afform.date_to.data)
             user.experience.append(experience)
