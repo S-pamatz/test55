@@ -108,10 +108,10 @@
            
                 <strong></strong>Press the DOI to get more information about the paper <br>
                 <strong>DOI: </strong><a href="https://doi.org/{{ publication.journal }}" target="_blank">{{ publication.journal }}</a></p>
-                <strong>Volume:</strong> {{ publication.volume }}<br>
-                <strong>Issue:</strong> {{ publication.issue }}<br>
+               
+          
                 <strong>Publication Year:</strong> {{ publication.publication_year }}<br>
-                <strong>Page Range:</strong> {{ publication. page_range }}<br>
+          
             {% if current_user == publication.affiliate %}
                 <form method="post" action="{{ url_for('routes.delete_publication', publication_id=publication.id) }}">
                     <input type="submit" value="Delete">

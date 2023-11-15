@@ -414,10 +414,10 @@ def submit_publicationAPI2():
             authors=eform.authors.data,
             
             journal=eform.journal.data,
-            volume=eform.volume.data,
-            issue=eform.issue.data,
+           # volume=eform.volume.data,
+           # issue=eform.issue.data,
             publication_year=eform.publication_year.data,
-            page_range=eform.page_range.data,
+          #  page_range=eform.page_range.data,
             affiliate=current_user  # Assuming "current_affiliate" is the logged-in user
         )
         db.session.add(new_publication)
@@ -861,9 +861,9 @@ def edit_publication(publication_id):
         current_publication.title = afform.title.data
         current_publication.publication_year = afform.publication_year.data
         current_publication.journal = afform.journal.data
-        current_publication.volume = afform.volume.data
-        current_publication.issue = afform.issue.data
-        current_publication.page_range = afform.page_range.data
+      #  current_publication.volume = afform.volume.data
+     #   current_publication.issue = afform.issue.data
+      #  current_publication.page_range = afform.page_range.data
         db.session.add(current_publication)
         db.session.commit()
         flash("You have modified {current_publication_name}".format(
@@ -875,9 +875,9 @@ def edit_publication(publication_id):
         afform.authors.data = current_publication.authors
         afform.publication_year.data = current_publication.publication_year
         afform.journal.data = current_publication.journal
-        afform.volume.data = current_publication.volume
-        afform.issue.data = current_publication.issue
-        afform.page_range.data = current_publication.page_range
+     #   afform.volume.data = current_publication.volume
+    #    afform.issue.data = current_publication.issue
+    #    afform.page_range.data = current_publication.page_range
 
     return render_template('edit_Publication.html', title='Edit Publication', form=afform, publication_id=publication_id)
 
