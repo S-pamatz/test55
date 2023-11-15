@@ -106,7 +106,7 @@
             <td>{{ project.name }}</td>
             <td>{{ project.authorss }}</td>
             <td>{{ project.year }}</td>
-            <td>{{ project.publisher }} </td>
+            <td>{{ project.publisher }}</td>
             <td>{{ project.url }}</td>
             <td><a href="{{ url_for('routes.edit_project', project_id=project.id, user_id=user.id) }}">Edit</a>
                 <a href="{{url_for('routes.delete_project', project_id=project.id, user_id=user.id)}}">Delete</a>
