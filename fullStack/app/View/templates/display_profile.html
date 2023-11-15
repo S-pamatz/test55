@@ -100,9 +100,7 @@
     </div>
     <div class="flex-info">
         <h4><span style="color: rgb(166, 15, 45); font-weight: bold;">Projects</span></h4>
-        {% for project in affiliate.projects %}
-            <p>{{project.authors}}.{{ project.year }}.{{ project.name }}.{{project.publisher}}<b><span style="color: rgb(166, 15, 45); font-weight: bold; margin-left: 48px;"></span></b></p>
-        {% endfor %}
+       
         <h4><span style="color: rgb(166, 15, 45); font-weight: bold;">Publications</span></h4>
         {% for publication in publications %}
                 <strong>Title:</strong> {{ publication.title }}<br>

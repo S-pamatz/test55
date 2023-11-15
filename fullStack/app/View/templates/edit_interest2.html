@@ -8,7 +8,7 @@
 
   <!-- Big Interest Form -->
  <!-- Big Interest Form -->
-<form method="POST" action="{{ url_for('routes.edit_interest') }}" novalidate>
+<form method="POST" action="{{ url_for('routes.edit_interest') }}">
     {{ form.hidden_tag() }}
     <label for="{{ form.name.id }}"></label>
     {{ wtf.form_field(form.name, value=selected_big_interest) }}

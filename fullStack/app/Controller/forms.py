@@ -32,7 +32,7 @@ class EditForm(FlaskForm):
     university = SelectField('University')
   #  wsu_faculty = SelectField('wsu_faculty', choices=[('Please Select an Option Below'), ('WSU professor'), ('WSU faculty')])
     #sponsor = SelectField('Sponsor')
-    partners = SelectField('Partners')
+   # partners = SelectField('Partners')
 
  #   membership = SelectField('Membership', choices=[(
    #     'Please Select an Option Below'), ('Yes, I am a member'), ('No, I am not a member')])
@@ -92,8 +92,14 @@ class AddProjectsForm(FlaskForm):
     name = StringField('Name of Publication', validators=[DataRequired()], render_kw={"placeholder": "e.g. Quaternary Science Reviews"})
     year = MonthField('Month-Year', validators=[])
     url = StringField('URL of Project', render_kw={"placeholder": "e.g. dx.doi.org/10.1016/j.quascirev.2015.08.028"})
+    partners = SelectField('Partners')
     publisher = StringField('Publisher', render_kw={"placeholder": "e.g. Quaternary Science Reviews"})
     submit = SubmitField('Submit')
+    def set_partners(self):
+
+        partners = Partners.query.order_by(Partners.id).all()
+        self.partners.choices = [(partner.name, partner.name)
+                                 for partner in partners]
 
 class AddExperiencesForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()], render_kw={"placeholder": "e.g. Professor, Teaching Assistant"})
@@ -183,44 +189,53 @@ class editPublication(FlaskForm):
 
 
 
+from wtforms.validators import DataRequired, Optional
+
+class NonValidatingSelectField(SelectField):
+    """
+    Attempt to make an open-ended select multiple field that can accept dynamic
+    choices added by the browser.
+    """
+
+    def pre_validate(self, form):
+        pass
+
+    def validate(self, form, extra_validators=tuple()):
+        # Override the validate method to disable choices validation
+        pass
+class NonValidatingSelectField1(SelectField):
+    """
+    Attempt to make an open-ended select multiple field that can accept dynamic
+    choices added by the browser.
+    """
+
+    def pre_validate(self, form):
+        pass
+
+    def validate(self, form, extra_validators=tuple()):
+        # Override the validate method to disable choices validation
+        pass
+
+
 
 class EditInterest(FlaskForm):
-    name = SelectField('Interest', validators=[DataRequired()])
+    name = SelectField('Interest',  default='', validators=[Optional(None)])
     submit = SubmitField('Submit')
 
     def set_name(self):
-        # Retrieve existing choices
-        existing_choices = [(interest.name, interest.name) for interest in interestform.query.all()]
+        big_interests = interestform.query.order_by(
+            interestform.id).all()
 
-        # Add the searched item to the choices if not already present
-        search_query = request.form.get('search_query')
-        if search_query and (search_query, search_query) not in existing_choices:
-            existing_choices.append((search_query, search_query))
-
-        # Set the choices for the SelectField
-        self.name.choices = existing_choices
-
-        
+        # Add the choices to the SelectField
+        self.name.choices = [(uni.name, uni.name) for uni in big_interests]
 
 class EditInterestSmall(FlaskForm):
-    
-    name = SelectField('Sub-Interests', choices=[], default='')
-    
+    name = SelectField('Sub-Interests', default='', validators=[Optional(None)])
     submit = SubmitField('Submit')
 
     def set_name_small(self):
         small_interests = smallinterestform.query.order_by(
             smallinterestform.id).all()
 
-        # Add a blank option to the beginning of the choices list
-        self.name.choices = [('', 'Select an option')] + [(uni.name, uni.name) for uni in small_interests]
-
-
-class CombinedInterestForm(FlaskForm):
-    name_big = SelectField('Big Interest', choices=[])
-    name_small = SelectField('Small Interest', choices=[])
-    submit = SubmitField('Submit')
-
-    def set_names(self, big_interests, small_interests):
-        self.name_big.choices = [(interest.name, interest.name) for interest in big_interests]
-        self.name_small.choices = [(interest.name, interest.name) for interest in small_interests]
+        # Add the choices to the SelectField
+        self.name.choices = [(uni.name, uni.name) for uni in small_interests]

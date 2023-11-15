@@ -71,6 +71,7 @@
                     <td>{{ project.year }}</td>
                     <td>{{ project.publisher }} </td>
                     <td>{{ project.url }}</td>
+                    <td>{{ project.partners }}</td>
                     <td><a href="{{ url_for('routes.edit_project', project_id=project.id, user_id=affiliate.id) }}">Edit</a>
                         <a href="{{url_for('routes.delete_project', project_id=project.id, user_id=affiliate.id)}}">Delete</a>
                     </td>

@@ -72,7 +72,7 @@ class Affiliate(db.Model, UserMixin):
     department = db.Column(db.String(128))  # Single department
     university = db.Column(db.String(128))
   #  wsu_faculty = db.Column(db.String(128))
-    partners = db.Column(db.String(128))
+  #  partners = db.Column(db.String(128))
     url = db.Column(db.String(128))
     projects = db.relationship("Project", secondary=works, backref="authors")
     interests = db.relationship("IntrestTest", secondary=interests, backref="affiliates")
@@ -103,6 +103,7 @@ class Project(db.Model):
     authorss = db.Column(db.String(120))
     year = db.Column(db.Date)
     publisher = db.Column(db.String(120))
+    partners = db.Column(db.String(120))
     url = db.Column(db.String(120))
 
 class Education(db.Model):

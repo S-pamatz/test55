@@ -45,7 +45,7 @@ application.config['MAIL_DEBUG'] = True
 
 application.config['MAIL_SUPPRESS_SEND'] = False
 application.config['TESTING'] = False
-application.config['DEBUG'] = True
+application.config['DEBUG'] = False
 mail = Mail(application)
 #############
 
@@ -78,10 +78,12 @@ def displayLanding():
 def add_projects(user_id):
     if int(user_id) == current_user.id or current_user.is_admin:
         afform = AddProjectsForm()
+        afform.set_partners()
         if afform.validate_on_submit():
             user = Affiliate.query.filter_by(id=user_id).first()
             project = Project(name=afform.name.data, authorss=afform.authors.data,
                             year=afform.year.data, publisher=afform.publisher.data,
+                            partners=afform.partners.data,
                             url=check_url(afform.url.data))
             user.projects.append(project)
             db.session.add(project)
@@ -922,7 +924,7 @@ def edit_profile():
     eform = EditForm()
     eform.set_department_choices()
     eform.set_university_choices()
-    eform.set_partners()
+  #  eform.set_partners()
 
     department_name = eform.department.data
     print("Department Name from Form:", department_name)
@@ -939,7 +941,7 @@ def edit_profile():
         current_user.lastname = eform.lastname.data
         current_user.wsuCampus = eform.campus.data
         current_user.university = eform.university.data
-        current_user.partners = eform.partners.data
+      #  current_user.partners = eform.partners.data
         current_user.URL = eform.URL.data
 
         if eform.password.data:
@@ -963,7 +965,7 @@ def edit_profile():
         eform.lastname.data = current_user.lastname
         eform.campus.data = current_user.wsuCampus
         eform.university.data = current_user.university
-        eform.partners.data = current_user.partners
+      #  eform.partners.data = current_user.partners
 
         if current_user.departments:
             eform.department.data = current_user.departments[0].name
@@ -987,6 +989,7 @@ def edit_project(project_id, user_id):
             current_project.authorss = afform.authors.data
             current_project.year = afform.year.data
             current_project.publisher = afform.publisher.data
+            current_project.partners = afform.partner.data
             current_project.url = afform.url.data
             db.session.add(current_project)
             db.session.commit()
@@ -1001,6 +1004,7 @@ def edit_project(project_id, user_id):
             afform.authors.data = current_project.authorss
             afform.publisher.data = current_project.publisher
             afform.url.data = current_project.url
+            afform.partner.data=current_project.partners
 
         return render_template('edit_project.html', title='Edit Project', form=afform, project_id=project_id, user_id=user_id)
     else:
@@ -1909,6 +1913,7 @@ def edit_interest():
         return render_template('edit_interest.html', form=form, eform=eform, selected_big_interest=selected_big_interest, selected_small_interest=selected_small_interest)
 
     return render_template('edit_interest.html', form=form, eform=eform, selected_big_interest=selected_big_interest, selected_small_interest=selected_small_interest)
+    #return redirect(url_for("routes.index"))
 
 @routes_blueprint.route('/delete_education/<user_id>/<education_id>', methods=['GET','POST'])
 @login_required
