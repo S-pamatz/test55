@@ -983,13 +983,14 @@ def edit_profile():
 def edit_project(project_id, user_id):
     if int(user_id) == current_user.id or current_user.is_admin:
         afform = AddProjectsForm()
+        afform.set_partners()
         current_project = Project.query.filter_by(id=project_id).first()
         if afform.validate_on_submit():
             current_project.name = afform.name.data
             current_project.authorss = afform.authors.data
             current_project.year = afform.year.data
             current_project.publisher = afform.publisher.data
-            current_project.partners = afform.partner.data
+            current_project.partners = afform.partners.data
             current_project.url = afform.url.data
             db.session.add(current_project)
             db.session.commit()
@@ -1004,7 +1005,7 @@ def edit_project(project_id, user_id):
             afform.authors.data = current_project.authorss
             afform.publisher.data = current_project.publisher
             afform.url.data = current_project.url
-            afform.partner.data=current_project.partners
+            afform.partners.data=current_project.partners
 
         return render_template('edit_project.html', title='Edit Project', form=afform, project_id=project_id, user_id=user_id)
     else:
