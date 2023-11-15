@@ -93,7 +93,7 @@ class AddProjectsForm(FlaskForm):
     year = MonthField('Month-Year', validators=[])
     url = StringField('URL of Project', render_kw={"placeholder": "e.g. dx.doi.org/10.1016/j.quascirev.2015.08.028"})
     partners = SelectField('Partners')
-    publisher = StringField('Publisher', render_kw={"placeholder": "e.g. Quaternary Science Reviews"})
+    publisher = StringField('Sponser', render_kw={"placeholder": "e.g. Quaternary Science Reviews"})
     submit = SubmitField('Submit')
     def set_partners(self):
 
