@@ -113,6 +113,21 @@
             </td>
         </tr>
         {% endfor %}
+        <h1>Edit Publications</h1>
+        {% for publication in user.publications %}
+        <tr>
+            <td>{{ publication.title }}</td>
+            <td>{{ publication.authors }}</td>
+            <td>{{ publication.journal }}</td>
+            <td>{{ publication.volume }} </td>
+            <td>{{ publication.issue }}</td>
+            <td>{{ publication.publication_year }}</td>
+            <td>{{ publication.page_range }}</td>
+            <td><a href="{{ url_for('routes.edit_publication', publication_id=publication.id) }}">Edit</a>
+                <a href="{{ url_for('routes.delete_publication', publication_id=publication.id) }}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
     </table>
 </div>
 {% endblock %}

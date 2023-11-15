@@ -101,7 +101,7 @@ class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     authorss = db.Column(db.String(120))
-    year = db.Column(db.Date)
+    year = db.Column(db.String(120))
     publisher = db.Column(db.String(120))
     partners = db.Column(db.String(120))
     url = db.Column(db.String(120))
@@ -110,15 +110,15 @@ class Education(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
     degree = db.Column(db.String(120), nullable=False)
-    year = db.Column(db.Date)
+    year = db.Column(db.String(120))
     college = db.Column(db.String(120), nullable=False)
 
 class Experience(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(120), nullable=False)
     location = db.Column(db.String(120), nullable=False)
-    date_from = db.Column(db.Date, nullable=False)
-    date_to = db.Column(db.Date, nullable=False)
+    date_from = db.Column(db.String(120), nullable=False)
+    date_to = db.Column(db.String(120), nullable=False)
 
 
 class Interest(db.Model):

@@ -90,8 +90,8 @@ class EmptyForm(FlaskForm):
 class AddProjectsForm(FlaskForm):
     authors = StringField('Authors', validators=[DataRequired()], render_kw={"placeholder": "e.g. 'Bruce Wayne, Mary Jane..."})
     name = StringField('Title of Project', validators=[DataRequired()], render_kw={"placeholder": "e.g. Quaternary Science Reviews"})
-    year = MonthField('Month-Year', validators=[])
-    url = StringField('URL of Project', render_kw={"placeholder": "e.g. dx.doi.org/10.1016/j.quascirev.2015.08.028"})
+    year = SelectField('Years of Operations', choices=[("Present", "Present") if date == 2023 else (date,date) for date in range(2023, 1900, -1) ])
+    url = StringField('URL of Project', render_kw={"placeholder": ""})
     partners = SelectField('Partners')
     publisher = StringField('Sponser', render_kw={"placeholder": "e.g. Quaternary Science Reviews"})
     submit = SubmitField('Submit')
@@ -104,15 +104,15 @@ class AddProjectsForm(FlaskForm):
 class AddExperiencesForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()], render_kw={"placeholder": "e.g. Professor, Teaching Assistant"})
     location = StringField('Insitution', render_kw={"placeholder": "e.g. Washington State University"})
-    date_from = MonthField('From')
-    date_to = MonthField('To')
+    date_from = SelectField('From', choices=[("Present", "Present") if date == 2023 else (date,date) for date in range(2023, 1900, -1) ])
+    date_to = SelectField('To', choices=[("Present", "Present") if date == 2023 else (date,date) for date in range(2023, 1900, -1) ])
     submit = SubmitField('Submit')
 
 
 class AddEducationForm(FlaskForm):
     degree = SelectField("Degree", choices=[("Ph.D.", "Ph.D."), ("M.S.", "M.S."), ("B.S.","B.S.")])
     name = StringField("Name of Degree", validators=[DataRequired()], render_kw={"placeholder": "e.g. Computer Science"})
-    year = MonthField("Date of Completion", validators=[])
+    year = SelectField('Date of Completion', choices=[("Present", "Present") if date == 2023 else (date,date) for date in range(2023, 1900, -1) ])
     college = StringField("College/University", validators=[], render_kw={"placeholder": "e.g. Washington State University"})
     submit = SubmitField('Submit')
 
@@ -177,17 +177,6 @@ class editPublication(FlaskForm):
     publication_year = IntegerField('Publication Year', render_kw={"placeholder": "e.g. 2001, 2002"})
     page_range = StringField('Page Range', render_kw={"placeholder": "e.g. 0 - 100"})
     submit = SubmitField('Submit')
-
-
-
-
-
-
-
-
-
-
-
 
 from wtforms.validators import DataRequired, Optional
 

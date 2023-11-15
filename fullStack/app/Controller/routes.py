@@ -93,7 +93,7 @@ def add_projects(user_id):
             
             if current_user.is_admin:
                 return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
-            return redirect(url_for('routes.edit_profile'))
+            return redirect(url_for('routes.add_projects', user_id=user_id))
 
         return render_template('add_projects.html', title='Add Projects', form=afform, user_id=user_id)
     else:
@@ -117,7 +117,7 @@ def add_experiences(user_id):
                 experience_name=experience.title))
             if current_user.is_admin:
                 return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
-            return redirect(url_for('routes.index'))
+            return redirect(url_for('routes.add_experiences', user_id=user_id))
 
         return render_template('add_experience.html', title='Add Experiences', form=afform, user_id=user_id)
     else:
@@ -140,7 +140,7 @@ def add_education(user_id):
                 education_name=education.title))
             if current_user.is_admin:
                 return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
-            return redirect(url_for('routes.index'))
+            return redirect(url_for('routes.add_education', user_id=user_id))
         
         return render_template('add_education.html', title='Add Education', form=afform, user_id=user_id)
     else:
@@ -858,6 +858,8 @@ def edit_experience(exp_id, user_id):
         elif request.method == 'GET':
             afform.title.data = current_exp.title
             afform.location.data = current_exp.location
+            afform.date_from.data = current_exp.date_from
+            afform.date_to.data = current_exp.date_to
 
         return render_template('edit_experience.html', title='Edit Professional Experience', form=afform, exp_id=exp_id, user_id=user_id)
     else:
@@ -1016,7 +1018,7 @@ def edit_project(project_id, user_id):
             afform.publisher.data = current_project.publisher
             afform.url.data = current_project.url
             afform.partners.data=current_project.partners
-
+            afform.year.data=current_project.year
         return render_template('edit_project.html', title='Edit Project', form=afform, project_id=project_id, user_id=user_id)
     else:
         flash("You are not authorized")
@@ -1852,7 +1854,7 @@ def delete_education(education_id, user_id):
 @login_required
 def delete_experience(experience_id, user_id):
     experience = Experience.query.filter_by(id=experience_id).first()
-    if int(user_id) == current_user or current_user.is_admin:
+    if int(user_id) == current_user.id or current_user.is_admin:
         db.session.delete(experience)
         db.session.commit()
     else:
