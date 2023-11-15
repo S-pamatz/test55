@@ -2,10 +2,11 @@
   /* background-color: red; */
   position: fixed;
   top: 10px;
-  left: 0;
-  width: 100%;
-  height: auto; 
-  display:flex;
+  left: auto;
+  width: 75%;
+  margin-left: 25%;
+  height: auto;
+  display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
@@ -34,7 +35,7 @@
 
 /* Additional style to ensure each div with button and modal is stacked vertically */
 .categoriesBar > div {
-  display: flex ;
-  flex-direction:column-reverse;
+  display: flex;
+  flex-direction: column-reverse;
   align-items: center;
 }
