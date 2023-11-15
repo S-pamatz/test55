@@ -55,7 +55,7 @@ class IntrestTest(db.Model):
 
 class Affiliate(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    image_file = db.Column(db.String(20), nullable=False, default='Default_pic.png')
+    image_file = db.Column(db.String(20), nullable=False, default='CEREO-landing.jpeg')
     email = db.Column(db.String(120), unique=True, nullable=False, default=None)
     password_hash = db.Column(db.String(128), nullable=False, default=None)
     firstname = db.Column(db.String(128), nullable=False, default=None)
