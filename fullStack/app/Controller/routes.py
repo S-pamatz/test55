@@ -65,7 +65,7 @@ def profileSearch(initial=None):
     #for some reason that doesnt work... maybe its nnull or something 
     filtered_affiliates = [
         user for user in affiliates
-        if user.firstname and user.lastname and user.firstname != "None" and user.lastname != "None"
+        if user.firstname != "None" and user.lastname != "None"
     ]
     print("can u stop breaking ")
     if initial:
