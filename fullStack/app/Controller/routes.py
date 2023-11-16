@@ -56,19 +56,30 @@ mail = Mail(application)
 @routes_blueprint.route('/landing/<initial>', methods=['GET'])
 def profileSearch(initial=None):
     affiliates = Affiliate.query.all()
-
+ #   for a in affiliates:
+      #  if a.firstname=="None":
+      #      a.firstname="Not Given"
+      #  elif a.lastname=="None":
+      #      a.lastname="Not Given"
+    # Filter affiliates with both first and last names
+    #for some reason that doesnt work... maybe its nnull or something 
+    filtered_affiliates = [
+        user for user in affiliates
+        if user.firstname and user.lastname and user.firstname != "None" and user.lastname != "None"
+    ]
+    print("can u stop breaking ")
     if initial:
-        # Filter affiliates by the first letter of the last name
-        filtered_affiliates = [user for user in affiliates if user.lastname and user.lastname[0].upper() == initial]
-    else:
-        filtered_affiliates = affiliates
-
+      
+        filtered_affiliates = [
+            user for user in filtered_affiliates
+            if user.lastname[0].upper() == initial
+        ]
+    print("david x lucy")
     # Ensure 'lastname' is not None and is not an empty string before accessing it
-    last_name_initials = set(user.lastname[0].upper() for user in affiliates if user.lastname)
+    last_name_initials = set(user.lastname[0].upper() for user in filtered_affiliates if user.lastname)
     print("mmmmm\n",last_name_initials)
-
-
-    return render_template('profileSearch.html', affiliates=affiliates, last_name_initials=sorted(last_name_initials))
+    
+    return render_template('profileSearch.html', affiliates=filtered_affiliates, last_name_initials=sorted(last_name_initials))
 
 
 @routes_blueprint.route('/landing', methods=['GET'])
