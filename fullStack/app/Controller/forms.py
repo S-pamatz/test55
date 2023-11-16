@@ -95,16 +95,17 @@ class EmptyForm(FlaskForm):
 class AddProjectsForm(FlaskForm):
     authors = StringField('Authors', validators=[DataRequired()], render_kw={"placeholder": "e.g. 'Bruce Wayne, Mary Jane..."})
     name = StringField('Title of Project', validators=[DataRequired()], render_kw={"placeholder": "e.g. Quaternary Science Reviews"})
-<<<<<<< HEAD
-    year = StringField('Month-Year', validators=[])
-    url = StringField('URL of Project', render_kw={"placeholder": "e.g. dx.doi.org/10.1016/j.quascirev.2015.08.028"})
-=======
     year = SelectField('Years of Operations', choices=[("Present", "Present") if date == get__current_year() else (date,date) for date in range(get__current_year(), 1900, -1) ])
     url = StringField('URL of Project', render_kw={"placeholder": ""})
->>>>>>> 16d8ed4af67d285444d2a3b6df6006df6371f1ee
     partners = SelectField('Partners')
-    publisher = StringField('Sponser', render_kw={"placeholder": "e.g. Quaternary Science Reviews"})
+    sponsor = SelectField('Sponsor')
     submit = SubmitField('Submit')
+    def set_sponsor(self):
+
+        sponsor = Sponsor.query.order_by(
+            Sponsor.id).all()
+        self.sponsor.choices = [(uni.name, uni.name)
+                                for uni in sponsor]
     def set_partners(self):
 
         partners = Partners.query.order_by(Partners.id).all()
@@ -122,11 +123,7 @@ class AddExperiencesForm(FlaskForm):
 class AddEducationForm(FlaskForm):
     degree = SelectField("Degree", choices=[("Ph.D.", "Ph.D."), ("M.S.", "M.S."), ("B.S.","B.S.")])
     name = StringField("Name of Degree", validators=[DataRequired()], render_kw={"placeholder": "e.g. Computer Science"})
-<<<<<<< HEAD
-    year = StringField("Date of Completion")
-=======
     year = SelectField('Date of Completion', choices=[("Present", "Present") if date == get__current_year() else (date,date) for date in range(get__current_year(), 1900, -1) ])
->>>>>>> 16d8ed4af67d285444d2a3b6df6006df6371f1ee
     college = StringField("College/University", validators=[], render_kw={"placeholder": "e.g. Washington State University"})
     submit = SubmitField('Submit')
 
@@ -167,7 +164,7 @@ class ask(FlaskForm):
 class PublicationForm(FlaskForm):
     authors = StringField('Authors', render_kw={"placeholder": "e.g. Boll, J., T. Link, M. Santelmann, R. Heinse, and B. Cosens."})
     title = StringField('Title', render_kw={"placeholder": "e.g. Effects of road construction on soil degradation and nutrient transport in Caspian Hyrcanian mixed forests"})
-    journal = StringField('Journal', render_kw={"placeholder": "e.g. Nature Communications"})
+    journal = StringField('DOI')
  #   volume = IntegerField('Volume', render_kw={"placeholder": "e.g. 11(8)"})
 #    issue = IntegerField('Issue', render_kw={"placeholder": "e.g. 63"})
     publication_year = IntegerField('Publication Year', render_kw={"placeholder": "e.g. 2001, 2002"})

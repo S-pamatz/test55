@@ -102,6 +102,7 @@ class Project(db.Model):
     name = db.Column(db.String(120), nullable=False)
     authorss = db.Column(db.String(120))
     year = db.Column(db.String(120))
+    sponsor = db.Column(db.String(128))
     publisher = db.Column(db.String(120))
     partners = db.Column(db.String(120))
     url = db.Column(db.String(120))
@@ -110,11 +111,7 @@ class Education(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
     degree = db.Column(db.String(120), nullable=False)
-<<<<<<< HEAD
     year = db.Column(db.String(120), nullable=False)
-=======
-    year = db.Column(db.String(120))
->>>>>>> 16d8ed4af67d285444d2a3b6df6006df6371f1ee
     college = db.Column(db.String(120), nullable=False)
 
 class Experience(db.Model):

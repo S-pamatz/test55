@@ -10,6 +10,7 @@ import base64
 import csv
 from flask import make_response, render_template, flash, redirect, url_for, request, Blueprint, jsonify
 from itsdangerous import SignatureExpired, URLSafeTimedSerializer
+from pymysql import NULL
 from app import db
 import pandas as pd
 import secrets
@@ -64,6 +65,8 @@ def profileSearch(initial=None):
 
     # Ensure 'lastname' is not None and is not an empty string before accessing it
     last_name_initials = set(user.lastname[0].upper() for user in affiliates if user.lastname)
+    print("mmmmm\n",last_name_initials)
+
 
     return render_template('profileSearch.html', affiliates=affiliates, last_name_initials=sorted(last_name_initials))
 
@@ -79,12 +82,15 @@ def add_projects(user_id):
     if int(user_id) == current_user.id or current_user.is_admin:
         afform = AddProjectsForm()
         afform.set_partners()
+        afform.set_sponsor()
         if afform.validate_on_submit():
             user = Affiliate.query.filter_by(id=user_id).first()
             project = Project(name=afform.name.data, authorss=afform.authors.data,
-                            year=afform.year.data, publisher=afform.publisher.data,
+                            year=afform.year.data, 
                             partners=afform.partners.data,
+                            sponsor=afform.sponsor.data,
                             url=check_url(afform.url.data))
+            print(type(afform.year.data))
             user.projects.append(project)
             db.session.add(project)
             db.session.commit()
@@ -566,10 +572,9 @@ def submit_publication():
             authors=form.authors.data,
             title=form.title.data,
             journal=form.journal.data,
-            volume=form.volume.data,
-            issue=form.issue.data,
+     
             publication_year=form.publication_year.data,
-            page_range=form.page_range.data,
+          
             affiliate=current_user  # Assuming "current_affiliate" is the logged-in user
         )
         db.session.add(new_publication)
@@ -1004,9 +1009,10 @@ def edit_project(project_id, user_id):
             current_project.name = afform.name.data
             current_project.authorss = afform.authors.data
             current_project.year = afform.year.data
-            current_project.publisher = afform.publisher.data
+            
             current_project.partners = afform.partners.data
             current_project.url = afform.url.data
+            current_project.sponsor=afform.sponsor.data
             db.session.add(current_project)
             db.session.commit()
             flash("You have modified {current_project_name}".format(
@@ -1018,10 +1024,11 @@ def edit_project(project_id, user_id):
         elif request.method == 'GET':
             afform.name.data = current_project.name
             afform.authors.data = current_project.authorss
-            afform.publisher.data = current_project.publisher
+         
             afform.url.data = current_project.url
             afform.partners.data=current_project.partners
             afform.year.data=current_project.year
+            afform.sponsor.data= current_project.sponsor
         return render_template('edit_project.html', title='Edit Project', form=afform, project_id=project_id, user_id=user_id)
     else:
         flash("You are not authorized")

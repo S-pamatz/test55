@@ -322,7 +322,9 @@ CREATE TABLE project (
   url VARCHAR(400) DEFAULT NULL,
   authorss varchar(120) DEFAULT NULL,
   publisher varchar(120) DEFAULT NULL,
-  year date DEFAULT NULL
+  `sponsor` varchar(200) DEFAULT NULL,
+  `partners` varchar(200) DEFAULT NULL,
+    year  varchar(120) DEFAULT NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 

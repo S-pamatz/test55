@@ -63,6 +63,7 @@
                   
                     <th>URL</th>
                     <th>Partner</th>
+                    <th>Sponsor</th>
                     <th>Edit</th>
                 </tr>
                 {% for project in affiliate.projects %}
@@ -73,6 +74,7 @@
                     <td>{{ project.publisher }} </td>
                     <td>{{ project.url }}</td>
                     <td>{{ project.partners }}</td>
+                    <td>{{ project.sponsor }}</td>
                     <td><a href="{{ url_for('routes.edit_project', project_id=project.id, user_id=affiliate.id) }}">Edit</a>
                         <a href="{{url_for('routes.delete_project', project_id=project.id, user_id=affiliate.id)}}">Delete</a>
                     </td>
