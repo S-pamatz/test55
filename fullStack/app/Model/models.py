@@ -110,7 +110,7 @@ class Education(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
     degree = db.Column(db.String(120), nullable=False)
-    year = db.Column(db.Date)
+    year = db.Column(db.String(120), nullable=False)
     college = db.Column(db.String(120), nullable=False)
 
 class Experience(db.Model):

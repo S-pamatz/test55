@@ -331,7 +331,7 @@ CREATE TABLE education(
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(255),
   degree VARCHAR(255),
-  year DATE,
+  year  varchar(120) DEFAULT NULL,
   college VARCHAR(255)
 )
 

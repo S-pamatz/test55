@@ -90,7 +90,7 @@ class EmptyForm(FlaskForm):
 class AddProjectsForm(FlaskForm):
     authors = StringField('Authors', validators=[DataRequired()], render_kw={"placeholder": "e.g. 'Bruce Wayne, Mary Jane..."})
     name = StringField('Title of Project', validators=[DataRequired()], render_kw={"placeholder": "e.g. Quaternary Science Reviews"})
-    year = MonthField('Month-Year', validators=[])
+    year = StringField('Month-Year', validators=[])
     url = StringField('URL of Project', render_kw={"placeholder": "e.g. dx.doi.org/10.1016/j.quascirev.2015.08.028"})
     partners = SelectField('Partners')
     publisher = StringField('Sponser', render_kw={"placeholder": "e.g. Quaternary Science Reviews"})
@@ -112,7 +112,7 @@ class AddExperiencesForm(FlaskForm):
 class AddEducationForm(FlaskForm):
     degree = SelectField("Degree", choices=[("Ph.D.", "Ph.D."), ("M.S.", "M.S."), ("B.S.","B.S.")])
     name = StringField("Name of Degree", validators=[DataRequired()], render_kw={"placeholder": "e.g. Computer Science"})
-    year = MonthField("Date of Completion", validators=[])
+    year = StringField("Date of Completion")
     college = StringField("College/University", validators=[], render_kw={"placeholder": "e.g. Washington State University"})
     submit = SubmitField('Submit')
 
