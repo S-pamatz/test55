@@ -973,7 +973,7 @@ def edit_profile():
         current_user.wsuCampus = eform.campus.data
         current_user.university = eform.university.data
       #  current_user.partners = eform.partners.data
-        current_user.URL = eform.URL.data
+        current_user.url = eform.URL.data
 
         if eform.password.data:
             current_user.set_password(eform.password.data)
@@ -996,6 +996,7 @@ def edit_profile():
         eform.lastname.data = current_user.lastname
         eform.campus.data = current_user.wsuCampus
         eform.university.data = current_user.university
+        eform.URL.data = current_user.url
       #  eform.partners.data = current_user.partners
 
         if current_user.departments:
@@ -1003,7 +1004,7 @@ def edit_profile():
 
       
      
-    eform.URL.data = current_user.URL if hasattr(current_user, 'URL') else None
+    #eform.URL.data = current_user.URL if hasattr(current_user, 'URL') else None did i write this? wtf is this
 
 
     return render_template('edit_profile.html', title='Edit Profile', form=eform, image_file=image_file, affiliate=current_user, publications=publications)
