@@ -1,5 +1,5 @@
 import React from "react";
-import classes from "./Header.module.css";
+import "./Header.module.css";
 import WsuLogo from "../../assets/wsu-white-logo-red-background.png";
 import { FaSearch } from "react-icons/fa";
 import GraphContext from "../data/GraphContext";
@@ -11,9 +11,9 @@ const Header = () => {
 
   const updateSearch = (e) => {
     setSearch(e.target.value);
-  }
+  };
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       ctx.onSearchClick(search);
     }
@@ -22,8 +22,7 @@ const Header = () => {
   const getSearch = (e) => {
     e.preventDefault();
     ctx.onSearchClick(search);
-  }
-
+  };
 
   return (
     <header className={classes.header}>

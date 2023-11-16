@@ -5,7 +5,7 @@
   background-color: rgba(255, 255, 255, 0.8);
   position: absolute;
   top: 15vh;
-  left: 0;
+  right: 0;
   z-index: 10;
   overflow: hidden;
   border-top: 2px solid #ccc;
@@ -29,14 +29,17 @@
   margin-bottom: 10px;
 }
 
-
 .sidebar button {
   width: 100%;
   text-align: center;
   padding: 12px;
   border: none;
   border-radius: 5px;
-  background: linear-gradient(45deg, #007BFF, #00C6FF); /* Modern gradient background */
+  background: linear-gradient(
+    45deg,
+    #007bff,
+    #00c6ff
+  ); /* Modern gradient background */
   color: white; /* Text color change for better contrast */
   cursor: pointer;
   font-weight: 600; /* Making the text a bit bolder */
@@ -44,13 +47,23 @@
 }
 
 .sidebar button:hover {
-  background: linear-gradient(45deg, #0069D9, #009ACF); /* Darker shade on hover */
-  transform: scale(1.05); /* Slightly scale up the button on hover for a dynamic feel */
+  background: linear-gradient(
+    45deg,
+    #0069d9,
+    #009acf
+  ); /* Darker shade on hover */
+  transform: scale(
+    1.05
+  ); /* Slightly scale up the button on hover for a dynamic feel */
 }
 
 .sidebar button:active {
   transform: scale(1); /* Reset the button size when active (clicked) */
-  background: linear-gradient(45deg, #005CBF, #007BAF); /* Even darker shade on active click */
+  background: linear-gradient(
+    45deg,
+    #005cbf,
+    #007baf
+  ); /* Even darker shade on active click */
 }
 .expandedSidebar {
   width: 25vw; /* expanded width */
@@ -130,7 +143,7 @@
 }
 
 .classes.button {
-  background-color: #007BFF; /* A primary blue color */
+  background-color: #007bff; /* A primary blue color */
   color: #fff; /* White text */
   padding: 10px 15px; /* Padding for button size */
   border: none; /* Remove border */
@@ -148,5 +161,5 @@
 
 .classes.button:focus {
   outline: none; /* Remove focus outline */
-  box-shadow: 0 0 5px rgba(0,123,255,0.5); /* Add a subtle focus shadow */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a subtle focus shadow */
 }
