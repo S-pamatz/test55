@@ -888,6 +888,7 @@ def edit_experience(exp_id, user_id):
 @login_required
 def edit_publication(publication_id):
     afform = PublicationForm()
+    print("how is this even working. the html is the wrong one wtf")
     current_publication = Publication.query.filter_by(id=publication_id).first()
     if afform.validate_on_submit():
         current_publication.authors = afform.authors.data
@@ -912,7 +913,7 @@ def edit_publication(publication_id):
     #    afform.issue.data = current_publication.issue
     #    afform.page_range.data = current_publication.page_range
 
-    return render_template('edit_Publication.html', title='Edit Publication', form=afform, publication_id=publication_id)
+    return render_template('edit_publication.html', title='Edit Publication', form=afform, publication_id=publication_id)
 
 
 
