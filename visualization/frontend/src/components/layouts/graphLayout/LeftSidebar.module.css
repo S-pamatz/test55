@@ -71,7 +71,7 @@
   background-color: rgba(255, 255, 255, 0.8);
   position: absolute;
   top: 11vh;
-  left: 0;
+  right: 0;
   z-index: 10;
   overflow: hidden;
   border-top: 2px solid #ccc;

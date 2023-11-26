@@ -147,6 +147,7 @@ export const GraphContextProvider = (props) => {
         const filteredEntries = await filterEntries(search);
         updatedNodes = [nodesLibrary[1]];
         updatedNodes[0].id =0;
+        updatedNodes[0].expanded = true;
 
         if (!filteredEntries || filteredEntries.length === 0) return;
 
