@@ -17,8 +17,9 @@ import {
 const GraphContext = createContext({
   nodes: [],
   links: [],
-  setNodes: (newNodes) => {},
   selectedNode: null,
+  expandAllNodes: () => {},
+  setNodes: (newNodes) => {},
   onNodeClick: (clickedNode) => {},
   onSearchClick: (search) => {},
   updateNode: (index, newProps) => {},
@@ -180,13 +181,48 @@ export const GraphContextProvider = (props) => {
     setLinks([...updatedLinks]);
   };
 
+  const expandAllNodes = async () => {
+    let tempNodes = [...nodes];
+    let tempLinks = [...links];
+  
+    // Iterate over each node and expand if not already expanded
+    for (const node of tempNodes) {
+      if (!node.expanded && nodeCanBeExpanded(node)) { // nodeCanBeExpanded is a hypothetical function
+        let updatedNodes, updatedLinks;
+        try {
+          const filteredEntries = await filterEntries(node.Name);
+          if (filteredEntries.length > 0) { // Check if there are entries to expand into
+            ({ updatedNodes, updatedLinks } = expandNodeUsingFilteredEntries(
+              tempNodes,
+              tempLinks,
+              node,
+              filteredEntries
+            ));
+            tempNodes = updatedNodes;
+            tempLinks = updatedLinks;
+          }
+        } catch (error) {
+          console.error("Error expanding node:", error);
+        }
+      }
+    }
+  
+    setNodes(tempNodes);
+    setLinks(tempLinks);
+  };
+
+  const nodeCanBeExpanded = (node) => {
+    return node.depth >= 2;
+  };
+
   return (
     <GraphContext.Provider
       value={{
         nodes: nodes,
         links: links,
-        setNodes: setNodes,
         selectedNode: selectedNode,
+        setNodes: setNodes,
+        expandAllNodes: expandAllNodes,
         onNodeClick: handleNodesClick,
         onSearchClick: handleSearchClick,
         updateNode: updateNode,

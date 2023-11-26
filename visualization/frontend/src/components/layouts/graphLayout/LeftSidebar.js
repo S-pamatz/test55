@@ -9,6 +9,7 @@ import backArrow from "../../../assets/icons8-back-arrow-30.png"; // Import the 
 import searchIcon from "../../../assets/Search.png";
 import { FaSearch } from "react-icons/fa";
 import { nodesLibrary } from "../../data/nodeLibrary";
+import ExpandAllNodeButton from "./LeftSidebarComponent/ExpandAllNodeButton";
 
 const Sidebar = () => {
   const [activeView, setActiveView] = useState("");
@@ -150,8 +151,14 @@ const Sidebar = () => {
           </div>
         </>
       )}
-      {/* TODO: Add content for other icons as needed */}
+      {activeView === "settings" && (
+        <div className={classes.settings}>
+          <h3>Settings</h3>
+              <ExpandAllNodeButton/>
+        </div>
+      )}
     </div>
+
   );
 };
 
