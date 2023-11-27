@@ -63,6 +63,7 @@ def profileSearch(initial=None):
       #      a.lastname="Not Given"
     # Filter affiliates with both first and last names
     #for some reason that doesnt work... maybe its nnull or something 
+   
     filtered_affiliates = [
         user for user in affiliates
         if user.firstname != "None" and user.lastname != "None"
@@ -727,7 +728,29 @@ def index():
 
 
 
+###
 
+@routes_blueprint.route('/displayProfileSearch/<int:user_id>', methods=['GET'])
+
+def displayProfileSearch(user_id):
+ 
+    user = Affiliate.query.get(user_id)
+    print("why is this not working for the love if god")
+    print(user.firstname)
+    image_file = url_for('static', filename=f'user_{user.id}.jpg')
+    if user is None:
+        
+        flash('User not found', 'danger')
+        return redirect(url_for('some_error_page')) 
+
+    publications = Publication.query.filter_by(affiliate_id=user.id).all()
+    
+  
+
+    return render_template('displayProfileSearch.html', title='Display Profile', affiliate=user, image_file=image_file, publications=publications)
+
+
+##
 
 
 

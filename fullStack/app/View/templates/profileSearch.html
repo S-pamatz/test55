@@ -110,8 +110,11 @@
                 <ul>
                     {% for user in affiliates %}
                         <li class="affiliate-entry" data-lastname="{{ user.lastname|first }}">
+                            <a href="{{ url_for('routes.displayProfileSearch', user_id=user.id) }}">Look at this person's profile</a>
+
+
                             <img src="{{ url_for('static', filename=user.image_file) }}" alt="Profile Picture" style="width:45px;height:45px;">
-                            {{ user.firstname }} {{ user.lastname }} <br>
+                            {{ user.firstname }} {{ user.lastname }} {{ user.id }} <br>
                             <strong>WSU Campus:</strong> {{ user.wsuCampus }}<br>
                         </li>
                     {% endfor %}
