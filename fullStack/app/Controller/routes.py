@@ -737,6 +737,7 @@ def displayProfileSearch(user_id):
     user = Affiliate.query.get(user_id)
     print("why is this not working for the love if god")
     print(user.firstname)
+    print(user_id)
     image_file = url_for('static', filename=f'user_{user.id}.jpg')
     if user is None:
         
