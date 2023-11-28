@@ -704,6 +704,8 @@ def test_saved_tags1():
 
     # Return the combined data directly
     return result_data
+
+
 @routes_blueprint.route('/index', methods=['GET'])
 @routes_blueprint.route('/', methods=['GET'])
 @login_required
@@ -728,7 +730,7 @@ def index():
 
 
 
-###
+### hik
 
 @routes_blueprint.route('/displayProfileSearch/<int:user_id>', methods=['GET'])
 
@@ -738,7 +740,7 @@ def displayProfileSearch(user_id):
     print("why is this not working for the love if god")
     print(user.firstname)
     print(user_id)
-    image_file = url_for('static', filename=f'user_{user.id}.jpg')
+    image_file = url_for('static', filename=user.image_file)
     if user is None:
         
         flash('User not found', 'danger')
