@@ -13,6 +13,7 @@ import {
   findBestMatchingNode,
   useHighlightPath,
 } from "../function/searchHelper";
+import batchExpandNodeLogic from "../function/batchExpandNodeLogic";
 
 const GraphContext = createContext({
   nodes: [],
@@ -47,79 +48,23 @@ export const GraphContextProvider = (props) => {
   };
 
   const setStartingNode = (newNode) => {
-    // You can add logic here if needed.
     setNodes([newNode]);
     setLinks([]);
   };
-
-  // const contextValue = {
-  //   nodes: nodes,
-  //   updateNode: updateNode,
-  //   // ... any other values/functions
-  // };
 
   const [selectedNode, setSelectedNode] = useState(null);
 
   const highlightPath = useHighlightPath();
 
+
   const handleNodesClick = async (clickedNode) => {
-    // for when node is selected from filter
-    const parentNode = nodesLibrary.find(
-      (node) => node.id === clickedNode.parent
-    );
-    const isParentNode =
-      parentNode && (parentNode.Name === "WSU" || parentNode.Name === "Others");
-    const isInNodeLibrary = nodesLibrary.some(
-      (node) => node.Name === clickedNode.Name
-    );
+    // Add 'await' to wait for the async function to resolve
+    let { updatedNodes, updatedLinks } = await expandNodeLogic(clickedNode);
 
-    if (clickedNode.node === "affilate" && !isInNodeLibrary) {
-      setSelectedNode(clickedNode);
-    }
+    // Check if the returned values are defined
+    if (!updatedNodes || !updatedLinks) return;
 
-    if (clickedNode.node === "affilate") {
-      return; // Early return if the node is not a top-level node
-    }
-    let updatedNodes, updatedLinks;
-    if (clickedNode.expanded) {
-      ({ updatedNodes, updatedLinks } = collapseNode(
-        nodes,
-        links,
-        clickedNode
-      ));
-    } else {
-      if (clickedNode.id === 46) {
-        ({ updatedNodes, updatedLinks } = expandNode(
-          nodes,
-          links,
-          clickedNode,
-          nodesLibrary
-        ));
-      } else if (clickedNode.depth >= 2 || isParentNode) {
-        console.log("clickedNode: ", clickedNode);
-        // If the node is a top-level node (depth = 1) and it is not expanded, expand it
-        try {
-          const filteredEntries = await filterEntries(clickedNode.Name);
-          ({ updatedNodes, updatedLinks } = expandNodeUsingFilteredEntries(
-            nodes,
-            links,
-            clickedNode,
-            filteredEntries
-          ));
-        } catch (error) {
-          console.error("Error expanding node:", error);
-          return;
-        }
-      } else {
-        // If the node is a top-level node (depth = 0) and it is not expanded, expand it using the nodeLibrary
-        ({ updatedNodes, updatedLinks } = expandNode(
-          nodes,
-          links,
-          clickedNode,
-          nodesLibrary
-        ));
-      }
-    }
+    // Update the state with the new values
     setNodes(updatedNodes);
     setLinks(updatedLinks);
   };
@@ -147,7 +92,7 @@ export const GraphContextProvider = (props) => {
       try {
         const filteredEntries = await filterEntries(search);
         updatedNodes = [nodesLibrary[1]];
-        updatedNodes[0].id =0;
+        updatedNodes[0].id = 0;
         updatedNodes[0].expanded = true;
 
         if (!filteredEntries || filteredEntries.length === 0) return;
@@ -180,39 +125,119 @@ export const GraphContextProvider = (props) => {
     setNodes([...updatedNodes]);
     setLinks([...updatedLinks]);
   };
+  const expandAllNodes = async (currentNodes, tempNodes, tempLinks) => {
+    if (!currentNodes || currentNodes.length === 0) {
+      return { tempNodes, tempLinks };
+    }
 
-  const expandAllNodes = async () => {
-    let tempNodes = [...nodes];
-    let tempLinks = [...links];
-  
-    // Iterate over each node and expand if not already expanded
-    for (const node of tempNodes) {
-      if (!node.expanded && nodeCanBeExpanded(node)) { // nodeCanBeExpanded is a hypothetical function
-        let updatedNodes, updatedLinks;
-        try {
-          const filteredEntries = await filterEntries(node.Name);
-          if (filteredEntries.length > 0) { // Check if there are entries to expand into
-            ({ updatedNodes, updatedLinks } = expandNodeUsingFilteredEntries(
-              tempNodes,
-              tempLinks,
-              node,
-              filteredEntries
-            ));
-            tempNodes = updatedNodes;
-            tempLinks = updatedLinks;
-          }
-        } catch (error) {
-          console.error("Error expanding node:", error);
-        }
+    for (const node of currentNodes) {
+      // Check if the node exists in the tempNodes array
+      if (!tempNodes.find((n) => n.id === node.id)) {
+        console.error(`Node not found: ${node.id}`);
+        continue; // Skip to the next node
+      }
+
+      if (!node.expanded && node.node !== "affiliate") {
+        console.log("tempNodes: ", tempNodes);
+        const { updatedNodes, updatedLinks } = await batchExpandNodeLogic(
+          node,
+          tempNodes,
+          tempLinks
+        );
+        tempNodes = updatedNodes;
+        tempLinks = updatedLinks;
+
+        // Get newly added child nodes to expand next
+        const newChildNodes = tempNodes.filter(
+          (n) => n.parent === node.id && n.node !== "affiliate"
+        );
+
+        // Recursively expand child nodes
+        const result = await expandAllNodes(
+          newChildNodes,
+          tempNodes,
+          tempLinks
+        );
+        tempNodes = result.tempNodes;
+        tempLinks = result.tempLinks;
       }
     }
-  
+
+    return { tempNodes, tempLinks };
+  };
+
+  const startExpandAllNodes = async () => {
+    const { tempNodes, tempLinks } = await expandAllNodes(
+      nodes,
+      [...nodes],
+      [...links]
+    );
     setNodes(tempNodes);
     setLinks(tempLinks);
   };
 
-  const nodeCanBeExpanded = (node) => {
-    return node.depth >= 2;
+  const expandNodeLogic = async (logicNode) => {
+    if (!nodes.find((n) => n.id === logicNode.id)) {
+      console.error(`Node not found: ${logicNode.id}`);
+      return; // Exit the function
+    }
+    let updatedNodes = [...nodes];
+    let updatedLinks = [...links];
+    // for when node is selected from filter
+    const parentNode = nodesLibrary.find(
+      (node) => node.id === logicNode.parent
+    );
+    const isParentNode =
+      parentNode && (parentNode.Name === "WSU" || parentNode.Name === "Others");
+    const isInNodeLibrary = nodesLibrary.some(
+      (node) => node.Name === logicNode.Name
+    );
+
+    if (logicNode.node === "affilate") {
+      if (!isInNodeLibrary) {
+        setSelectedNode(logicNode);
+      }
+      // Return current state if no expansion is needed
+      return { updatedNodes, updatedLinks };
+    }
+
+    if (logicNode.node === "affilate") {
+      return; // Early return if the node is not a top-level node
+    }
+    if (logicNode.expanded) {
+      ({ updatedNodes, updatedLinks } = collapseNode(nodes, links, logicNode));
+    } else {
+      if (logicNode.id === 46) {
+        ({ updatedNodes, updatedLinks } = expandNode(
+          nodes,
+          links,
+          logicNode,
+          nodesLibrary
+        ));
+      } else if (logicNode.depth >= 2 || isParentNode) {
+        try {
+          const filteredEntries = await filterEntries(logicNode.Name);
+          ({ updatedNodes, updatedLinks } = expandNodeUsingFilteredEntries(
+            nodes,
+            links,
+            logicNode,
+            filteredEntries
+          ));
+        } catch (error) {
+          console.error("Error expanding node:", error);
+          return;
+        }
+      } else {
+        // If the node is a top-level node (depth = 0) and it is not expanded, expand it using the nodeLibrary
+        ({ updatedNodes, updatedLinks } = expandNode(
+          nodes,
+          links,
+          logicNode,
+          nodesLibrary
+        ));
+      }
+    }
+    return { updatedNodes, updatedLinks };
   };
 
   return (
@@ -222,7 +247,7 @@ export const GraphContextProvider = (props) => {
         links: links,
         selectedNode: selectedNode,
         setNodes: setNodes,
-        expandAllNodes: expandAllNodes,
+        expandAllNodes: startExpandAllNodes,
         onNodeClick: handleNodesClick,
         onSearchClick: handleSearchClick,
         updateNode: updateNode,
