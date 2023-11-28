@@ -109,7 +109,7 @@
             <div id="data-container" style="display: none;">
                 <ul>
                     {% for user in affiliates %}
-                        <li class="affiliate-entry" data-lastname="{{ user.lastname|first }}">
+                        <li class="affiliate-entry" data-lastname="{{ user.lastname|capitalize }}">
                             <a href="{{ url_for('routes.displayProfileSearch', user_id=user.id) }}" style="background-color: red; color: white; padding: 5px;">Look at this person's profile!</a>
 
 
