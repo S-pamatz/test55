@@ -3,7 +3,7 @@ from flask import request
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from pyparsing import Optional
-from wtforms import IntegerField, MonthField, SelectMultipleField, StringField, SubmitField, TextAreaField, PasswordField, SelectField
+from wtforms import IntegerField, SelectMultipleField, StringField, SubmitField, TextAreaField, PasswordField, SelectField
 from wtforms_sqlalchemy.fields import QuerySelectField
 from wtforms.validators import ValidationError, Length, DataRequired, Email, EqualTo
 from app.Model.models import Affiliate, Air, Department, Partners, Sponsor, Universities_Colleges, Water, interestform, smallinterestform
