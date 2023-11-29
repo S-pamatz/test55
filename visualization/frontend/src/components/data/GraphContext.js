@@ -94,6 +94,7 @@ export const GraphContextProvider = (props) => {
         updatedNodes = [nodesLibrary[1]];
         updatedNodes[0].id = 0;
         updatedNodes[0].expanded = true;
+        updatedLinks = [];
 
         if (!filteredEntries || filteredEntries.length === 0) return;
 
@@ -116,8 +117,6 @@ export const GraphContextProvider = (props) => {
         updatedNodes.push(nameNode);
         updatedLinks.push({ source: updatedNodes[0].id, target: nameNode.id });
 
-        console.log("updatedNodes: ", updatedNodes);
-        console.log("updatedLinks: ", updatedLinks);
       } catch (error) {
         console.error("Error searching and expanding nodes:", error);
       }

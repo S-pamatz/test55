@@ -37,11 +37,11 @@ const ForceDirectGraph = () => {
       )
       .force(
         "charge",
-        d3.forceManyBody().strength(-100).distanceMin(50).distanceMax(200)
+        d3.forceManyBody().strength(-10).distanceMin(100).distanceMax(1000)
       )
       .force(
         "collide",
-        d3.forceCollide().radius((d) => defaultRadius + 20)
+        d3.forceCollide().radius((d) => defaultRadius + 40)
       )
       .force("x", d3.forceX(width / 2).strength(0.1))
       .force("y", d3.forceY(height / 2).strength(0.1))
@@ -55,7 +55,7 @@ const ForceDirectGraph = () => {
       .append("line")
       .attr("class", "link")
       .attr("stroke", d => d.stroke || nodeColor)
-      .attr("stroke-width", d => d.strokeWidth || '2');
+      .attr("stroke-width", d => d.strokeWidth || '3');
 
     const nodeGroup = g
       .selectAll(".nodeGroup")
