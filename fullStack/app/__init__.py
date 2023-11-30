@@ -7,6 +7,13 @@ from flask_moment import Moment
 from flask_bootstrap import Bootstrap
 from config import Config
 from flask_cors import CORS
+import os
+
+# Get the directory of the current script file
+current_script_directory = os.path.abspath(os.path.dirname(__file__))
+
+# Construct the path to the SSL certificate
+ssl_certificate_path = os.path.join(current_script_directory, 'ssl.pem')
 
 # extensions
 db = SQLAlchemy()
@@ -18,21 +25,27 @@ moment = Moment()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
-    CORS(app) 
+    CORS(app)
     app.config.from_object(config_class)
     app.static_folder = config_class.STATIC_FOLDER
     app.template_folder = config_class.TEMPLATE_FOLDER
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:teamFullStack@localhost/our_users1'
-  #  app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:CEREO2023@localhost:3306/mysql'
-    # instad of localhost i need ipss
-    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://username:password@remote_server_ip_or_hostname:port/database_name'
+
+    # Azure MySQL database connection details
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin1:CEREO2023!@az-db-cereo.mysql.database.azure.com:3306/our_users1'
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'connect_args': {
+        'ssl': {
+            'ca': ssl_certificate_path
+        }
+    }
+}
 
     db.init_app(app)
     login.init_app(app)
     moment.init_app(app)
     bootstrap.init_app(app)
 
-    # blue print reg
+    # Blueprint registration
     from app.Controller.errors import errors_blueprint as errors
     app.register_blueprint(errors)
 

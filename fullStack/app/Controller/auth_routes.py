@@ -15,6 +15,13 @@ from flask_mail import Mail, Message
 auth_blueprint = Blueprint('auth', __name__)
 auth_blueprint.template_folder = Config.TEMPLATE_FOLDER
 import mysql.connector
+import os
+
+# Get the directory of the current script file
+current_script_directory = os.path.abspath(os.path.dirname(__file__))
+
+# Construct the path to the SSL certificate
+ssl_certificate_path = os.path.join(current_script_directory, 'ssl.pem')
 # for users that do not have their email in the db
 from postmarker.core import PostmarkClient
 application = Flask(__name__)
@@ -80,10 +87,12 @@ def confirm_email_DB(token):
 
 def testD(givenEmail):
     mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="teamFullStack",
-        database="our_users1"
+        host="az-db-cereo.mysql.database.azure.com",
+        user="admin1",
+        password="CEREO2023",
+        database="our_users1",
+        ssl_ca= ssl_certificate_path,
+        ssl_verify_cert=True
     )
     print("thius is my given email")
     mycursor = mydb.cursor()

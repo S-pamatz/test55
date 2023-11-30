@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+    {% block app_content%}
+        <h1> Register DB </h1>
+        {% if form %}
+        <div class = "row">
+            <div class="col-md-4">
+                <p>Please note: The URL can be a link of your choosing. It can be a URL to your linkedin, Github, etc...</p>
+                {{ wtf.quick_form(form, action=url_for('auth.registerDB', givenEmail=givenEmail)) }}
+
+
+            </div>
+        </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-md-4">
+                  
+                </div>
+            </div>
+
+
+{% endblock %}

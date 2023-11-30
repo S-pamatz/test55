@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Interests{% endblock %}
+
+{% block app_content %}
+  <h1>Edit Interest</h1>
+
+
+  <!-- Big Interest Form -->
+ <!-- Big Interest Form -->
+<form method="POST" action="{{ url_for('routes.edit_interest') }}" novalidate>
+    {{ form.hidden_tag() }}
+    <label for="{{ form.name.id }}"></label>
+    {{ wtf.form_field(form.name, value=selected_big_interest) }}
+    {{ wtf.form_field(form.submit) }}
+
+    <select id="search_result_big" style="display: none;">
+        {% for interest in big_interests %}
+            {% if interest.name == search_query %}
+                <option value="{{ interest.name }}" selected>{{ interest.name }}</option>
+            {% else %}
+                <option value="{{ interest.name }}">{{ interest.name }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+</form>
+
+
+  <!-- Small Interest Form -->
+  <form method="POST" action="{{ url_for('routes.edit_interest') }}">
+    {{ eform.hidden_tag() }}
+    <label for="{{ eform.name.id }}"></label>
+    {{ wtf.form_field(eform.name, value=selected_small_interest) }}
+    {{ wtf.form_field(eform.submit) }}
+
+    {% if small_interests %}
+      <select name="search_result_small" id="search_result_small">
+        {% for interest in small_interests %}
+          <option value="{{ interest.name }}">{{ interest.name }}</option>
+        {% endfor %}
+      </select>
+    {% endif %}
+  </form>
+
+
+{% endblock %}

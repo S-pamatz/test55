@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Papers Verification</title>
+</head>
+<body>
+    <h1>Author Papers Verification</h1>
+    <form action="/verification_submit" method="POST">
+        {% for author_id, papers in papers.items() %}
+        <h2>{{ author_details[author_id] }}'s Papers:</h2>
+        {% if papers %}
+            <ul>
+            {% for paper in papers %}
+                <li>
+                    <input type="hidden" name="author_id" value="{{ author_id }}">
+                    <input type="hidden" name="paper_id" value="{{ paper.paperId }}">
+                    {{ form.authorID.label }} {{ form.authorID(size=10) }}
+                    {{ form.paperID.label }} {{ form.paperID(size=10) }}
+                    {{ form.submit() }}
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No papers found for this author</p>
+        {% endif %}
+        {% endfor %}
+    </form>
+</body>
+</html>

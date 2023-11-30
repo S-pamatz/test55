@@ -1,0 +1,185 @@
+{% extends 'bootstrap/base.html' %}
+{% import 'bootstrap/wtf.html' as wtf%}
+{% block title %}
+    {% if title %}{{ title }} - CEREO {% else %}Welcome to CEREO{% endif %}
+{% endblock %}
+
+{% block scripts %}
+    {{ moment.include_moment() }}
+{% endblock %} 
+
+{% block navbar %}
+<head>
+    <script src="https://kit.fontawesome.com/cca1b66c2f.js" crossorigin="anonymous"></script>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+    *{
+        margin: 0;
+        padding: 0;
+        outline: none;
+        border: none;
+        text-decoration: none;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+    }
+    nav{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        height: 200%;
+        Left: 0;
+        background: #fff;
+        width: 210px;
+        overflow: hidden;
+        transition: width 0.2s linear;
+        box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+    }
+    .logo{
+        text-align: center;
+        display: flex;
+        transition: all 0.5s ease;
+        margin: 10px 0 0 10px;
+    }
+    .logo img{
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+    }
+    .logo span{
+        font-weight: bold;
+        padding-left: 15px;
+        font-size: 18px;
+        text-transform: uppercase;
+        position: relative;
+    }
+    a{
+        position: relative;
+        color: rgb(85, 83, 83);
+        font-size: 14px;
+        display: table;
+        width: 300px;
+        padding: 10px; 
+        text-decoration: none;
+    }
+    .fas{
+        position: relative;
+        width: 70px;
+        height: 40px;
+        top: 14px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .nav-item{
+        position: relative;
+        top: 12px;
+        margin-left: 10px;
+    }
+    a:hover{
+        background: #eee;
+        text-decoration: none;
+    }
+    .logout{
+        position: absolute;
+        bottom: 0;
+    }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('routes.displayLanding') }}" class="logo">
+                <img src="{{ url_for('static', filename='CEREO-logos.jpeg') }}">
+                <span class="nav-item">WSU CEREO </span>
+            </a></li>
+            {% if current_user.is_anonymous %}
+                <li><a href="{{ url_for('auth.login') }}">
+                    <i class="fas fa-sign-in"></i>
+                    <span class="nav-item">Login</span>
+                </a></li>
+            {% else %}
+                <li><a href="{{ url_for('routes.index') }}">
+                    <i class="fas fa-user"></i>
+                    <span class="nav-item">Profile</span>
+                </a></li>
+                <li><a href="{{ url_for('routes.edit_profile') }}">
+                    <i class="fas fa-user-gear"></i>
+                    <span class="nav-item">Edit Profile</span>
+                </a></li>
+                <li><a href="{{ url_for('routes.add_education', user_id=current_user.id) }}">
+                    <i class="fas fa-book"></i>
+                    <span class="nav-item">Add Education</span>
+                </a></li>
+                <li><a href="{{ url_for('routes.add_experiences', user_id=current_user.id) }}">
+                    <i class="fas fa-clipboard"></i>
+                    <span class="nav-item">Add Experiences</span>
+                </a></li>
+                <li><a href="{{ url_for('routes.add_projects', user_id=current_user.id) }}">
+                    <i class="fas fa-project-diagram"></i>
+                    <span class="nav-item">Add Projects</span>
+                </a></li>
+           
+                <li><a href="{{ url_for('routes.semantic_scholar_author_search_user_input') }}">
+                    <i class="fas fa-copy"></i>
+                    <span class="nav-item">Add Publications </span>
+                </a></li>
+                <li><a href="{{ url_for('routes.edit_interest') }}">
+                    <i class="fas fa-copy"></i>
+                    <span class="nav-item">Add Interests</span>
+                </a></li>
+            {% if current_user.is_admin %}
+                <li><a href="{{ url_for('auth.admin') }}">
+                    <i class="fas fa-users-line"></i>
+                    <span class="nav-item">Manage Users</span>
+                </a></li>
+              
+            {% endif %}
+            <li><a href="{{ url_for('auth.logout') }}" class="logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="nav-item">Logout</span>
+            </a></li>
+            {% endif %}
+            <li><a href="{{ url_for('routes.profileSearch') }}">
+                <i class="fas fa-magnifying-glass"></i>
+                <span class="nav-item">Profile Search</span>
+            </a></li>
+            <li><a href="{{ url_for('routes.displayAll') }}">
+                <i class="fas fa-chart-bar"></i>
+                <span class="nav-item">Visualize</span>
+            </a></li>
+        </ul>
+    </nav>
+</body>
+{% endblock %}
+
+{% block content %}
+<style>
+    .container{
+        flex-grow: 1;
+    }
+    .page-container{
+        display:flex;
+        flex-direction:row;
+    }
+    body{
+        margin-left: 350px;
+        margin-top: 50px;
+    }
+</style>
+<body>
+    <div class="page-container">
+        <div class="container">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-info" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+    
+            {# application content needs to be provided in the app_content block #}
+            {% block app_content %}{% endblock %}
+        </div>
+    </div>
+</body>
+{% endblock %}
+ 
