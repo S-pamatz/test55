@@ -56,10 +56,16 @@ export const GraphContextProvider = (props) => {
 
   const highlightPath = useHighlightPath();
 
-
   const handleNodesClick = async (clickedNode) => {
-    // Add 'await' to wait for the async function to resolve
-    let { updatedNodes, updatedLinks } = await expandNodeLogic(clickedNode);
+    let updatedNodes = [];
+    let updatedLinks = [];
+
+    if (clickedNode.node === "searchNode") {
+      ({ updatedNodes, updatedLinks } = await expandNodeLogic(clickedNode, "Affiliate"));
+    } else {
+      // Add 'await' to wait for the async function to resolve
+      ({ updatedNodes, updatedLinks } = await expandNodeLogic(clickedNode, "Normal"));
+    }
 
     // Check if the returned values are defined
     if (!updatedNodes || !updatedLinks) return;
@@ -91,17 +97,16 @@ export const GraphContextProvider = (props) => {
     } else {
       try {
         const filteredEntries = await filterEntries(search);
-        updatedNodes = [nodesLibrary[1]];
-        updatedNodes[0].id = 0;
-        updatedNodes[0].expanded = true;
+        console.log("nodes: ", nodes);
+        console.log("updatedNodes: ", updatedNodes);
+        updatedNodes = [];
         updatedLinks = [];
-
         if (!filteredEntries || filteredEntries.length === 0) return;
 
         const entry = filteredEntries[0];
 
         let nameNode = {
-          id: updatedNodes.length,
+          id: 0,
           Name: entry.Name,
           Interest: entry.Interest,
           Department: entry.Department,
@@ -110,13 +115,12 @@ export const GraphContextProvider = (props) => {
           URL: entry.URL,
           WSUCampus: entry.WSUCampus,
           expanded: false,
-          parent: updatedNodes[0].id,
-          depth: updatedNodes[0].depth + 1,
-          node: "affilate",
+          node: "searchNode",
+          fx: 500,
+          fy: 400,
         };
         updatedNodes.push(nameNode);
         updatedLinks.push({ source: updatedNodes[0].id, target: nameNode.id });
-
       } catch (error) {
         console.error("Error searching and expanding nodes:", error);
       }
@@ -175,7 +179,7 @@ export const GraphContextProvider = (props) => {
     setLinks(tempLinks);
   };
 
-  const expandNodeLogic = async (logicNode) => {
+  const expandNodeLogic = async (logicNode, expandType) => {
     if (!nodes.find((n) => n.id === logicNode.id)) {
       console.error(`Node not found: ${logicNode.id}`);
       return; // Exit the function
@@ -206,25 +210,35 @@ export const GraphContextProvider = (props) => {
     if (logicNode.expanded) {
       ({ updatedNodes, updatedLinks } = collapseNode(nodes, links, logicNode));
     } else {
-      if (logicNode.id === 46) {
-        ({ updatedNodes, updatedLinks } = expandNode(
-          nodes,
-          links,
-          logicNode,
-          nodesLibrary
-        ));
-      } else if (logicNode.depth >= 2 || isParentNode) {
-        try {
-          const filteredEntries = await filterEntries(logicNode.Name);
-          ({ updatedNodes, updatedLinks } = expandNodeUsingFilteredEntries(
+      if (expandType === "Normal") {
+        if (logicNode.Name === "Others") {
+          ({ updatedNodes, updatedLinks } = expandNode(
             nodes,
             links,
             logicNode,
-            filteredEntries
+            nodesLibrary
           ));
-        } catch (error) {
-          console.error("Error expanding node:", error);
-          return;
+        } else if (logicNode.depth >= 2 || isParentNode) {
+          try {
+            const filteredEntries = await filterEntries(logicNode.Name);
+            ({ updatedNodes, updatedLinks } = expandNodeUsingFilteredEntries(
+              nodes,
+              links,
+              logicNode,
+              filteredEntries
+            ));
+          } catch (error) {
+            console.error("Error expanding node:", error);
+            return;
+          }
+        }else {
+          // If the node is a top-level node (depth = 0) and it is not expanded, expand it using the nodeLibrary
+          ({ updatedNodes, updatedLinks } = expandNode(
+            nodes,
+            links,
+            logicNode,
+            nodesLibrary
+          ));
         }
       } else {
         // If the node is a top-level node (depth = 0) and it is not expanded, expand it using the nodeLibrary

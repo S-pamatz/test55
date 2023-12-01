@@ -314,6 +314,7 @@ export let nodesLibrary = [
     depth: 0,
     parent: 28,
   },
+  
 ];
 
 export default nodesLibrary;
