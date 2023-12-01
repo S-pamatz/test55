@@ -6,10 +6,11 @@ import CloseIcon from "../../../assets/icons8-back-arrow-30.png";
 
 const NodeInfoRightSidebar = () => {
   const { selectedNode } = useContext(GraphContext);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     // Whenever selectedNode changes, open the sidebar
+    console.log(selectedNode);
     setIsSidebarOpen(true);
   }, [selectedNode]);
 
@@ -19,7 +20,7 @@ const NodeInfoRightSidebar = () => {
   };
 
   if (!selectedNode) {
-    return ;
+    return;
   }
 
   return (
@@ -35,6 +36,14 @@ const NodeInfoRightSidebar = () => {
           <div>
             <h4>WSU Campus: </h4>
             <div>{selectedNode.WSUCampus}</div>
+            <form
+              action={
+                "https://cereo.azurewebsites.net/displayProfileSearch/" +
+                selectedNode.userId
+              }
+            >
+              <input type="submit" value="View Profile" />
+            </form>
             <h4>Site:</h4>
             <div>{selectedNode.URL}</div>
             <h4>Email:</h4>

@@ -1,8 +1,7 @@
 // handleNodeClick.js
 // Description: This file contains the functions that are called when a node is clicked.
-import Department from "../../assets/DepartmentW.png"
-import Scholar from "../../assets/ScholarW.png"
-
+import Department from "../../assets/DepartmentW.png";
+import Scholar from "../../assets/ScholarW.png";
 
 // This function finds the descendants of a node and returns them in an array
 export const findDescendants = (nodes, parentNode) => {
@@ -31,6 +30,7 @@ export const expandNodeUsingFilteredEntries = (
     const affilateName = `${name[1]}, ${name[0]}`;
     return {
       id: maxId + 1 + index,
+      userId: entry.id,
       Name: affilateName,
       Interest: entry.Interest,
       Department: entry.Department,
