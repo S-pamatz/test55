@@ -27,7 +27,7 @@ export const populateNodesWithUniqueData = async () => {
         nodesLibrary.push({
           id: currentId,
           Name: department,
-          parent: 6, // Assuming wsu node id as the parent
+          parent: 7, // Assuming wsu node id as the parent
           icon: Department, 
           expanded: false,
           fx: null,
@@ -42,7 +42,7 @@ export const populateNodesWithUniqueData = async () => {
       nodesLibrary.push({
         id: otherId,
         Name: "Others",
-        parent: 6, // Assuming wsu node id as the parent
+        parent: 7, // Assuming wsu node id as the parent
         icon: Other,
         expanded: false,
         fx: null,
@@ -73,7 +73,7 @@ export const populateNodesWithUniqueData = async () => {
         nodesLibrary.push({
           id: currentId,
           Name: interest,
-          parent: 2, // Assuming Interests node id as the parent
+          parent: 3, // Assuming Interests node id as the parent
           expanded: false,
           fx: null,
           fy: null,

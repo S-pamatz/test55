@@ -30,7 +30,7 @@ const GraphContext = createContext({
 export const GraphContextProvider = (props) => {
   const [nodes, setNodes] = useState([
     {
-      id: 0,
+      id: 1,
       Name: "Universities",
       icon: University,
       expanded: false,
