@@ -4,8 +4,7 @@
 // Define the base URL of the backend server
 //const backendBaseUrl = "http://172.232.172.160:3004"; // Replace with your actual backend URL
 const backendBaseUrl = "http://localhost:3004";
-const remoteServer = "http://172.232.172.160"
-
+const remoteServer = "https://cereo.azurewebsites.net";
 
 // Function to make a request to the backend to get all the entries
 export const filterEntries = (valueToFilterBy) => {
