@@ -196,7 +196,7 @@ export const GraphContextProvider = (props) => {
       (node) => node.Name === logicNode.Name
     );
 
-    if (logicNode.node === "affilate") {
+    if (logicNode.node === "affilate" || logicNode.node === "searchNode") {
       if (!isInNodeLibrary) {
         setSelectedNode(logicNode);
       }

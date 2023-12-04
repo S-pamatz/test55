@@ -10,6 +10,7 @@ import searchIcon from "../../../assets/Search.png";
 import { FaSearch } from "react-icons/fa";
 import { nodesLibrary } from "../../data/nodeLibrary";
 import ExpandAllNodeButton from "./LeftSidebarComponent/ExpandAllNodeButton";
+import Popup from "../UIComponents/Popup";
 
 const Sidebar = () => {
   const [activeView, setActiveView] = useState("");
@@ -52,9 +53,18 @@ const Sidebar = () => {
     }
   };
 
-  const getSearch = (e) => {
-    e.preventDefault();
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupContent, setPopupContent] = useState(null);
+
+  // Function to handle search button click
+  const handleSearchClick = () => {
+    // Perform the search or show instructions for search
     ctx.onSearchClick(search);
+
+    // Set the content for the popup and show it
+    setPopupContent(<p>If the search node is in the graph, the search will highlight its path.
+      If the node is not in the graph, the search node will become the main node.</p>); 
+    setShowPopup(true); // Show the popup
   };
 
   return (
@@ -133,7 +143,6 @@ const Sidebar = () => {
           </ul>
         </div>
       )}
-
       {activeView === "search" && (
         <>
           <div className={classes.search}>
@@ -145,20 +154,25 @@ const Sidebar = () => {
               onChange={updateSearch}
               onKeyPress={handleKeyPress}
             />
-            <button className={classes.searchButton} onClick={getSearch}>
+            <button
+              className={classes.searchButton}
+              onClick={handleSearchClick}
+            >
               <FaSearch />
             </button>
           </div>
+          {showPopup && (
+            <Popup onClose={() => setShowPopup(false)}>{popupContent}</Popup>
+          )}
         </>
       )}
       {activeView === "settings" && (
         <div className={classes.settings}>
           <h3>Settings</h3>
-              <ExpandAllNodeButton/>
+          <ExpandAllNodeButton />
         </div>
       )}
     </div>
-
   );
 };
 

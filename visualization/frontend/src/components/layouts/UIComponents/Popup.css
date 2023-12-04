@@ -1,0 +1,30 @@
+.popup-background {
+    position: fixed; /* or 'absolute' if you want it to scroll with the page */
+    top: 100px; /* Position it at the bottom */
+    right: 20px; /* Position it on the right */
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10; /* Ensure it's above other elements but not excessively high */
+    width: 300px; /* Adjust to your preference */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .popup-container {
+    position: relative;
+  }
+  
+  .close-btn {
+    background-color: #ccc;
+    color: #333;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: auto; /* Align to the right */
+    margin-bottom: 5px;
+  }
+  
