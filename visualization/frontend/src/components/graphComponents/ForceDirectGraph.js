@@ -37,7 +37,7 @@ const ForceDirectGraph = () => {
       )
       .force(
         "charge",
-        d3.forceManyBody().strength(-10).distanceMin(100).distanceMax(1000)
+        d3.forceManyBody().strength(-100).distanceMin(50).distanceMax(300)
       )
       .force(
         "collide",
@@ -45,8 +45,8 @@ const ForceDirectGraph = () => {
       )
       .force("x", d3.forceX(width / 2).strength(0.1))
       .force("y", d3.forceY(height / 2).strength(0.1))
-      .alphaDecay(0.4); // adjust alpha decay for faster stabilization
-    // .velocityDecay(0.2); // adjust velocity decay for faster stabilization
+      .alphaDecay(0.4) // adjust alpha decay for faster stabilization
+      // .velocityDecay(0.2); // adjust velocity decay for faster stabilization
 
     const link = g
       .selectAll(".link")
