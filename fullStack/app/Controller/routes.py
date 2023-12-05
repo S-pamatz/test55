@@ -223,70 +223,74 @@ def semantic_scholar_author_search():
             return f"Error: {response.status_code}", response.status_code
     else:
         return "No author name provided", 400
-@routes_blueprint.route('/semantic_scholar_author_search_user_input', methods=['GET', 'POST'])
-def semantic_scholar_author_search_user_input():
-    if request.method == 'POST':
-        base_url = "https://api.semanticscholar.org/graph/v1/author/search"
-        s2_api_key = "7wIu7PY7cV8dXPxpaS744oKcXDsAhuAaDrM68GXi" 
+@routes_blueprint.route('/semantic_scholar_author_search_user_input/<user_id>', methods=['GET', 'POST'])
+def semantic_scholar_author_search_user_input(user_id):
+    user = Affiliate.query.filter_by(id=user_id).first()
+    if user == current_user or current_user.is_admin:
+        if request.method == 'POST':
+            base_url = "https://api.semanticscholar.org/graph/v1/author/search"
+            s2_api_key = "7wIu7PY7cV8dXPxpaS744oKcXDsAhuAaDrM68GXi" 
 
-        author_name = request.form.get('author_name')
+            author_name = request.form.get('author_name')
 
-        if author_name:
-            query = author_name.replace(' ', '+')  # Format the query for the URL
+            if author_name:
+                query = author_name.replace(' ', '+')  # Format the query for the URL
 
-            # Construct the URL with the query parameter
-            search_url = f"{base_url}?query={query}"
-            headers = {"x-api-key": s2_api_key}
+                # Construct the URL with the query parameter
+                search_url = f"{base_url}?query={query}"
+                headers = {"x-api-key": s2_api_key}
 
-            response = requests.get(search_url, headers=headers)
+                response = requests.get(search_url, headers=headers)
 
-            if response.status_code == 200:
-                data = response.json()
-                print("hello ")
-                print("This is my parse function")
-                print(response)
-                dictNameID = {}
-                authors_data = data.get('data', [])
-                if authors_data:  
-                    for author in authors_data:
-                        dictNameID[author['authorId']] = author['name']
-               # print(dictNameID)
-                paperDict={}#conecting names with the papers
-                for key, items in dictNameID.items():
-                    paperDict[items]=get_author_papers(key)
-               
-                #print(first_paper)
-                   # print(items, " wrote ", type(get_author_papers(key)))
-                parseDict={}
-                for key, val in paperDict.items():
-                  #  print("this is the val ",key, " this is the type ",type(val))
-                    for key2,val2 in val.items():
-                     #   print("the key is ",key2," the val is ",type(val2))
-                       
-                        parseDict[key]=val2
-                list=[]
-                for key, val in parseDict.items():
-                 #   print("the key is ",key," the val is ",val)
-                    #print(type(val))
-                  # print(val[0])
-                    list.append(val[0])
-                   # print("\n\n")
-                print(len(list))
-                for val in list:
-                    for val2 in val.items():
-                        print("this is my val 2",val2)
-                json_list = json.dumps(list)
-                return redirect(url_for('routes.submit_publicationAPI', paper_info_list=json_list))
-                  #  print("\n\n")
-                #since there can be multiple papers, we only need to check the first one
-             
-               
+                if response.status_code == 200:
+                    data = response.json()
+                    print("hello ")
+                    print("This is my parse function")
+                    print(response)
+                    dictNameID = {}
+                    authors_data = data.get('data', [])
+                    if authors_data:  
+                        for author in authors_data:
+                            dictNameID[author['authorId']] = author['name']
+                # print(dictNameID)
+                    paperDict={}#conecting names with the papers
+                    for key, items in dictNameID.items():
+                        paperDict[items]=get_author_papers(key)
+                
+                    #print(first_paper)
+                    # print(items, " wrote ", type(get_author_papers(key)))
+                    parseDict={}
+                    for key, val in paperDict.items():
+                    #  print("this is the val ",key, " this is the type ",type(val))
+                        for key2,val2 in val.items():
+                        #   print("the key is ",key2," the val is ",type(val2))
+                        
+                            parseDict[key]=val2
+                    list=[]
+                    for key, val in parseDict.items():
+                    #   print("the key is ",key," the val is ",val)
+                        #print(type(val))
+                    # print(val[0])
+                        list.append(val[0])
+                    # print("\n\n")
+                    print(len(list))
+                    for val in list:
+                        for val2 in val.items():
+                            print("this is my val 2",val2)
+                    json_list = json.dumps(list)
+                    return redirect(url_for('routes.submit_publicationAPI', paper_info_list=json_list, user_id=user_id))
+                    #  print("\n\n")
+                    #since there can be multiple papers, we only need to check the first one
+                
+                
+                else:
+                    return f"Error: {response.status_Wcode}", response.status_code
             else:
-                return f"Error: {response.status_Wcode}", response.status_code
-        else:
-            return "No author name provided", 400
+                return "No author name provided", 400
 
-    return render_template('author_search_form.html')
+        return render_template('author_search_form.html', user_id=user_id)
+    else:
+        return redirect(url_for('routes.index'))
 
 def parsepaper(dict):
    # for key, val in dict.items():
@@ -528,11 +532,12 @@ def get_author_names_title(title):
     cleaned_authors = ' '.join([remove_unicode_escape_sequences(author) for author in authors])
     print(type(cleaned_authors))
     return cleaned_authors
-@routes_blueprint.route('/submit_publicationAPI', methods=['GET', 'POST'])
-def submit_publicationAPI():
+@routes_blueprint.route('/submit_publicationAPI/<user_id>', methods=['GET', 'POST'])
+def submit_publicationAPI(user_id):
     eform = PublicationForm()
     paper_info_list = request.args.get('paper_info_list')
 
+    user = Affiliate.query.filter_by(id=user_id).first()
     if paper_info_list:
         
         paper_info_list = json.loads(paper_info_list)
@@ -548,7 +553,7 @@ def submit_publicationAPI():
     paperDOI=[get_paper_DOI(paper_id) for paper_id in paperID]
     print("here are my paper DOI",paperDOI)
     print("why is are  breaking. are u stupid like me? ",len(paperDOI))
-    name=current_user.firstname+" "+current_user.lastname
+    name=user.firstname+" "+user.lastname
     print("this is the name",name)
     print("this is the type of my titles", type(titles))
     print("why are u breaking plz stop ",titles)
@@ -560,7 +565,7 @@ def submit_publicationAPI():
         new_publication = Publication(
             title=titles[x], 
             authors=authors,
-            affiliate=current_user,
+            affiliate=user,
             publication_year=publishDATE[x],
             journal=paperDOI[x].get('doi', 'DOI not available')
             
@@ -571,29 +576,36 @@ def submit_publicationAPI():
    
 
     
-
+    if current_user.is_admin:
+        return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
     return redirect(url_for('routes.index'))
 
 #manually inputting
-@routes_blueprint.route('/submit_publication', methods=['GET', 'POST'])
-def submit_publication():
+@routes_blueprint.route('/submit_publication/<user_id>', methods=['GET', 'POST'])
+def submit_publication(user_id):
     form = PublicationForm()
-    if form.validate_on_submit():
-        # Create a new Publication object and associate it with the logged-in affiliate
-        new_publication = Publication(
-            authors=form.authors.data,
-            title=form.title.data,
-            journal=form.journal.data,
-     
-            publication_year=form.publication_year.data,
-          
-            affiliate=current_user  # Assuming "current_affiliate" is the logged-in user
-        )
-        db.session.add(new_publication)
-        db.session.commit()
-        flash('Publication submitted successfully!', 'success')
-        return redirect(url_for('routes.index'))  # Redirect to the homepage after submission
-    return render_template('submit_publication.html', form=form)
+    user = Affiliate.query.filter_by(id=user_id).first()
+    if user is current_user or current_user.is_admin:
+        if form.validate_on_submit():
+            # Create a new Publication object and associate it with the logged-in affiliate
+            new_publication = Publication(
+                authors=form.authors.data,
+                title=form.title.data,
+                journal=form.journal.data,
+        
+                publication_year=form.publication_year.data,
+            
+                affiliate=  user
+            )
+            db.session.add(new_publication)
+            db.session.commit()
+            flash('Publication submitted successfully!', 'success')
+            if current_user.is_admin:
+                return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
+            return redirect(url_for('routes.index'))  # Redirect to the homepage after submission
+        return render_template('submit_publication.html', form=form, user_id=user_id)
+    else:
+        return redirect(url_for('routes.index'))
 
 
 @routes_blueprint.route('/mypub')
@@ -605,18 +617,20 @@ def mypub():
         # Handle case if no user is logged in
         return render_template('error.html', message="No user logged in")  # Or redirect to login, etc.
     
-@routes_blueprint.route('/delete_publication/<int:publication_id>', methods=['GET', 'POST'])
-def delete_publication(publication_id):
+@routes_blueprint.route('/delete_publication/<user_id>/<int:publication_id>', methods=['GET', 'POST'])
+def delete_publication(publication_id, user_id):
     publication = Publication.query.get_or_404(publication_id)
     
     # Check if the current user has the authorization to delete this publication
-    if publication.affiliate == current_user:
+    if publication.affiliate == current_user or current_user.is_admin:
         db.session.delete(publication)
         db.session.commit()
         flash('Publication deleted successfully!', 'success')
     else:
         flash('You are not authorized to delete this publication', 'danger')
 
+    if current_user.is_admin:
+        return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
     return redirect(url_for('routes.index'))
 
 
@@ -910,36 +924,43 @@ def edit_experience(exp_id, user_id):
     else:
         flash("You are not authorized")
         return redirect(url_for("routes.index"))
-@routes_blueprint.route('/edit_publication/<publication_id>', methods=['POST', 'GET'])
+@routes_blueprint.route('/edit_publication/<user_id>/<publication_id>', methods=['POST', 'GET'])
 @login_required
-def edit_publication(publication_id):
-    afform = PublicationForm()
-    print("how is this even working. the html is the wrong one wtf")
-    current_publication = Publication.query.filter_by(id=publication_id).first()
-    if afform.validate_on_submit():
-        current_publication.authors = afform.authors.data
-        current_publication.title = afform.title.data
-        current_publication.publication_year = afform.publication_year.data
-        current_publication.journal = afform.journal.data
-      #  current_publication.volume = afform.volume.data
-     #   current_publication.issue = afform.issue.data
-      #  current_publication.page_range = afform.page_range.data
-        db.session.add(current_publication)
-        db.session.commit()
-        flash("You have modified {current_publication_name}".format(
-            current_publication_name=current_publication.title))
-        return redirect(url_for('routes.index'))
-    
-    elif request.method == 'GET':
-        afform.title.data = current_publication.title
-        afform.authors.data = current_publication.authors
-        afform.publication_year.data = current_publication.publication_year
-        afform.journal.data = current_publication.journal
-     #   afform.volume.data = current_publication.volume
-    #    afform.issue.data = current_publication.issue
-    #    afform.page_range.data = current_publication.page_range
+def edit_publication(publication_id, user_id):
+    user = Affiliate.query.filter_by(id = user_id).first()
+    if user == current_user or current_user.is_admin:
 
-    return render_template('edit_publication.html', title='Edit Publication', form=afform, publication_id=publication_id)
+        afform = PublicationForm()
+        print("how is this even working. the html is the wrong one wtf")
+        current_publication = Publication.query.filter_by(id=publication_id).first()
+        if afform.validate_on_submit():
+            current_publication.authors = afform.authors.data
+            current_publication.title = afform.title.data
+            current_publication.publication_year = afform.publication_year.data
+            current_publication.journal = afform.journal.data
+        #  current_publication.volume = afform.volume.data
+        #   current_publication.issue = afform.issue.data
+        #  current_publication.page_range = afform.page_range.data
+            db.session.add(current_publication)
+            db.session.commit()
+            flash("You have modified {current_publication_name}".format(
+                current_publication_name=current_publication.title))
+            if current_user.is_admin:
+                return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
+            return redirect(url_for('routes.index'))
+        
+        elif request.method == 'GET':
+            afform.title.data = current_publication.title
+            afform.authors.data = current_publication.authors
+            afform.publication_year.data = current_publication.publication_year
+            afform.journal.data = current_publication.journal
+        #   afform.volume.data = current_publication.volume
+        #    afform.issue.data = current_publication.issue
+        #    afform.page_range.data = current_publication.page_range
+
+        return render_template('edit_publication.html', title='Edit Publication', form=afform, publication_id=publication_id, user_id=user_id)
+    else:
+        return redirect(url_for('routes.index'))
 
 
 

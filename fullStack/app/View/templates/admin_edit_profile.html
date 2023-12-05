@@ -112,8 +112,26 @@
                 <a href="{{url_for('routes.delete_project', project_id=project.id, user_id=user.id)}}">Delete</a>
             </td>
         </tr>
+    
         {% endfor %}
+    </table>
         <h1>Edit Publications</h1>
+        <button>
+            <a href="{{ url_for('routes.semantic_scholar_author_search_user_input', user_id=user.id) }}">
+                <span class="nav-item">Add Publications </span>
+            </a>
+        </button>
+    <table class="styled-table">
+        <tr>
+            <th>Title of Publication</th>
+            <th>Authors</th>
+            <th>Journal</th>
+            <th>Volume</th>
+            <th>Issue</th>
+            <th>Publication Year</th>
+            <th>Page Range</th>
+            <th>Edit</th>
+        </tr>
         {% for publication in user.publications %}
         <tr>
             <td>{{ publication.title }}</td>
@@ -123,8 +141,8 @@
             <td>{{ publication.issue }}</td>
             <td>{{ publication.publication_year }}</td>
             <td>{{ publication.page_range }}</td>
-            <td><a href="{{ url_for('routes.edit_publication', publication_id=publication.id) }}">Edit</a>
-                <a href="{{ url_for('routes.delete_publication', publication_id=publication.id) }}">Delete</a>
+            <td><a href="{{ url_for('routes.edit_publication', publication_id=publication.id, user_id=user.id) }}">Edit</a>
+                <a href="{{ url_for('routes.delete_publication', publication_id=publication.id, user_id=user.id) }}">Delete</a>
             </td>
         </tr>
         {% endfor %}

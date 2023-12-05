@@ -30,15 +30,17 @@ def create_app(config_class=Config):
     app.static_folder = config_class.STATIC_FOLDER
     app.template_folder = config_class.TEMPLATE_FOLDER
 
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:teamFullStack@localhost/our_users1'
     # Azure MySQL database connection details
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin1:CEREO2023!@az-db-cereo.mysql.database.azure.com:3306/our_users1'
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    'connect_args': {
-        'ssl': {
-            'ca': ssl_certificate_path
-        }
-    }
-}
+#     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin1:CEREO2023!@az-db-cereo.mysql.database.azure.com:3306/our_users1'
+#     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+#     'connect_args': {
+#         'ssl': {
+#             'ca': ssl_certificate_path
+#         }
+#     }
+# }
 
     db.init_app(app)
     login.init_app(app)
