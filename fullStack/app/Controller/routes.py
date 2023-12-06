@@ -1547,6 +1547,7 @@ def search():
     for affiliate in affiliates:
         response_data.append({
             "Interest": '',
+            "id": getattr(affiliate, 'id'),
             "Department": getattr(affiliate, 'department', ''),
             "Name": f"{getattr(affiliate, 'firstname', '')} {getattr(affiliate, 'lastname', '')}".strip(),
             "Membership": '',  # placeholder, adjust as needed
