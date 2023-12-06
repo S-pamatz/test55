@@ -724,6 +724,7 @@ def test_saved_tags1():
 
 
 
+
 @routes_blueprint.route('/index', methods=['GET'])
 @routes_blueprint.route('/', methods=['GET'])
 @login_required
@@ -739,24 +740,37 @@ def index():
     categories = current_user.interests
    
     combined_data=[]
-    # Retrieve all subcategories related to the current user's categories
+ 
    
     user_id = current_user.id
 
-    # Query the BigInterest records associated with the current user
+  
     big_interests = BigInterest.query.filter_by(affiliate_id=user_id).all()
+    for b in big_interests:
+        pass
 
-    # Query the SmallInterest records associated with the current user
     small_interests = smallInterest.query.filter_by(affiliate_id=user_id).all()
-    print("this is big ",big_interests," and this is small ",small_interests)
+    for s in small_interests:
+        pass
+    #print("this is big ",big_interests," and this is small ",small_interests)
     for x in big_interests:
+        #what a jank way to do this lol
         if x.name in Dict:
             values = Dict[x.name]
             print(x.name, values)
-            print(type(x.name))#str
-            print(type(values))#list
-            Dict2[x.name] = values
+            accumulated_values = set()  
+            for v in values:
+                for s in small_interests:
+                    if s.name == v: 
+                        print(s.name, " is in ", values)
+                        accumulated_values.add(s.name) 
+            Dict2[x.name] = ",".join(accumulated_values)  
+
+
+                
+          
             
+    
 
     return render_template('display_profile.html', title='Display Profile', affiliate=current_user, image_file=image_file, combined_data= combined_data,publications=publications,Dict2=Dict2)
 
@@ -765,27 +779,41 @@ def index():
 ### hik
 
 @routes_blueprint.route('/displayProfileSearch/<int:user_id>', methods=['GET'])
-
 def displayProfileSearch(user_id):
- 
     user = Affiliate.query.get(user_id)
-    print("why is this not working for the love if god")
-    print(user.firstname)
-    print(user_id)
-    image_file = url_for('static', filename=user.image_file)
+    
     if user is None:
-        
         flash('User not found', 'danger')
         return redirect(url_for('some_error_page')) 
 
-    publications = Publication.query.filter_by(affiliate_id=user.id).all()
+    image_file = url_for('static', filename=user.image_file)
     
-  
+    publications = Publication.query.filter_by(affiliate_id=user.id).all()
+    Dict = {'Air': ['Carbon Cycling','Air quality','Evaporation','Flux measurement','Modeling'], 'Water': ['Drinking','Ground','Surface'],
+            'Land':['Deforestation','Wildfire','Land Use Change']}
+    Dict2={}
 
-    return render_template('displayProfileSearch.html', title='Display Profile', affiliate=user, image_file=image_file, publications=publications)
+    user_id = user.id  # Use the user_id from the function argument
+
+    big_interests = BigInterest.query.filter_by(affiliate_id=user_id).all()
+    small_interests = smallInterest.query.filter_by(affiliate_id=user_id).all()
+
+    for x in big_interests:
+        if x.name in Dict:
+            values = Dict[x.name]
+            accumulated_values = set()  
+            for v in values:
+                for s in small_interests:
+                    if s.name == v: 
+                        accumulated_values.add(s.name) 
+            Dict2[x.name] = ",".join(accumulated_values)  
+    
+    return render_template('displayProfileSearch.html', title='Display Profile', affiliate=user, image_file=image_file, publications=publications, Dict2=Dict2)
 
 
 ##
+
+
 
 
 

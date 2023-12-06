@@ -87,12 +87,10 @@ def confirm_email_DB(token):
 
 def testD(givenEmail):
     mydb = mysql.connector.connect(
-        host="az-db-cereo.mysql.database.azure.com",
-        user="admin1",
-        password="CEREO2023",
-        database="our_users1",
-        ssl_ca= ssl_certificate_path,
-        ssl_verify_cert=True
+        host="localhost",
+        user="root",
+        password="teamFullStack",
+        database="our_users1"
     )
     print("thius is my given email")
     mycursor = mydb.cursor()
@@ -106,6 +104,7 @@ def testD(givenEmail):
     print(mycursor.rowcount, "record(s) deleted")
     return []
 
+ 
  
 
 @auth_blueprint.route('/registerDB/<givenEmail>', methods=['GET', 'POST'])

@@ -55,7 +55,7 @@ class IntrestTest(db.Model):
 
 class Affiliate(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    image_file = db.Column(db.String(20), nullable=False, default='CEREO-landing.jpeg')
+    image_file = db.Column(db.String(20), nullable=False, default='CEREO-pic.jpeg')### arvind
     email = db.Column(db.String(120), unique=True, nullable=False, default=None)
     password_hash = db.Column(db.String(128), nullable=False, default=None)
     firstname = db.Column(db.String(128), nullable=False, default=None)
@@ -200,3 +200,8 @@ class smallinterestform(db.Model):
     __tablename__ = 'smallinterestform'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
+
+big_small_association = db.Table('big_small_association',
+    db.Column('big_interest_name', db.String(255), db.ForeignKey('bigInterest.name')),
+    db.Column('small_interest_name', db.String(255), db.ForeignKey('smallInterest.name'))
+)
