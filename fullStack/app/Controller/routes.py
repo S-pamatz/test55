@@ -91,6 +91,7 @@ def displayLanding():
 @routes_blueprint.route('/add_projects/<user_id>', methods=["POST", "GET"])
 @login_required
 def add_projects(user_id):
+    user = Affiliate.query.filter_by(id=user_id).first()
     if int(user_id) == current_user.id or current_user.is_admin:
         afform = AddProjectsForm()
         afform.set_partners()
@@ -113,7 +114,7 @@ def add_projects(user_id):
                 return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
             return redirect(url_for('routes.add_projects', user_id=user_id))
 
-        return render_template('add_projects.html', title='Add Projects', form=afform, user_id=user_id)
+        return render_template('add_projects.html', title='Add Projects', form=afform, user_id=user_id, user=user)
     else:
         flash("You are not authorized.")
         return redirect(url_for("routes.index"))
@@ -122,6 +123,7 @@ def add_projects(user_id):
 @routes_blueprint.route('/add_experiences/<user_id>', methods=["POST", "GET"])
 @login_required
 def add_experiences(user_id):
+    user = Affiliate.query.filter_by(id=user_id).first()
     if int(user_id) == current_user.id or current_user.is_admin:
         afform = AddExperiencesForm()
         user = Affiliate.query.filter_by(id=user_id).first()
@@ -140,7 +142,7 @@ def add_experiences(user_id):
                 return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
             return redirect(url_for('routes.add_experiences', user_id=user_id))
 
-        return render_template('add_experience.html', title='Add Experiences', form=afform, user_id=user_id)
+        return render_template('add_experience.html', title='Add Experiences', form=afform, user_id=user_id, user=user)
     else:
         flash("You are not authorized")
         return redirect(url_for("routes.index"))
@@ -148,6 +150,7 @@ def add_experiences(user_id):
 @routes_blueprint.route('/add_education/<user_id>', methods=["POST", "GET"])
 @login_required
 def add_education(user_id):
+    user = Affiliate.query.filter_by(id=user_id).first()
     if int(user_id) == current_user.id or current_user.is_admin:
         afform = AddEducationForm()
         if afform.validate_on_submit():
@@ -163,7 +166,7 @@ def add_education(user_id):
                 return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
             return redirect(url_for('routes.add_education', user_id=user_id))
         
-        return render_template('add_education.html', title='Add Education', form=afform, user_id=user_id)
+        return render_template('add_education.html', title='Add Education', form=afform, user_id=user_id, user=user)
     else:
         flash("You are not authorized")
         return redirect(url_for("routes.index"))
@@ -288,7 +291,7 @@ def semantic_scholar_author_search_user_input(user_id):
             else:
                 return "No author name provided", 400
 
-        return render_template('author_search_form.html', user_id=user_id)
+        return render_template('author_search_form.html', user_id=user_id, user=user)
     else:
         return redirect(url_for('routes.index'))
 
@@ -578,14 +581,14 @@ def submit_publicationAPI(user_id):
     
     if current_user.is_admin:
         return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
-    return redirect(url_for('routes.index'))
+    return redirect(url_for('routes.semantic_scholar_author_search_user_input', user_id=user_id))
 
 #manually inputting
 @routes_blueprint.route('/submit_publication/<user_id>', methods=['GET', 'POST'])
 def submit_publication(user_id):
     form = PublicationForm()
     user = Affiliate.query.filter_by(id=user_id).first()
-    if user is current_user or current_user.is_admin:
+    if current_user == user or current_user.is_admin:
         if form.validate_on_submit():
             # Create a new Publication object and associate it with the logged-in affiliate
             new_publication = Publication(
@@ -602,7 +605,7 @@ def submit_publication(user_id):
             flash('Publication submitted successfully!', 'success')
             if current_user.is_admin:
                 return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
-            return redirect(url_for('routes.index'))  # Redirect to the homepage after submission
+            return redirect(url_for('routes.semantic_scholar_author_search_user_input', user_id=user_id))  # Redirect to the homepage after submission
         return render_template('submit_publication.html', form=form, user_id=user_id)
     else:
         return redirect(url_for('routes.index'))
@@ -631,7 +634,7 @@ def delete_publication(publication_id, user_id):
 
     if current_user.is_admin:
         return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
-    return redirect(url_for('routes.index'))
+    return redirect(url_for('routes.semantic_scholar_author_search_user_input', user_id=user_id))
 
 
 
@@ -883,7 +886,7 @@ def edit_education(education_id, user_id):
                 education_name=current_education.title))
             if current_user.is_admin:
                 return redirect(url_for('auth.admin_edit_profile', user_id=user_id))
-            return redirect(url_for('routes.index'))
+            return redirect(url_for('routes.add_education', user_id=user_id))
         
         elif request.method == 'GET':
             afform.degree.data = current_education.degree
@@ -912,7 +915,7 @@ def edit_experience(exp_id, user_id):
                 current_exp_name=current_exp.title))
             if current_user.is_admin:
                 return redirect(url_for('auth.admin_edit_profile', user_id=user_id))
-            return redirect(url_for('routes.index'))
+            return redirect(url_for('routes.add_experiences', user_id=user_id))
         
         elif request.method == 'GET':
             afform.title.data = current_exp.title
@@ -947,7 +950,7 @@ def edit_publication(publication_id, user_id):
                 current_publication_name=current_publication.title))
             if current_user.is_admin:
                 return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
-            return redirect(url_for('routes.index'))
+            return redirect(url_for('routes.semantic_scholar_author_search_user_input', user_id=user_id))
         
         elif request.method == 'GET':
             afform.title.data = current_publication.title
@@ -1064,6 +1067,7 @@ def edit_project(project_id, user_id):
     if int(user_id) == current_user.id or current_user.is_admin:
         afform = AddProjectsForm()
         afform.set_partners()
+        afform.set_sponsor()
         current_project = Project.query.filter_by(id=project_id).first()
         if afform.validate_on_submit():
             current_project.name = afform.name.data
@@ -1079,7 +1083,7 @@ def edit_project(project_id, user_id):
                 current_project_name=current_project.name))
             if current_user.is_admin:
                 return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
-            return redirect(url_for('routes.edit_profile'))
+            return redirect(url_for('routes.add_projects', user_id=user_id))
         
         elif request.method == 'GET':
             afform.name.data = current_project.name
@@ -1918,7 +1922,7 @@ def delete_education(education_id, user_id):
     flash("You have deleted {name}".format(name=education.title))
     if current_user.is_admin:
         return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
-    return redirect(url_for("routes.edit_profile"))
+    return redirect(url_for("routes.add_education", user_id=user_id))
 
 @routes_blueprint.route('/delete_experience/<user_id>/<experience_id>', methods=['GET','POST'])
 @login_required
@@ -1934,7 +1938,7 @@ def delete_experience(experience_id, user_id):
     flash("You have deleted {name}".format(name=experience.title))
     if current_user.is_admin:
         return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
-    return redirect(url_for("routes.edit_profile"))
+    return redirect(url_for("routes.add_experiences", user_id=user_id))
 
 @routes_blueprint.route('/delete_project/<user_id>/<project_id>', methods=['GET','POST'])
 @login_required
@@ -1950,4 +1954,4 @@ def delete_project(project_id, user_id):
     flash("You have deleted {name}".format(name=project.name))
     if current_user.is_admin:
         return redirect(url_for("auth.admin_edit_profile", user_id=user_id))
-    return redirect(url_for("routes.edit_profile"))
+    return redirect(url_for("routes.add_projects", user_id=user_id))

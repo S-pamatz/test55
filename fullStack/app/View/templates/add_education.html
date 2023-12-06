@@ -19,6 +19,8 @@
         }
     </style>
         <h1> {{title}} </h1>
+
+        
         {% if form %}
         <div class = "row">
             <div class="col-md-4">
@@ -29,7 +31,27 @@
         </div>
             {% endif %}
         
-
+            <h1>Current Education Data</h1>         
+            <table class="styled-table">
+                <tr>
+                    <th>Degree</th>
+                    <th>Name of Degree</th>
+                    <th>Date</th>
+                    <th>College/University</th>
+                    <th>Manage</th>
+                </tr>
+                {% for education in user.education %}
+                <tr>
+                    <td>{{ education.degree }}</td>
+                    <td>{{ education.title }}</td>
+                    <td>{{ education.year }}</td>
+                    <td>{{ education.college }} </td>
+                    <td><a href="{{ url_for('routes.edit_education', education_id=education.id, user_id=user.id) }}">Edit</a>
+                        <a href="{{ url_for('routes.delete_education', education_id=education.id, user_id=user.id) }}">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
 
 
 

@@ -30,6 +30,29 @@
         </div>
             {% endif %}
 
+            <h1>Current Professional Experiences</h1>     
+            <table class="styled-table">
+                <tr>
+                    <th>Title</th>
+                    <th>Origin</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Manage</th>
+                </tr>
+                {% for experience in user.experience %}
+                <tr>
+                    <td>{{ experience.title }}</td>
+                    <td>{{ experience.location }}</td>
+                    <td>{{ experience.date_from }}</td>
+                    <td>{{ experience.date_to }} </td>
+                    <td><a href="{{url_for('routes.edit_experience', exp_id=experience.id, user_id=user.id)}}">Edit</a>
+                        <a href="{{url_for('routes.delete_experience', experience_id=experience.id, user_id=user.id)}}">Delete</a>
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </table>
+
 
 
 

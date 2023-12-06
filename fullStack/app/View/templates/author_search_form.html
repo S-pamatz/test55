@@ -18,6 +18,52 @@
         <br><br>
         <input type="submit" value="Search">
     </form>
+
+    <h1>Current Publications</h1>
+            <table class="styled-table">
+                <tr>
+                    <th>Title of Publication</th>
+                    <th>Authors</th>
+                    <th>Journal</th>
+                    <th>Volume</th>
+                    <th>Issue</th>
+                    <th>Publication Year</th>
+                    <th>Page Range</th>
+                    <th>Edit</th>
+                </tr>
+                {% for publication in user.publications %}
+                <tr>
+                    <td>{{ publication.title }}</td>
+                    <td>{{ publication.authors }}</td>
+                    <td>{{ publication.journal }}</td>
+                    <td>{{ publication.volume }} </td>
+                    <td>{{ publication.issue }}</td>
+                    <td>{{ publication.publication_year }}</td>
+                    <td>{{ publication.page_range }}</td>
+                    <td><a href="{{ url_for('routes.edit_publication', publication_id=publication.id, user_id=user.id) }}">Edit</a>
+                        <a href="{{ url_for('routes.delete_publication', publication_id=publication.id, user_id=user.id) }}">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            <style>
+                .styled-table {
+                    border-collapse: collapse;
+                    width: 100%;
+                }
+                .styled-table th,
+                .styled-table td {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                    text-align: left;
+                }
+                .styled-table th {
+                    background-color: #f2f2f2;
+                }
+                .styled-table tr:nth-child(even) {
+                    background-color: #f2f2f2;
+                }
+            </style>
 </body>
 </html>
 {% endblock %}

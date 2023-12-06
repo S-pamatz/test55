@@ -30,7 +30,34 @@
         </div>
             {% endif %}
 
-
+            <h1>Current Projects</h1>
+            <table class="styled-table">
+                <tr>
+                    <th>Name of Project</th>
+                    <th>Contributers</th>
+                    <th>Date</th>
+                    <th>Publisher</th>
+                  
+                    <th>URL</th>
+                    <th>Partner</th>
+                    <th>Sponsor</th>
+                    <th>Manage</th>
+                </tr>
+                {% for project in user.projects %}
+                <tr>
+                    <td>{{ project.name }}</td>
+                    <td>{{ project.authorss }}</td>
+                    <td>{{ project.year }}</td>
+                    <td>{{ project.publisher }} </td>
+                    <td>{{ project.url }}</td>
+                    <td>{{ project.partners }}</td>
+                    <td>{{ project.sponsor }}</td>
+                    <td><a href="{{ url_for('routes.edit_project', project_id=project.id, user_id=user.id) }}">Edit</a>
+                        <a href="{{url_for('routes.delete_project', project_id=project.id, user_id=user.id)}}">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
 
 
 {% endblock %}
