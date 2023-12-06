@@ -102,10 +102,10 @@
                 <strong>Publication Year:</strong> {{ publication.publication_year }}<br>
           
             {% if current_user == publication.affiliate %}
-                <form method="post" action="{{ url_for('routes.delete_publication', publication_id=publication.id) }}">
+                <form method="post" action="{{ url_for('routes.delete_publication', publication_id=publication.id, user_id=current_user.id) }}">
                     <input type="submit" value="Delete">
                 </form>
-                <form method="get" action="{{ url_for('routes.edit_publication', publication_id=publication.id) }}">
+                <form method="get" action="{{ url_for('routes.edit_publication', publication_id=publication.id, user_id=current_user.id) }}">
                     <input type="submit" value="Edit">
                 </form>
                 
