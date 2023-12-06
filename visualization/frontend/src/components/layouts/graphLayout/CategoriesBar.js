@@ -38,35 +38,35 @@ const CategoriesBar = () => {
       <Modal
         content={"Universities"}
         position={buttonPosition}
-        image={<img src={UniversityIcon} alt="University" />}
+        image={<img src={UniversityIcon} alt="Universities" />}
         setActiveModalContent={setActiveModalContent}
       />
 
       <Modal
         content={"Departments"}
         position={buttonPosition}
-        image={<img src={DepartmentsIcon} alt="University" />}
+        image={<img src={DepartmentsIcon} alt="Departments" />}
         setActiveModalContent={setActiveModalContent}
       />
 
       <Modal
         content={"Interests"}
         position={buttonPosition}
-        image={<img src={Interests} alt="University" />}
+        image={<img src={Interests} alt="Interests" />}
         setActiveModalContent={setActiveModalContent}
       />
 
       <Modal
         content={"Projects"}
         position={buttonPosition}
-        image={<img src={Projects} alt="University" />}
+        image={<img src={Projects} alt="Projects" />}
         setActiveModalContent={setActiveModalContent}
       />
 
       <Modal
         content={"Publications"}
         position={buttonPosition}
-        image={<img src={Publication} alt="University" />}
+        image={<img src={Publication} alt="Publications" />}
         setActiveModalContent={setActiveModalContent}
       />
     </span>

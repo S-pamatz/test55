@@ -61,7 +61,7 @@ const Modal = ({ content, image }) => {
         }
       }
       for (const node of nodesLibrary) {
-        if (node.parent === 6) {
+        if (node.parent === 7) {
           allElements.push(node);
         }
       }
