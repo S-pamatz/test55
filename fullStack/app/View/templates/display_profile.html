@@ -71,29 +71,11 @@
             <p>
                 <span class="email">Interests |</span>
                 <b>
-                    {% set unique_big_interests = [] %}
-                    {% for big_interest in affiliate.bigInterest %}
-                        {% if big_interest.name not in unique_big_interests %}
-                            {{ big_interest.name }}{% if not loop.last %}, {% endif %}
-                            {% set _ = unique_big_interests.append(big_interest.name) %}
-                        {% endif %}
-                    {% endfor %}
+                    {{ Dict2 | tojson | safe | trim('{}') }}
                 </b>
             </p>
-            
           
-<p>
-    <span class="email">Sub-Interests |</span>
-    <b>
-        {% set unique_small_interests = [] %}
-        {% for small_interest in affiliate.smallInterest %}
-            {% if small_interest.name not in unique_small_interests %}
-                {{ small_interest.name }}{% if not loop.last %}, {% endif %}
-                {% set _ = unique_small_interests.append(small_interest.name) %}
-            {% endif %}
-        {% endfor %}
-    </b>
-</p>
+
                 </p>
             </b></p> 
         </div>
@@ -120,10 +102,10 @@
                 <strong>Publication Year:</strong> {{ publication.publication_year }}<br>
           
             {% if current_user == publication.affiliate %}
-                <form method="post" action="{{ url_for('routes.delete_publication', publication_id=publication.id, user_id=current_user.id) }}">
+                <form method="post" action="{{ url_for('routes.delete_publication', publication_id=publication.id) }}">
                     <input type="submit" value="Delete">
                 </form>
-                <form method="get" action="{{ url_for('routes.edit_publication', publication_id=publication.id, user_id=current_user.id) }}">
+                <form method="get" action="{{ url_for('routes.edit_publication', publication_id=publication.id) }}">
                     <input type="submit" value="Edit">
                 </form>
                 

@@ -107,23 +107,23 @@
                 </a></li>
                 <li><a href="{{ url_for('routes.add_education', user_id=current_user.id) }}">
                     <i class="fas fa-book"></i>
-                    <span class="nav-item">Add Education</span>
+                    <span class="nav-item">Manage Education</span>
                 </a></li>
                 <li><a href="{{ url_for('routes.add_experiences', user_id=current_user.id) }}">
                     <i class="fas fa-clipboard"></i>
-                    <span class="nav-item">Add Experiences</span>
+                    <span class="nav-item">Manage Experiences</span>
                 </a></li>
                 <li><a href="{{ url_for('routes.add_projects', user_id=current_user.id) }}">
                     <i class="fas fa-project-diagram"></i>
-                    <span class="nav-item">Add Projects</span>
+                    <span class="nav-item">Manage Projects</span>
                 </a></li>
            
                 <li><a href="{{ url_for('routes.semantic_scholar_author_search_user_input', user_id=current_user.id) }}">
                     <i class="fas fa-copy"></i>
-                    <span class="nav-item">Add Publications </span>
+                    <span class="nav-item">Manage Publications </span>
                 </a></li>
                 <li><a href="{{ url_for('routes.edit_interest') }}">
-                    <i class="fas fa-copy"></i>
+                    <i class="fas fa-filter"></i>
                     <span class="nav-item">Add Interests</span>
                 </a></li>
             {% if current_user.is_admin %}
