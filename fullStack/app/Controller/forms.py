@@ -24,6 +24,8 @@ class ProfileForm(FlaskForm):
 
 #
 
+class PasswordChangeForm(FlaskForm):
+    password = PasswordField('New Password', validators=[DataRequired()])
 
 class EditForm(FlaskForm):
     picture = FileField('Update Profile Picture', validators=[

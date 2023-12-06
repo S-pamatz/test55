@@ -6,7 +6,7 @@ import urllib3
 from app import db
 
 from app.Controller.auth_forms import LoginForm, affiliateRegister, AddKeywords, AdminEditProfile
-from app.Controller.forms import EmailForm
+from app.Controller.forms import EmailForm, PasswordChangeForm
 from app.Controller.routes import email
 from app.Model.models import Affiliate, Department, Interest, Campus
 from flask_login import login_user, current_user, logout_user, login_required
@@ -294,7 +294,84 @@ def register(givenEmail):
     return render_template('register.html', form=rform, givenEmail=givenEmail)
 
 
+############RESET PASSWORD
 
+#rest password
+@auth_blueprint.route('/reset', methods=['GET', 'POST'])
+def reset():
+
+    form = EmailForm()  # Creating an instance of the EmailForm class
+    
+    if form.validate_on_submit():  # If the form is submitted and validated
+        email = form.email.data  # Get the email entered by the user
+        return redirect(url_for('auth.resetEmail', givenEmail=email))
+
+    return render_template('email_template.html', form=form)
+
+
+@auth_blueprint.route('/reset/<givenEmail>', methods=['GET'])
+def resetEmail(givenEmail):
+    listEmail=[]
+    if request.method == 'GET':
+        all_affiliates = Affiliate.query.all()
+
+        # Extract emails from the affiliates
+        all_emails = [affiliate.email for affiliate in all_affiliates if affiliate.email]
+        for affiliate in all_affiliates:
+            listEmail.append(affiliate.email)
+         
+           
+        print(listEmail)
+        #not sure but the other way was not working. i am adding all emails to a list and then checking
+        if givenEmail in listEmail:
+                print("the given email is in the liustr")
+                token = s.dumps(givenEmail, salt='email-confirm')
+                link = url_for('auth.confirm_email_reset', token=token,
+                            _external=True)
+            
+                response = postmark.emails.send(
+                        From='brian.joo@wsu.edu',
+                        To=givenEmail,
+                        Subject='Reset passsword',
+                        HtmlBody=link
+                    )
+                # Check if the email was sent successfully
+                if response['ErrorCode'] == 0:
+                    return 'Email sent'
+                else:
+                    return 'Email failed: {}'.format(response['Message'])
+        else:
+            print("ther given email is not in the databse. please try again or make a new account")
+            return redirect(url_for('routes.index'))
+    return givenEmail
+
+@auth_blueprint.route('/confirm_email_reset/<token>')
+def confirm_email_reset(token):
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=3600)
+        return redirect(url_for('auth.resetPassword', givenEmail=email))
+
+    except SignatureExpired:
+        return '<h1>The token is expired!</h1>'
+@auth_blueprint.route('/resetPassword/<givenEmail>', methods=['GET', 'POST'])
+def resetPassword(givenEmail):
+    rform = PasswordChangeForm()  # Create a new form for changing the password
+
+    if rform.validate_on_submit():
+        # Get the user by email
+        affiliate = Affiliate.query.filter_by(email=givenEmail).first()
+
+        if affiliate:
+            # Set the new password
+            affiliate.set_password(rform.password.data)
+
+            # Commit the changes
+            db.session.commit()
+            flash('Password successfully changed')
+            return redirect(url_for('routes.index'))
+
+    return render_template('resetPass.html', form=rform, givenEmail=givenEmail)
+#############RESET PASSWORD
 
 
 @auth_blueprint.route('/login', methods=['GET', 'POST'])

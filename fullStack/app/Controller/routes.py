@@ -720,27 +720,42 @@ def test_saved_tags1():
     return result_data
 
 
+
 @routes_blueprint.route('/index', methods=['GET'])
 @routes_blueprint.route('/', methods=['GET'])
 @login_required
 def index():
     publications = Publication.query.filter_by(affiliate=current_user).all()
-       
+    Dict = {'Air': ['Carbon Cycling','Air quality','Evaporation','Flux measurement','Modeling'], 'Water': ['Drinking','Ground','Surface'],
+            'Land':['Deforestation','Wildfire','Land Use Change']}
+    Dict2={}
+
     #eform = EmptyForm()
     image_file = url_for('static', filename=current_user.image_file)
     # Assuming 'interests' is the relationship between Affiliate and IntrestTest
     categories = current_user.interests
-    combined_data=test_saved_tags1()
-    print("this is a test",combined_data)
+   
+    combined_data=[]
     # Retrieve all subcategories related to the current user's categories
-    subcategories = []
-    for category in categories:
-        subcategories.extend(category.subcategory.interests)
-    subcategory_names = [subcategory.name for subcategory in subcategories]
-    print(subcategory_names)
+   
+    user_id = current_user.id
 
-    print(categories)
-    return render_template('display_profile.html', title='Display Profile', affiliate=current_user, image_file=image_file, combined_data= combined_data,publications=publications)
+    # Query the BigInterest records associated with the current user
+    big_interests = BigInterest.query.filter_by(affiliate_id=user_id).all()
+
+    # Query the SmallInterest records associated with the current user
+    small_interests = smallInterest.query.filter_by(affiliate_id=user_id).all()
+    print("this is big ",big_interests," and this is small ",small_interests)
+    for x in big_interests:
+        if x.name in Dict:
+            values = Dict[x.name]
+            print(x.name, values)
+            print(type(x.name))#str
+            print(type(values))#list
+            Dict2[x.name] = values
+            
+
+    return render_template('display_profile.html', title='Display Profile', affiliate=current_user, image_file=image_file, combined_data= combined_data,publications=publications,Dict2=Dict2)
 
 
 
