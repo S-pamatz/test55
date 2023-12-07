@@ -87,10 +87,12 @@ def confirm_email_DB(token):
 
 def testD(givenEmail):
     mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="teamFullStack",
-        database="our_users1"
+        host="az-db-cereo.mysql.database.azure.com",
+        user="admin1",
+        password="CEREO2023",
+        database="our_users1",
+        ssl_ca= ssl_certificate_path,
+        ssl_verify_cert=True
     )
     print("thius is my given email")
     mycursor = mydb.cursor()

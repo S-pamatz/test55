@@ -66,7 +66,7 @@ class Affiliate(db.Model, UserMixin):
     is_validated = db.Column(db.Boolean, default=False)  # New column
   #  membership = db.Column(db.String(128))
     wsuCampus = db.Column(db.String(128))
-    departments = db.relationship(
+    departments = db.relationship(  
         "Department", secondary=works_departments, backref="affiliates"
     )
     department = db.Column(db.String(128))  # Single department
