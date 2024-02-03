@@ -2,6 +2,7 @@
 echo "Runing react build."
 (
     cd visualization/frontend
+    npm install
     npm run build
 )
 
